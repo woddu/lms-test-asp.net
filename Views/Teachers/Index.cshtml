@@ -1,4 +1,4 @@
-@model IEnumerable<lms_test1.Areas.Identity.Data.LMSUser>
+@model IEnumerable<lms_test1.Models.ViewModels.Teachers.UserWithRolesViewModel>
 
 @{
     ViewData["Title"] = "Teacher Management";
@@ -33,16 +33,10 @@
                         @Html.DisplayNameFor(model => model.Verified)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.LastName)
+                        @Html.DisplayNameFor(model => model.Initials)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.FirstName)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.UserName)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Email)
+                        @Html.DisplayNameFor(model => model.Role)
                     </th>
                     <th>
                     <th></th>
@@ -55,16 +49,10 @@
                         @Html.DisplayFor(modelItem => item.Verified)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.LastName)
+                        @Html.DisplayFor(modelItem => item.Initials)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.FirstName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.UserName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Email)
+                        @Html.DisplayFor(modelItem => item.Role)
                     </td>
                     <td>
                         <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
