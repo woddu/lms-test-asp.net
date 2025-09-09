@@ -53,11 +53,11 @@
                         </li>
                         @if (User.IsInRole("Admin"))
                         {
-                            <li @if(Context.Request.Path.Value?.ToLower().StartsWith("/teachermanagement") == true) {
+                            <li @if(Context.Request.Path.Value?.ToLower().StartsWith("/teachers") == true) {
                             <text>class="active"</text>
                                                         }
                                 >
-                                <a asp-area="" asp-controller="TeacherManagement" asp-action="Index">Teacher Management</a>
+                                <a asp-area="" asp-controller="Teachers" asp-action="Index">Teacher Management</a>
                             </li>
                         }
                         <li><a href="#0">Sections</a></li>
