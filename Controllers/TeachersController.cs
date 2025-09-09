@@ -23,9 +23,24 @@ public class TeachersController(UserManager<LMSUser> userManager) : Controller
     public async Task<IActionResult> Index()
     {
         var users = await _userManager.Users
-            .OrderBy(u => u.Verified)
-            .ToListAsync();
-        return View(users);
+        .OrderBy(u => u.Verified)
+        .ToListAsync();
+
+    var userWithRoles = new List<UserWithRolesViewModel>();
+
+    foreach (var user in users)
+    {
+        var roles = await _userManager.GetRolesAsync(user);
+        userWithRoles.Add(new UserWithRolesViewModel
+        {
+            Id = user.Id,
+            Initials = $"{user.LastName}, {user.FirstName[0]}",
+            Verified = user.Verified,
+            Role = roles.FirstOrDefault() ?? ""
+        });
+    }
+
+    return View(userWithRoles);
     }
 
     // GET: Teachers/Details/5
