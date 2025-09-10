@@ -9,27 +9,24 @@ using lms_test1.Data;
 using lms_test1.Models;
 using Microsoft.AspNetCore.Authorization;
 
-
 namespace lms_test1.Controllers;
-
-[Authorize(Roles = "Admin")]
-public class StudentController : Controller
+[Authorize(Roles = "Admin,HeadTeacher")]
+public class SectionsController : Controller
 {
     private readonly ApplicationDbContext _context;
 
-    public StudentController(ApplicationDbContext context)
+    public SectionsController(ApplicationDbContext context)
     {
         _context = context;
     }
 
-    // GET: Student
+    // GET: Section
     public async Task<IActionResult> Index()
     {
-        var applicationDbContext = _context.Students.Include(s => s.Section);
-        return View(await applicationDbContext.ToListAsync());
+        return View(await _context.Sections.ToListAsync());
     }
 
-    // GET: Student/Details/5
+    // GET: Section/Details/5
     public async Task<IActionResult> Details(int? id)
     {
         if (id == null)
@@ -37,42 +34,39 @@ public class StudentController : Controller
             return NotFound();
         }
 
-        var student = await _context.Students
-            .Include(s => s.Section)
+        var section = await _context.Sections
             .FirstOrDefaultAsync(m => m.Id == id);
-        if (student == null)
+        if (section == null)
         {
             return NotFound();
         }
 
-        return View(student);
+        return View(section);
     }
 
-    // GET: Student/Create
+    // GET: Section/Create
     public IActionResult Create()
     {
-        ViewData["SectionId"] = new SelectList(_context.Sections, "Id", "Id");
         return View();
     }
 
-    // POST: Student/Create
+    // POST: Section/Create
     // To protect from overposting attacks, enable the specific properties you want to bind to.
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Id,LastName,FirstName,MiddleName,Gender,Age,BirthDate,Address,SectionId")] Student student)
+    public async Task<IActionResult> Create([Bind("Id,Name,Track,YearLevel")] Section section)
     {
         if (ModelState.IsValid)
         {
-            _context.Add(student);
+            _context.Add(section);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        ViewData["SectionId"] = new SelectList(_context.Sections, "Id", "Id", student.SectionId);
-        return View(student);
+        return View(section);
     }
 
-    // GET: Student/Edit/5
+    // GET: Section/Edit/5
     public async Task<IActionResult> Edit(int? id)
     {
         if (id == null)
@@ -80,23 +74,22 @@ public class StudentController : Controller
             return NotFound();
         }
 
-        var student = await _context.Students.FindAsync(id);
-        if (student == null)
+        var section = await _context.Sections.FindAsync(id);
+        if (section == null)
         {
             return NotFound();
         }
-        ViewData["SectionId"] = new SelectList(_context.Sections, "Id", "Id", student.SectionId);
-        return View(student);
+        return View(section);
     }
 
-    // POST: Student/Edit/5
+    // POST: Section/Edit/5
     // To protect from overposting attacks, enable the specific properties you want to bind to.
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, [Bind("Id,LastName,FirstName,MiddleName,Gender,Age,BirthDate,Address,SectionId")] Student student)
+    public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Track,YearLevel")] Section section)
     {
-        if (id != student.Id)
+        if (id != section.Id)
         {
             return NotFound();
         }
@@ -105,12 +98,12 @@ public class StudentController : Controller
         {
             try
             {
-                _context.Update(student);
+                _context.Update(section);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!StudentExists(student.Id))
+                if (!SectionExists(section.Id))
                 {
                     return NotFound();
                 }
@@ -121,11 +114,10 @@ public class StudentController : Controller
             }
             return RedirectToAction(nameof(Index));
         }
-        ViewData["SectionId"] = new SelectList(_context.Sections, "Id", "Id", student.SectionId);
-        return View(student);
+        return View(section);
     }
 
-    // GET: Student/Delete/5
+    // GET: Section/Delete/5
     public async Task<IActionResult> Delete(int? id)
     {
         if (id == null)
@@ -133,35 +125,34 @@ public class StudentController : Controller
             return NotFound();
         }
 
-        var student = await _context.Students
-            .Include(s => s.Section)
+        var section = await _context.Sections
             .FirstOrDefaultAsync(m => m.Id == id);
-        if (student == null)
+        if (section == null)
         {
             return NotFound();
         }
 
-        return View(student);
+        return View(section);
     }
 
-    // POST: Student/Delete/5
+    // POST: Section/Delete/5
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
-        var student = await _context.Students.FindAsync(id);
-        if (student != null)
+        var section = await _context.Sections.FindAsync(id);
+        if (section != null)
         {
-            _context.Students.Remove(student);
+            _context.Sections.Remove(section);
         }
 
         await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
-    private bool StudentExists(int id)
+    private bool SectionExists(int id)
     {
-        return _context.Students.Any(e => e.Id == id);
+        return _context.Sections.Any(e => e.Id == id);
     }
 }
 
