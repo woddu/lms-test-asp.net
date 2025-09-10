@@ -85,7 +85,7 @@ public class StudentsController : Controller
         {
             return NotFound();
         }
-        ViewData["SectionId"] = new SelectList(_context.Sections, "Id", "Id", student.SectionId);
+        ViewData["SectionId"] = new SelectList(_context.Sections, "Id", "Name", student.SectionId);
         return View(student);
     }
 
