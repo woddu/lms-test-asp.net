@@ -1,4 +1,3 @@
-body,textarea,input,select{background:0;border-radius:0;font:16px sans-serif;margin:0}.addon,.btn-sm,.nav,textarea,input,select{outline:0;font-size:14px}.smooth{transition:all .2s}.btn,.nav a{text-decoration:none}.container{margin:0 20px;width:auto}@media(min-width:1310px){.container{margin:auto;width:1270px}}.btn,h2{font-size:2em}h1{font-size:3em}.btn{background:#999;border-radius:6px;border:0;color:#fff;cursor:pointer;display:inline-block;margin:2px 0;padding:12px 30px 14px}.btn:hover{background:#888}.btn:active,.btn:focus{background:#777}.btn-a{background:#0ae}.btn-a:hover{background:#09d}.btn-a:active,.btn-a:focus{background:#08b}.btn-b{background:#3c5}.btn-b:hover{background:#2b4}.btn-b:active,.btn-b:focus{background:#2a4}.btn-c{background:#d33}.btn-c:hover{background:#c22}.btn-c:active,.btn-c:focus{background:#b22}.btn-sm{border-radius:4px;padding:10px 14px 11px}label>*{display:inline}form>*{display:block;margin-bottom:10px}textarea,input,select{border:1px solid #ccc;padding:8px}textarea:focus,input:focus,select:focus{border-color:#5ab}textarea,input[type=text]{-webkit-appearance:none;width:13em;outline:0}.addon{box-shadow:0 0 0 1px #ccc;padding:8px 12px}.table th,.table td{padding:.5em;text-align:left}.table tbody>:nth-child(2n-1){background:#ddd}.row{margin:1% 0;overflow:auto}.col{float:left}.table,.c12{width:100%}.c11{width:91.66%}.c10{width:83.33%}.c9{width:75%}.c8{width:66.66%}.c7{width:58.33%}.c6{width:50%}.c5{width:41.66%}.c4{width:33.33%}.c3{width:25%}.c2{width:16.66%}.c1{width:8.33%}@media(max-width:870px){.row .col{width:100%}}
 
 body {
   background: #89909f;
@@ -10,14 +9,14 @@ body {
 }
 
 a {
-  text-decoration: none; /* removes underline */
+  text-decoration: none;
 }
 
 .site-wrap {  
-  position: fixed;          /* stays in place relative to viewport */
-  top: 1rem;                 /* 1rem offset from top */
-  right: 1rem;               /* 1rem offset from right */
-  bottom: 1rem;              /* 1rem offset from bottom */
+  position: fixed;         
+  top: 1rem;                
+  right: 1rem;              
+  bottom: 1rem;             
   left: 1rem;
   display: grid;
   grid-template-columns: 280px 1fr;
@@ -82,9 +81,9 @@ a {
 .site-nav ul {
   margin-bottom: auto;
   margin-bottom: auto;
-  list-style: none;   /* removes the bullet */
-  padding-left: 0;    /* removes default left padding */
-  margin-left: 0;     /* removes default left margin */
+  list-style: none;  
+  padding-left: 0;   
+  margin-left: 0;    
 }
 
 .site-nav ul,
@@ -100,18 +99,18 @@ a {
   display: block;
   padding: 0.75rem 0.5rem 0.75rem 2rem;
   position: relative;
-  text-decoration: none; /* removes underline */
+  text-decoration: none;
 }
 
 .site-nav ul li a:hover,
 .site-nav ul li a:focus {
   color: #4371c5;
-  text-decoration: none; /* removes underline */
+  text-decoration: none;
 }
 
 .site-nav ul li.active > a {
   background: linear-gradient(to right, #101b2d, transparent);
-  text-decoration: none; /* removes underline */
+  text-decoration: none;
 }
 
 .site-nav ul li.active > a::before {
@@ -134,7 +133,7 @@ a {
 .site-nav ul ul a {
   padding-top: 0.4rem;
   padding-bottom: 0.4rem;
-  text-decoration: none; /* removes underline */
+  text-decoration: none;
 }
 
 .site-nav .logout-button {
@@ -204,50 +203,54 @@ a {
 main {
   display: flex;
   flex-direction: column;
-  height: 100%;               /* fill the grid cell vertically */
+  height: 100%;              
   width: 100%;
   border-radius: 2rem;
   background: #ebecee;
   margin-left: -2rem;
   position: relative;
-  min-height: 0;               /* allow flex children to shrink */
+  min-height: 0;              
 }
 
 main > header {
   padding: 3rem 3rem 0 3rem;
-  flex: 0 0 auto;              /* fixed height based on content */
+  flex: 0 0 auto;             
 }
 
-.overflow-auto {
-  flex: 1 1 auto;              /* take remaining space */
-  min-height: 0;               /* critical for scroll to work */
-  overflow: auto;              /* scroll inside if content too big */
+.prevent-overflow {
+  flex: 1 1 auto;             
+  min-height: 0;              
+  overflow: auto;             
 }
 
-/* WebKit */
-.overflow-auto::-webkit-scrollbar {
+.prevent-overflow::-webkit-scrollbar {
   width: 8px;
 }
 
-.overflow-auto::-webkit-scrollbar-track {
+.prevent-overflow::-webkit-scrollbar-track {
   background: #f0f0f0;
 }
 
-.overflow-auto::-webkit-scrollbar-thumb {
+.prevent-overflow::-webkit-scrollbar-thumb {
   background-color: #1c2736;
   border-radius: 4px;
   border: 2px solid #f0f0f0;
 }
 
-.overflow-auto::-webkit-scrollbar-thumb:hover {
+.prevent-overflow::-webkit-scrollbar-thumb:hover {
   background-color: #0b121b;
 }
 
-main .overflow-auto .content-columns,
-main .overflow-auto .container{
+main .prevent-overflow .content-columns,
+main .prevent-overflow .container{
   padding: 3rem;
   display: flex;
   background: #e5e5e9;
+}
+
+.px-8 {
+  padding-left: 2rem;
+  padding-right: 2rem;
 }
 
 .content-columns .col {
@@ -291,13 +294,13 @@ main .overflow-auto .container{
   font-size: 1.15rem;
   color: #8c939e;
   position: relative;
-  text-decoration: none; /* removes underline */
+  text-decoration: none;
 }
 
 .nav-tabs a.active {
   color: #101620;
   font-weight: 600;
-  text-decoration: none; /* removes underline */
+  text-decoration: none;
 }
 
 .nav-tabs a.active span {
@@ -329,6 +332,15 @@ main .overflow-auto .container{
   color: #868d99;
 }
 
-table {
-  font-size: 1rem; /* or use px like 18px */
+
+.form-group {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.text-danger {
+  color: #d9534f;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
 }
