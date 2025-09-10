@@ -15,9 +15,16 @@ using lms_test1.Models;
 namespace lms_test1.Controllers;
 
 [Authorize(Roles = "Admin")]
-public class TeachersController(UserManager<LMSUser> userManager) : Controller
+public class TeachersController : Controller
 {
-    private readonly UserManager<LMSUser> _userManager = userManager;
+    private readonly UserManager<LMSUser> _userManager;
+    private readonly ApplicationDbContext _context;
+
+    public TeachersController(UserManager<LMSUser> userManager, ApplicationDbContext context)
+    {
+        _userManager = userManager;
+        _context = context;
+    }
 
     // GET: Teachers
     public async Task<IActionResult> Index()
@@ -26,21 +33,21 @@ public class TeachersController(UserManager<LMSUser> userManager) : Controller
         .OrderBy(u => u.Verified)
         .ToListAsync();
 
-    var userWithRoles = new List<UserWithRolesViewModel>();
+        var userWithRoles = new List<UserWithRolesViewModel>();
 
-    foreach (var user in users)
-    {
-        var roles = await _userManager.GetRolesAsync(user);
-        userWithRoles.Add(new UserWithRolesViewModel
+        foreach (var user in users)
         {
-            Id = user.Id,
-            Initials = $"{user.LastName}, {user.FirstName[0]}",
-            Verified = user.Verified,
-            Role = roles.FirstOrDefault() ?? ""
-        });
-    }
+            var roles = await _userManager.GetRolesAsync(user);
+            userWithRoles.Add(new UserWithRolesViewModel
+            {
+                Id = user.Id,
+                Initials = $"{user.LastName}, {user.FirstName[0]}",
+                Verified = user.Verified,
+                Role = roles.FirstOrDefault() ?? ""
+            });
+        }
 
-    return View(userWithRoles);
+        return View(userWithRoles);
     }
 
     // GET: Teachers/Details/5
@@ -57,21 +64,16 @@ public class TeachersController(UserManager<LMSUser> userManager) : Controller
         //     .FirstOrDefaultAsync(m => m.Id == id);
         var user = await _userManager.Users
             .Where(u => u.Id == id)
-            .Select(u => new
+            .Select(u => new LMSUserDetailViewModel
             {
-                u.Id,
-                u.FirstName,
-                u.LastName,
-                AdvisorySection = u.AdvisorySection == null ? null : new
-                {
-                    u.AdvisorySection.Id,
-                    u.AdvisorySection.Name
-                },
-                Subjects = (u.Subjects ?? new List<Subject>())
-                    .Select(s => new { s.Id, s.Name })
-                    .ToList()
+                Id = u.Id,
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+                AdvisorySection = u.AdvisorySection,
+                Subjects = u.Subjects
             })
             .FirstOrDefaultAsync();
+
         if (user == null)
         {
             return NotFound();
@@ -123,22 +125,50 @@ public class TeachersController(UserManager<LMSUser> userManager) : Controller
     // GET: Teachers/Edit/5
     public async Task<IActionResult> Edit(string id)
     {
-        if (id == null)
+        if (string.IsNullOrEmpty(id))
         {
             return NotFound();
         }
 
         var lMSUser = await _userManager.Users
-            .Include(l => l.AdvisorySection)
-            .Include(l => l.Subjects)
-            .FirstOrDefaultAsync(m => m.Id == id);
+            .Include(u => u.AdvisorySection)
+            .Include(u => u.Subjects)
+            .FirstOrDefaultAsync(u => u.Id == id);
+
         if (lMSUser == null)
         {
             return NotFound();
         }
-        // ViewData["AdvisorySectionId"] = new SelectList(_userManager.Sections, "Id", "Id", lMSUser.AdvisorySectionId);
-        return View(lMSUser);
+
+        var viewModel = new LMSUserEditViewModel
+        {
+            Id = lMSUser.Id,
+            Verified = lMSUser.Verified,
+            FirstName = lMSUser.FirstName,
+            MiddleName = lMSUser.MiddleName,
+            LastName = lMSUser.LastName,
+            Email = lMSUser.Email ?? string.Empty,
+            UserName = lMSUser.UserName ?? string.Empty,
+            AdvisorySectionId = lMSUser.AdvisorySectionId,
+            AdvisorySectionOptions = await _context.Sections
+                .Select(s => new SelectListItem
+                {
+                    Value = s.Id.ToString(),
+                    Text = s.Name
+                })
+                .ToListAsync(),
+            Subjects = lMSUser.Subjects?
+                .Select(s => new TeacherSubjectViewModel
+                {
+                    Id = s.Id,
+                    Name = s.Name
+                })
+                .ToList()
+        };
+
+        return View(viewModel);
     }
+
 
     // POST: Teachers/Edit/5
     // To protect from overposting attacks, enable the specific properties you want to bind to.
