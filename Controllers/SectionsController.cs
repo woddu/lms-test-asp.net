@@ -10,6 +10,7 @@ using lms_test1.Models;
 using Microsoft.AspNetCore.Authorization;
 
 namespace lms_test1.Controllers;
+
 [Authorize(Roles = "Admin,HeadTeacher")]
 public class SectionsController : Controller
 {
@@ -23,7 +24,11 @@ public class SectionsController : Controller
     // GET: Section
     public async Task<IActionResult> Index()
     {
-        return View(await _context.Sections.ToListAsync());
+        return View(
+            await _context.Sections
+                .OrderBy(s => s.YearLevel)
+                .ToListAsync()
+        );
     }
 
     // GET: Section/Details/5
@@ -55,7 +60,7 @@ public class SectionsController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Id,Name,Track,YearLevel")] Section section)
+    public async Task<IActionResult> Create([Bind("Id,Name,Track,Strand,YearLevel")] Section section)
     {
         if (ModelState.IsValid)
         {
@@ -87,7 +92,7 @@ public class SectionsController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Track,YearLevel")] Section section)
+    public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Track,Strand,YearLevel")] Section section)
     {
         if (id != section.Id)
         {
