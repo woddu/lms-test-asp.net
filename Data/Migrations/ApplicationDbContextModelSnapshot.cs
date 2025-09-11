@@ -17,21 +17,6 @@ namespace lms_test1.Data.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.8");
 
-            modelBuilder.Entity("LMSUserSubject", b =>
-                {
-                    b.Property<int>("SubjectsId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("TeacherId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("SubjectsId", "TeacherId");
-
-                    b.HasIndex("TeacherId");
-
-                    b.ToTable("LMSUserSubject");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -164,21 +149,6 @@ namespace lms_test1.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("SectionSubject", b =>
-                {
-                    b.Property<int>("SectionsId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SubjectsId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("SectionsId", "SubjectsId");
-
-                    b.HasIndex("SubjectsId");
-
-                    b.ToTable("SectionSubject");
-                });
-
             modelBuilder.Entity("lms_test1.Areas.Identity.Data.LMSUser", b =>
                 {
                     b.Property<string>("Id")
@@ -308,6 +278,10 @@ namespace lms_test1.Data.Migrations
                     b.Property<int>("SubjectId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("TeacherId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<double>("WW1")
                         .HasColumnType("REAL");
 
@@ -342,9 +316,9 @@ namespace lms_test1.Data.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.HasIndex("SubjectId");
+                    b.HasIndex("TeacherId", "SubjectId");
 
-                    b.ToTable("Score");
+                    b.ToTable("Scores");
                 });
 
             modelBuilder.Entity("lms_test1.Models.Section", b =>
@@ -415,12 +389,25 @@ namespace lms_test1.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<double>("Exam")
-                        .HasColumnType("REAL");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Subjects");
+                });
+
+            modelBuilder.Entity("lms_test1.Models.TeacherSubject", b =>
+                {
+                    b.Property<string>("TeacherId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("SubjectId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("Exam")
+                        .HasColumnType("REAL");
 
                     b.Property<double>("PT1")
                         .HasColumnType("REAL");
@@ -452,6 +439,9 @@ namespace lms_test1.Data.Migrations
                     b.Property<double>("PT9")
                         .HasColumnType("REAL");
 
+                    b.Property<int>("SectionId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<double>("WW1")
                         .HasColumnType("REAL");
 
@@ -482,24 +472,13 @@ namespace lms_test1.Data.Migrations
                     b.Property<double>("WW9")
                         .HasColumnType("REAL");
 
-                    b.HasKey("Id");
+                    b.HasKey("TeacherId", "SubjectId");
 
-                    b.ToTable("Subjects");
-                });
+                    b.HasIndex("SectionId");
 
-            modelBuilder.Entity("LMSUserSubject", b =>
-                {
-                    b.HasOne("lms_test1.Models.Subject", null)
-                        .WithMany()
-                        .HasForeignKey("SubjectsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasIndex("SubjectId");
 
-                    b.HasOne("lms_test1.Areas.Identity.Data.LMSUser", null)
-                        .WithMany()
-                        .HasForeignKey("TeacherId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.ToTable("TeacherSubjects");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -553,21 +532,6 @@ namespace lms_test1.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SectionSubject", b =>
-                {
-                    b.HasOne("lms_test1.Models.Section", null)
-                        .WithMany()
-                        .HasForeignKey("SectionsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("lms_test1.Models.Subject", null)
-                        .WithMany()
-                        .HasForeignKey("SubjectsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("lms_test1.Areas.Identity.Data.LMSUser", b =>
                 {
                     b.HasOne("lms_test1.Models.Section", "AdvisorySection")
@@ -585,15 +549,15 @@ namespace lms_test1.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("lms_test1.Models.Subject", "Subject")
-                        .WithMany()
-                        .HasForeignKey("SubjectId")
+                    b.HasOne("lms_test1.Models.TeacherSubject", "TeacherSubject")
+                        .WithMany("Scores")
+                        .HasForeignKey("TeacherId", "SubjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Student");
 
-                    b.Navigation("Subject");
+                    b.Navigation("TeacherSubject");
                 });
 
             modelBuilder.Entity("lms_test1.Models.Student", b =>
@@ -605,14 +569,58 @@ namespace lms_test1.Data.Migrations
                     b.Navigation("Section");
                 });
 
+            modelBuilder.Entity("lms_test1.Models.TeacherSubject", b =>
+                {
+                    b.HasOne("lms_test1.Models.Section", "Section")
+                        .WithMany("TeacherSubjects")
+                        .HasForeignKey("SectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("lms_test1.Models.Subject", "Subject")
+                        .WithMany("TeacherSubjects")
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("lms_test1.Areas.Identity.Data.LMSUser", "Teacher")
+                        .WithMany("TeacherSubjects")
+                        .HasForeignKey("TeacherId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Section");
+
+                    b.Navigation("Subject");
+
+                    b.Navigation("Teacher");
+                });
+
+            modelBuilder.Entity("lms_test1.Areas.Identity.Data.LMSUser", b =>
+                {
+                    b.Navigation("TeacherSubjects");
+                });
+
             modelBuilder.Entity("lms_test1.Models.Section", b =>
                 {
                     b.Navigation("Adviser");
 
                     b.Navigation("Students");
+
+                    b.Navigation("TeacherSubjects");
                 });
 
             modelBuilder.Entity("lms_test1.Models.Student", b =>
+                {
+                    b.Navigation("Scores");
+                });
+
+            modelBuilder.Entity("lms_test1.Models.Subject", b =>
+                {
+                    b.Navigation("TeacherSubjects");
+                });
+
+            modelBuilder.Entity("lms_test1.Models.TeacherSubject", b =>
                 {
                     b.Navigation("Scores");
                 });
