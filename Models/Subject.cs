@@ -6,6 +6,7 @@ public class Subject
 {
     public int Id { get; set; }
     public required string Name { get; set; }
+    public required string Track { get; set; }
     public ICollection<TeacherSubject>? TeacherSubjects { get; set; }
 
 }

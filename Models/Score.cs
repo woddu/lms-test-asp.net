@@ -34,19 +34,19 @@ public class Score
             // "Academic Track (except Immersion)",
             // "Work Immersion/ Culminating Activity (for Academic Track)",
             // "TVL/ Sports/ Arts and Design Track"
-            if (Student.Section?.Track.Trim() == "Core Subject (All Tracks)")
+            if (TeacherSubject.Subject?.Track.Trim() == "Core Subject (All Tracks)")
             {
                 return 0.25; // 40% for Core Subject (All Tracks)
             }
-            else if (Student.Section?.Track.Trim() == "Academic Track (except Immersion)")
+            else if (TeacherSubject.Subject?.Track.Trim() == "Academic Track (except Immersion)")
             {
                 return 0.25; // 35% for Academic Track (except Immersion)
             }
-            else if (Student.Section?.Track.Trim() == "Work Immersion/ Culminating Activity (for Academic Track)")
+            else if (TeacherSubject.Subject?.Track.Trim() == "Work Immersion/ Culminating Activity (for Academic Track)")
             {
                 return 0.35; // 25% for Work Immersion/ Culminating Activity (for Academic Track)
             }
-            else if (Student.Section?.Track.Trim() == "TVL/ Sports/ Arts and Design Track")
+            else if (TeacherSubject.Subject?.Track.Trim() == "TVL/ Sports/ Arts and Design Track")
             {
                 return 0.20; // 30% for TVL/ Sports/ Arts and Design Track
             }
@@ -73,19 +73,19 @@ public class Score
     {
         get
         {
-            if (Student.Section?.Track.Trim() == "Core Subject (All Tracks)")
+            if (TeacherSubject.Subject?.Track.Trim() == "Core Subject (All Tracks)")
             {
                 return 0.50; // 50% for Core Subject (All Tracks)
             }
-            else if (Student.Section?.Track.Trim() == "Academic Track (except Immersion)")
+            else if (TeacherSubject.Subject?.Track.Trim() == "Academic Track (except Immersion)")
             {
                 return 0.45; // 50% for Academic Track (except Immersion)
             }
-            else if (Student.Section?.Track.Trim() == "Work Immersion/ Culminating Activity (for Academic Track)")
+            else if (TeacherSubject.Subject?.Track.Trim() == "Work Immersion/ Culminating Activity (for Academic Track)")
             {
                 return 0.40; // 50% for Work Immersion/ Culminating Activity (for Academic Track)
             }
-            else if (Student.Section?.Track.Trim() == "TVL/ Sports/ Arts and Design Track")
+            else if (TeacherSubject.Subject?.Track.Trim() == "TVL/ Sports/ Arts and Design Track")
             {
                 return 0.60; // 50% for TVL/ Sports/ Arts and Design Track
             }
@@ -103,19 +103,19 @@ public class Score
     {
         get
         {
-            if (Student.Section?.Track.Trim() == "Core Subject (All Tracks)")
+            if (TeacherSubject.Subject?.Track.Trim() == "Core Subject (All Tracks)")
             {
                 return 0.25; // 25% for Core Subject (All Tracks)
             }
-            else if (Student.Section?.Track.Trim() == "Academic Track (except Immersion)")
+            else if (TeacherSubject.Subject?.Track.Trim() == "Academic Track (except Immersion)")
             {
                 return 0.30; // 30% for Academic Track (except Immersion)
             }
-            else if (Student.Section?.Track.Trim() == "Work Immersion/ Culminating Activity (for Academic Track)")
+            else if (TeacherSubject.Subject?.Track.Trim() == "Work Immersion/ Culminating Activity (for Academic Track)")
             {
                 return 0.25; // 25% for Work Immersion/ Culminating Activity (for Academic Track)
             }
-            else if (Student.Section?.Track.Trim() == "TVL/ Sports/ Arts and Design Track")
+            else if (TeacherSubject.Subject?.Track.Trim() == "TVL/ Sports/ Arts and Design Track")
             {
                 return 0.20; // 20% for TVL/ Sports/ Arts and Design Track
             }
