@@ -13,7 +13,7 @@ public class LMSUser : IdentityUser
     [PersonalData]
     public required string FirstName { get; set; }
 
-    public ICollection<Subject>? Subjects { get; set; }
+    public ICollection<TeacherSubject> TeacherSubjects { get; set; } = new List<TeacherSubject>();
     public int? AdvisorySectionId { get; set; }
     public Section? AdvisorySection { get; set; }
 }

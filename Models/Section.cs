@@ -9,6 +9,6 @@ public class Section
     public required string Track { get; set; }
     public required int YearLevel { get; set; }
     public LMSUser? Adviser { get; set; } 
-    public ICollection<Subject>? Subjects { get; set; }
     public ICollection<Student>? Students { get; set; }
+    public ICollection<TeacherSubject>? TeacherSubjects { get; set; } = new List<TeacherSubject>(); 
 }

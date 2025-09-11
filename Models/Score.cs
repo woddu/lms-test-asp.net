@@ -1,8 +1,18 @@
+using lms_test1.Areas.Identity.Data;
+
 namespace lms_test1.Models;
 
 public class Score
 {
     public int Id { get; set; }
+    
+    // Relationships
+    public required int StudentId { get; set; }
+    public required Student Student { get; set; }
+
+    public required int SubjectId { get; set; }    
+    public required string TeacherId { get; set; }
+    public required TeacherSubject TeacherSubject { get; set; }
 
     // Written Works
     public double WW1 { get; set; }
@@ -123,9 +133,9 @@ public class Score
             double wwTotal = WW1 + WW2 + WW3 + WW4 + WW5 + WW6 + WW7 + WW8 + WW9 + WW10;
             double ptTotal = PT1 + PT2 + PT3 + PT4 + PT5 + PT6 + PT7 + PT8 + PT9 + PT10;
 
-            double wwWeighted = wwTotal / (Subject?.WWTotal ?? 1) * 100 / WWPercentage;
-            double ptWeighted = ptTotal / (Subject?.PTTotal ?? 1) * 100 / PTPercentage;
-            double examTotal = Subject?.Exam ?? 1;
+            double wwWeighted = wwTotal / (TeacherSubject?.WWTotal ?? 1) * 100 / WWPercentage;
+            double ptWeighted = ptTotal / (TeacherSubject?.PTTotal ?? 1) * 100 / PTPercentage;
+            double examTotal = TeacherSubject?.Exam ?? 1;
             double examWeighted = Exam / (examTotal < 1 ? 1 : examTotal) * 100 / ExamPercentage;
 
             double initialGrade = wwWeighted + ptWeighted + examWeighted;
@@ -134,13 +144,6 @@ public class Score
 
         }
     }
-
-    // Relationships
-    public required int StudentId { get; set; }
-    public required Student Student { get; set; }
-
-    public required int SubjectId { get; set; }
-    public required Subject Subject { get; set; }
 
     public Score()
     {
