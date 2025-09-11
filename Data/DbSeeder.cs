@@ -60,12 +60,11 @@ public static class DbSeeder
     public static async Task SeedEntitiesAsync(ApplicationDbContext context)
     {
         // Seed 10 Subjects
-        if (context.Subjects.Any())
+        if (!context.Subjects.Any())
         {
-            context.Subjects.RemoveRange(context.Subjects);
-            await context.SaveChangesAsync();
-        }
-        var subjects = new List<Models.Subject>
+            // context.Subjects.RemoveRange(context.Subjects);
+            // await context.SaveChangesAsync();
+            var subjects = new List<Models.Subject>
         {
             // Core Subjects (All Tracks)
             new Models.Subject { Name = "Oral Communication" },
@@ -116,58 +115,93 @@ public static class DbSeeder
             new Models.Subject { Name = "Inquiries, Investigations and Immersion" }
         };
 
-        context.Subjects.AddRange(subjects);
-        await context.SaveChangesAsync();
+            context.Subjects.AddRange(subjects);
+            await context.SaveChangesAsync();
+        }
+
 
 
         // Seed 10 Sections
-        if (context.Sections.Any())
+        if (!context.Sections.Any())
         {
-            context.Sections.RemoveRange(context.Sections);
-            await context.SaveChangesAsync();
-        }
-        var grade11Names = new[] { "Orion", "Cassiopeia", "Lyra", "Andromeda", "Pegasus" };
-        var grade12Names = new[] { "Socrates", "Plato", "Aristotle", "Pythagoras", "Epicurus" };
+            // context.Sections.RemoveRange(context.Sections);
+            // await context.SaveChangesAsync();
+            var grade11Names = new[] { "Orion", "Cassiopeia", "Lyra", "Andromeda", "Pegasus" };
+            var grade12Names = new[] { "Socrates", "Plato", "Aristotle", "Pythagoras", "Epicurus" };
 
-        var sections = Enumerable.Range(1, 10).Select(i =>
-        {
-            var isGrade11 = i % 2 == 0;
-            var name = isGrade11 ? grade11Names[i / 2 % grade11Names.Length]
-                                : grade12Names[i / 2 % grade12Names.Length];
+            // Define strands per track
+            var academicStrands = new[] { "STEM", "ABM", "HUMSS", "GAS" };
+            var tvlStrands = new[] { "Home Economics", "ICT", "Industrial Arts", "Agri-Fishery Arts" };
+            var artsSportsStrands = new[] { "Arts and Design", "Sports" };
 
-            return new Models.Section
+            var sections = Enumerable.Range(1, 10).Select(i =>
             {
-                Name = name,
-                Track = i % 4 == 0 ? "Core Subject (All Tracks)" :
-                        i % 4 == 1 ? "Academic Track (except Immersion)" :
-                        i % 4 == 2 ? "Work Immersion/ Culminating Activity (for Academic Track)" :
-                                    "TVL/ Sports/ Arts and Design Track",
-                YearLevel = isGrade11 ? 11 : 12
-            };
-        }).ToList();
+                var isGrade11 = i % 2 == 0;
+                var name = isGrade11
+                    ? grade11Names[i / 2 % grade11Names.Length]
+                    : grade12Names[i / 2 % grade12Names.Length];
 
-        context.Sections.AddRange(sections);
-        await context.SaveChangesAsync();
+                string track;
+                string strand;
+
+                switch (i % 4)
+                {
+                    case 0:
+                        track = "Core Subject (All Tracks)";
+                        strand = "N/A"; // Core subjects apply to all strands
+                        break;
+                    case 1:
+                        track = "Academic Track (except Immersion)";
+                        strand = academicStrands[i % academicStrands.Length];
+                        break;
+                    case 2:
+                        track = "Work Immersion/ Culminating Activity (for Academic Track)";
+                        strand = academicStrands[i % academicStrands.Length];
+                        break;
+                    default:
+                        track = "TVL/ Sports/ Arts and Design Track";
+                        // Alternate between TVL and Arts/Sports strands
+                        strand = (i % 2 == 0)
+                            ? tvlStrands[i % tvlStrands.Length]
+                            : artsSportsStrands[i % artsSportsStrands.Length];
+                        break;
+                }
+
+                return new Models.Section
+                {
+                    Name = name,
+                    Track = track,
+                    YearLevel = isGrade11 ? 11 : 12,
+                    Strand = strand
+                };
+            }).ToList();
+
+            context.Sections.AddRange(sections);
+            await context.SaveChangesAsync();
+
+
+        }
 
 
         // Seed 10 Students
-        if (context.Students.Any())
+        if (!context.Students.Any())
         {
-            context.Students.RemoveRange(context.Students);
+            // context.Students.RemoveRange(context.Students);
+            // await context.SaveChangesAsync();
+            var students = Enumerable.Range(1, 10).Select(i => new Models.Student
+            {
+                LastName = $"LastName {i}",
+                FirstName = $"FirstName {i}",
+                MiddleName = $"M{i}",
+                Gender = (i % 2 == 0) ? 'F' : 'M',
+                Age = 13 + (i % 6),
+                BirthDate = DateTime.Now.AddYears(-13 - (i % 6)).AddDays(i),
+                Address = $"{i} Main St",
+                SectionId = null // You can assign SectionId if you want to relate
+            }).ToList();
+            context.Students.AddRange(students);
             await context.SaveChangesAsync();
         }
-        var students = Enumerable.Range(1, 10).Select(i => new Models.Student
-        {
-            LastName = $"LastName {i}",
-            FirstName = $"FirstName {i}",
-            MiddleName = $"M{i}",
-            Gender = (i % 2 == 0) ? 'F' : 'M',
-            Age = 13 + (i % 6),
-            BirthDate = DateTime.Now.AddYears(-13 - (i % 6)).AddDays(i),
-            Address = $"{i} Main St",
-            SectionId = null // You can assign SectionId if you want to relate
-        }).ToList();
-        context.Students.AddRange(students);
-        await context.SaveChangesAsync();
+
     }
 }
