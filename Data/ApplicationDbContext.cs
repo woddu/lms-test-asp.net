@@ -42,7 +42,9 @@ public class ApplicationDbContext : IdentityDbContext<LMSUser>
         builder.Entity<TeacherSubject>()
             .HasOne(ts => ts.Section)
             .WithMany(s => s.TeacherSubjects)
-            .HasForeignKey(ts => ts.SectionId);
+            .HasForeignKey(ts => ts.SectionId)
+            .IsRequired(false);
+
 
         // Score → Student
         builder.Entity<Score>()
