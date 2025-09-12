@@ -1,0 +1,31 @@
+@model IEnumerable<lms_test1.Models.Student>
+
+@if (!Model.Any())
+{
+    <tr>
+        <td colspan="9" style="text-align: center; font-style: italic; color: #888;">
+            No students found.
+        </td>
+    </tr>
+}
+else
+{
+    foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.LastName</td>
+            <td>@item.FirstName</td>
+            <td>@item.MiddleName</td>
+            <td>@item.Gender</td>
+            <td>@item.Age</td>
+            <td>@(item.BirthDate.HasValue ? item.BirthDate.Value.ToShortDateString() : "")</td>
+            <td>@item.Address</td>
+            <td>@item.Section?.Name</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+    }
+}
