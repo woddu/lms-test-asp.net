@@ -1,3 +1,4 @@
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using lms_test1.Data;
 using lms_test1.Models;
 using Microsoft.AspNetCore.Authorization;
+
 
 
 namespace lms_test1.Controllers;
@@ -162,6 +164,23 @@ public class StudentsController : Controller
     private bool StudentExists(int id)
     {
         return _context.Students.Any(e => e.Id == id);
+    }
+
+    // AJAX: GET: Students/SearchStudents
+    public async Task<IActionResult> SearchStudents(string term)
+    {
+        var studentsQuery = _context.Students.Include(s => s.Section).AsQueryable();
+        if (!string.IsNullOrWhiteSpace(term))
+        {
+            var loweredTerm = term.ToLower();
+            studentsQuery = studentsQuery.Where(s =>
+                s.LastName.ToLower().Contains(loweredTerm) ||
+                s.FirstName.ToLower().Contains(loweredTerm) ||
+                s.MiddleName.ToLower().Contains(loweredTerm)
+            );
+        }
+        var students = await studentsQuery.ToListAsync();
+        return PartialView("_StudentTableRows", students);
     }
 }
 

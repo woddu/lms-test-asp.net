@@ -60,7 +60,7 @@ public class SectionsController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Id,Name,Track,Strand,YearLevel")] Section section)
+    public async Task<IActionResult> Create([Bind("Id,Name,Strand,YearLevel")] Section section)
     {
         if (ModelState.IsValid)
         {
@@ -92,7 +92,7 @@ public class SectionsController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Track,Strand,YearLevel")] Section section)
+    public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Strand,YearLevel")] Section section)
     {
         if (id != section.Id)
         {
@@ -158,6 +158,18 @@ public class SectionsController : Controller
     private bool SectionExists(int id)
     {
         return _context.Sections.Any(e => e.Id == id);
+    }
+
+    // Search Sections (AJAX/partial)
+    public IActionResult SearchSections(string term)
+    {
+        var sections = _context.Sections
+            .Where(s => string.IsNullOrEmpty(term) || s.Name.ToLower().Contains(term.ToLower()))
+            .OrderBy(s => s.YearLevel)
+            .ToList();
+
+        // You should create a partial view _SectionTableRows.cshtml for this to work
+        return PartialView("_SectionTableRows", sections);
     }
 }
 
