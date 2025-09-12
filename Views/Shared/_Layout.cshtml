@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="//cdn.jsdelivr.net/combine/npm/purecss@3.0.0/build/base-min.css,npm/purecss@3.0.0/build/buttons-min.css,npm/purecss@3.0.0/build/forms-min.css,npm/purecss@3.0.0/build/grids-min.css,npm/purecss@3.0.0/build/grids-responsive-min.css,npm/purecss@3.0.0/build/tables-min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/lms_test1.styles.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 
 <body>
@@ -62,19 +63,32 @@
                         }
                         @if (User.IsInRole("Admin") || User.IsInRole("HeadTeacher"))
                         {
-                            <li @if(Context.Request.Path.Value?.ToLower().StartsWith("/section") == true) {
+                            <li @if(Context.Request.Path.Value?.ToLower().StartsWith("/sections") == true) {
                             <text>class="active"</text>
                                                         }
                                 >
-                                <a asp-area="" asp-controller="Section" asp-action="Index">Sections</a>
+                                <a asp-area="" asp-controller="Sections" asp-action="Index">Sections</a>
                             </li>
                         }
-                        <li><a href="#0">Students</a></li>
-                        <li><a href="#0">Subjects</a></li>
-                        <li><a href="#0">Subjects</a></li>
-                        <li><a href="#0">Subjects</a></li>
-                        <li><a href="#0">Subjects</a></li>
-                        <li><a href="#0">Subjects</a></li>
+                        @if (User.IsInRole("Admin") || User.IsInRole("HeadTeacher"))
+                        {
+                            <li @if(Context.Request.Path.Value?.ToLower().StartsWith("/students") == true) {
+                            <text>class="active"</text>
+                                                        }
+                                >
+                                <a asp-area="" asp-controller="Students" asp-action="Index">Students</a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Admin") || User.IsInRole("HeadTeacher"))
+                        {
+                            <li @if(Context.Request.Path.Value?.ToLower().StartsWith("/subjects") == true) {
+                            <text>class="active"</text>
+                                                        }
+                                >
+                                <a asp-area="" asp-controller="Subjects" asp-action="Index">Subjects</a>
+                            </li>
+                        }
+                        
                     </ul>
                     <div class="note">
                         <h3>Your Monthly Report</h3>
@@ -82,7 +96,7 @@
                     </div>
                 </div>
             </div>
-            <ul>
+            <ul style="padding: .5rem 0;">
                 <li>
                     <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
                         <button  type="submit" class="logout-button">Logout</button>
@@ -101,7 +115,6 @@
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
