@@ -14,6 +14,6 @@ public class LMSUser : IdentityUser
     public required string FirstName { get; set; }
 
     public ICollection<TeacherSubject> TeacherSubjects { get; set; } = new List<TeacherSubject>();
-    public int? AdvisorySectionId { get; set; }
+    //TODO turn to one to many relation where one teacher can have manyZz advisory section
     public Section? AdvisorySection { get; set; }
 }

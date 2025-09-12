@@ -8,6 +8,7 @@ public class Section
     public required string Name { get; set; }
     public required string Strand { get; set; }
     public required int YearLevel { get; set; }
+    public string? AdviserId { get; set; }
     public LMSUser? Adviser { get; set; } 
     public ICollection<Student>? Students { get; set; }
     public ICollection<TeacherSubject>? TeacherSubjects { get; set; } = new List<TeacherSubject>(); 
