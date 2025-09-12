@@ -23,52 +23,57 @@
                 <path d="M15.5 14h-.79l-.28-.27a6.471 6.471 0 001.48-5.34C15.02 5.59 12.43 3 9.5 3S4 5.59 4 8.5 6.59 14 9.5 14c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
             </svg>
 
-            <input style="padding-left: 36px; font-size: 1rem; border: 1px solid #ccc; border-radius: 4px;"
-                type="text" placeholder="Search..." style="margin-bottom: 1rem; padding: 0.5rem; width: 100%; border: 1px solid #ccc; border-radius: 4px;">
+            <input id="searchBox" type="text" placeholder="Search..."
+                style="padding-left: 36px; font-size: 1rem; border: 1px solid #ccc; border-radius: 4px;" />
         </form>  
         <table class="pure-table">
             <thead>
                 <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Name)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Strand)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.YearLevel)
-                    </th>
+                    <th>@Html.DisplayNameFor(model => model.Name)</th>
+                    <th>@Html.DisplayNameFor(model => model.Strand)</th>
+                    <th>@Html.DisplayNameFor(model => model.YearLevel)</th>
                     <th></th>
                 </tr>
             </thead>
-            <tbody>
-        @if (!Model.Any()) {
-                <tr>
-                    <td colspan="4" style="text-align: center; font-style: italic; color: #888;">
-                        No sections found.
-                    </td>
-                </tr>
-        } else {
-            foreach (var item in Model) {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Strand)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.YearLevel)
-                    </td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                    </td>
-                </tr>
-            }
-        }
+            <tbody id="sectionTableBody">
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="4" style="text-align: center; font-style: italic; color: #888;">
+                            No sections found.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Strand)</td>
+                            <td>@Html.DisplayFor(modelItem => item.YearLevel)</td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                }
             </tbody>
         </table>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            $("#searchBox").on("keyup", function () {
+                var query = $(this).val();
+                $.get('@Url.Action("SearchSections", "Sections")', { term: query }, function (data) {
+                    $("#sectionTableBody").html(data);
+                });
+            });
+        });
+    </script>
+}
