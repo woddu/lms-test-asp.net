@@ -18,9 +18,6 @@ public class LMSUserEditViewModel
     [Display(Name = "Middle Name")]
     public string? MiddleName { get; set; }
     public bool Verified { get; set; }
-
-    [Display(Name = "Advisory Section")]    
-    public int? AdvisorySectionId { get; set; }
     
     [EmailAddress]
     public string Email { get; set; } = string.Empty;
