@@ -6,36 +6,24 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace lms_test1.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class LMSModels : Migration
+    public partial class NewInitalMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "AdvisorySectionId",
-                table: "AspNetUsers",
-                type: "INTEGER",
-                nullable: true);
-
-            migrationBuilder.AddColumn<string>(
-                name: "Discriminator",
-                table: "AspNetUsers",
-                type: "TEXT",
-                maxLength: 13,
-                nullable: false,
-                defaultValue: "");
-
             migrationBuilder.AddColumn<string>(
                 name: "FirstName",
                 table: "AspNetUsers",
                 type: "TEXT",
-                nullable: true);
+                nullable: false,
+                defaultValue: "");
 
             migrationBuilder.AddColumn<string>(
                 name: "LastName",
                 table: "AspNetUsers",
                 type: "TEXT",
-                nullable: true);
+                nullable: false,
+                defaultValue: "");
 
             migrationBuilder.AddColumn<string>(
                 name: "MiddleName",
@@ -47,7 +35,8 @@ namespace lms_test1.Data.Migrations
                 name: "Verified",
                 table: "AspNetUsers",
                 type: "INTEGER",
-                nullable: true);
+                nullable: false,
+                defaultValue: false);
 
             migrationBuilder.CreateTable(
                 name: "Sections",
@@ -56,11 +45,18 @@ namespace lms_test1.Data.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
-                    Track = table.Column<string>(type: "TEXT", nullable: false)
+                    Strand = table.Column<string>(type: "TEXT", nullable: false),
+                    YearLevel = table.Column<int>(type: "INTEGER", nullable: false),
+                    AdviserId = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Sections", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Sections_AspNetUsers_AdviserId",
+                        column: x => x.AdviserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -70,6 +66,46 @@ namespace lms_test1.Data.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
+                    Track = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Subjects", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Students",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    LastName = table.Column<string>(type: "TEXT", nullable: false),
+                    FirstName = table.Column<string>(type: "TEXT", nullable: false),
+                    MiddleName = table.Column<string>(type: "TEXT", nullable: false),
+                    Gender = table.Column<char>(type: "TEXT", nullable: false),
+                    Age = table.Column<int>(type: "INTEGER", nullable: true),
+                    BirthDate = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    Address = table.Column<string>(type: "TEXT", nullable: true),
+                    SectionId = table.Column<int>(type: "INTEGER", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Students", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Students_Sections_SectionId",
+                        column: x => x.SectionId,
+                        principalTable: "Sections",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TeacherSubjects",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    TeacherId = table.Column<string>(type: "TEXT", nullable: false),
+                    SubjectId = table.Column<int>(type: "INTEGER", nullable: false),
                     WW1 = table.Column<double>(type: "REAL", nullable: false),
                     WW2 = table.Column<double>(type: "REAL", nullable: false),
                     WW3 = table.Column<double>(type: "REAL", nullable: false),
@@ -94,89 +130,29 @@ namespace lms_test1.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Subjects", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Students",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    LastName = table.Column<string>(type: "TEXT", nullable: false),
-                    FirstName = table.Column<string>(type: "TEXT", nullable: false),
-                    MiddleName = table.Column<string>(type: "TEXT", nullable: false),
-                    Gender = table.Column<char>(type: "TEXT", nullable: false),
-                    Age = table.Column<int>(type: "INTEGER", nullable: true),
-                    BirthDate = table.Column<DateTime>(type: "TEXT", nullable: true),
-                    Address = table.Column<string>(type: "TEXT", nullable: true),
-                    SectionId = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Students", x => x.Id);
+                    table.PrimaryKey("PK_TeacherSubjects", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Students_Sections_SectionId",
-                        column: x => x.SectionId,
-                        principalTable: "Sections",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "LMSUserSubject",
-                columns: table => new
-                {
-                    SubjectsId = table.Column<int>(type: "INTEGER", nullable: false),
-                    TeacherId = table.Column<string>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_LMSUserSubject", x => new { x.SubjectsId, x.TeacherId });
-                    table.ForeignKey(
-                        name: "FK_LMSUserSubject_AspNetUsers_TeacherId",
+                        name: "FK_TeacherSubjects_AspNetUsers_TeacherId",
                         column: x => x.TeacherId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_LMSUserSubject_Subjects_SubjectsId",
-                        column: x => x.SubjectsId,
+                        name: "FK_TeacherSubjects_Subjects_SubjectId",
+                        column: x => x.SubjectId,
                         principalTable: "Subjects",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "SectionSubject",
-                columns: table => new
-                {
-                    SectionsId = table.Column<int>(type: "INTEGER", nullable: false),
-                    SubjectsId = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SectionSubject", x => new { x.SectionsId, x.SubjectsId });
-                    table.ForeignKey(
-                        name: "FK_SectionSubject_Sections_SectionsId",
-                        column: x => x.SectionsId,
-                        principalTable: "Sections",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_SectionSubject_Subjects_SubjectsId",
-                        column: x => x.SubjectsId,
-                        principalTable: "Subjects",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Score",
+                name: "Scores",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    StudentId = table.Column<int>(type: "INTEGER", nullable: false),
+                    TeacherSubjectId = table.Column<int>(type: "INTEGER", nullable: false),
                     WW1 = table.Column<double>(type: "REAL", nullable: false),
                     WW2 = table.Column<double>(type: "REAL", nullable: false),
                     WW3 = table.Column<double>(type: "REAL", nullable: false),
@@ -197,101 +173,106 @@ namespace lms_test1.Data.Migrations
                     PT8 = table.Column<double>(type: "REAL", nullable: false),
                     PT9 = table.Column<double>(type: "REAL", nullable: false),
                     PT10 = table.Column<double>(type: "REAL", nullable: false),
-                    Exam = table.Column<double>(type: "REAL", nullable: false),
-                    StudentId = table.Column<int>(type: "INTEGER", nullable: false),
-                    SubjectId = table.Column<int>(type: "INTEGER", nullable: false)
+                    Exam = table.Column<double>(type: "REAL", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Score", x => x.Id);
+                    table.PrimaryKey("PK_Scores", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Score_Students_StudentId",
+                        name: "FK_Scores_Students_StudentId",
                         column: x => x.StudentId,
                         principalTable: "Students",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Score_Subjects_SubjectId",
-                        column: x => x.SubjectId,
-                        principalTable: "Subjects",
+                        name: "FK_Scores_TeacherSubjects_TeacherSubjectId",
+                        column: x => x.TeacherSubjectId,
+                        principalTable: "TeacherSubjects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TeacherSubjectSections",
+                columns: table => new
+                {
+                    SectionsId = table.Column<int>(type: "INTEGER", nullable: false),
+                    TeacherSubjectsId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TeacherSubjectSections", x => new { x.SectionsId, x.TeacherSubjectsId });
+                    table.ForeignKey(
+                        name: "FK_TeacherSubjectSections_Sections_SectionsId",
+                        column: x => x.SectionsId,
+                        principalTable: "Sections",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TeacherSubjectSections_TeacherSubjects_TeacherSubjectsId",
+                        column: x => x.TeacherSubjectsId,
+                        principalTable: "TeacherSubjects",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_AdvisorySectionId",
-                table: "AspNetUsers",
-                column: "AdvisorySectionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_LMSUserSubject_TeacherId",
-                table: "LMSUserSubject",
-                column: "TeacherId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Score_StudentId",
-                table: "Score",
+                name: "IX_Scores_StudentId",
+                table: "Scores",
                 column: "StudentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Score_SubjectId",
-                table: "Score",
-                column: "SubjectId");
+                name: "IX_Scores_TeacherSubjectId",
+                table: "Scores",
+                column: "TeacherSubjectId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SectionSubject_SubjectsId",
-                table: "SectionSubject",
-                column: "SubjectsId");
+                name: "IX_Sections_AdviserId",
+                table: "Sections",
+                column: "AdviserId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Students_SectionId",
                 table: "Students",
                 column: "SectionId");
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_AspNetUsers_Sections_AdvisorySectionId",
-                table: "AspNetUsers",
-                column: "AdvisorySectionId",
-                principalTable: "Sections",
-                principalColumn: "Id");
+            migrationBuilder.CreateIndex(
+                name: "IX_TeacherSubjects_SubjectId",
+                table: "TeacherSubjects",
+                column: "SubjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TeacherSubjects_TeacherId",
+                table: "TeacherSubjects",
+                column: "TeacherId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TeacherSubjectSections_TeacherSubjectsId",
+                table: "TeacherSubjectSections",
+                column: "TeacherSubjectsId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_AspNetUsers_Sections_AdvisorySectionId",
-                table: "AspNetUsers");
+            migrationBuilder.DropTable(
+                name: "Scores");
 
             migrationBuilder.DropTable(
-                name: "LMSUserSubject");
-
-            migrationBuilder.DropTable(
-                name: "Score");
-
-            migrationBuilder.DropTable(
-                name: "SectionSubject");
+                name: "TeacherSubjectSections");
 
             migrationBuilder.DropTable(
                 name: "Students");
 
             migrationBuilder.DropTable(
-                name: "Subjects");
+                name: "TeacherSubjects");
 
             migrationBuilder.DropTable(
                 name: "Sections");
 
-            migrationBuilder.DropIndex(
-                name: "IX_AspNetUsers_AdvisorySectionId",
-                table: "AspNetUsers");
-
-            migrationBuilder.DropColumn(
-                name: "AdvisorySectionId",
-                table: "AspNetUsers");
-
-            migrationBuilder.DropColumn(
-                name: "Discriminator",
-                table: "AspNetUsers");
+            migrationBuilder.DropTable(
+                name: "Subjects");
 
             migrationBuilder.DropColumn(
                 name: "FirstName",
