@@ -10,8 +10,7 @@ public class Score
     public required int StudentId { get; set; }
     public required Student Student { get; set; }
 
-    public required int SubjectId { get; set; }    
-    public required string TeacherId { get; set; }
+    public required int TeacherSubjectId { get; set; } 
     public required TeacherSubject TeacherSubject { get; set; }
 
     // Written Works
