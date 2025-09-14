@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using lms_test1.Areas.Identity.Data;
+using lms_test1.Models;
 
 namespace lms_test1.Data;
 
@@ -23,9 +24,19 @@ public static class DbSeeder
         // 2. Define users to seed
         var usersToSeed = new[]
         {
-            new { UserName = "admin", Email = "admin@admin.com", FirstName = "System", LastName = "Administrator", Role = "Admin", Password = "@Admin2025" },
-            new { UserName = "headteacher1", Email = "headteacher@school.com", FirstName = "Bea Rhumeyla", LastName = "Talion", Role = "HeadTeacher", Password = "@Head2025" },
-            new { UserName = "teacher1", Email = "teacher@school.com", FirstName = "Ron Neil", LastName = "Castro", Role = "Teacher", Password = "@Teach2025" }
+            new { UserName = "admin", Email = "admin@admin.com", FirstName = "System", MiddleName="Admin", LastName = "Administrator", Role = "Admin", Password = "@Admin2025" },
+            new { UserName = "headteacher1", Email = "headteacher@school.com", FirstName = "Bea Rhumeyla", MiddleName="Sejera", LastName = "Talion", Role = "HeadTeacher", Password = "@Head2025" },
+            new { UserName = "teacher1", Email = "teacher@school.com", FirstName = "Ron Neil", MiddleName="Navea", LastName = "Castro", Role = "Teacher", Password = "@Teach2025" },
+            new { UserName = "mtdelacruz", Email = "mtdelacruz@school.edu.ph", FirstName = "Maria", MiddleName = "Teresa", LastName = "Dela Cruz", Role = "Teacher", Password = "@Teach2025"  },
+            new { UserName = "jrsantos", Email = "jrsantos@school.edu.ph", FirstName = "Jose", MiddleName = "Ramon", LastName = "Santos", Role = "Teacher", Password = "@Teach2025"  },
+            new { UserName = "albautista", Email = "albautista@school.edu.ph", FirstName = "Ana", MiddleName = "Lourdes", LastName = "Bautista", Role = "Teacher", Password = "@Teach2025"  },
+            new { UserName = "rvreyes", Email = "rvreyes@school.edu.ph", FirstName = "Roberto", MiddleName = "Villanueva", LastName = "Reyes", Role = "Teacher", Password = "@Teach2025"  },
+            new { UserName = "lgmendoza", Email = "lgmendoza@school.edu.ph", FirstName = "Lourdes", MiddleName = "Garcia", LastName = "Mendoza", Role = "Teacher", Password = "@Teach2025"  },
+            new { UserName = "ecfernandez", Email = "ecfernandez@school.edu.ph", FirstName = "Ernesto", MiddleName = "Cruz", LastName = "Fernandez", Role = "Teacher", Password = "@Teach2025"  },
+            new { UserName = "craquino", Email = "craquino@school.edu.ph", FirstName = "Cecilia", MiddleName = "Ramos", LastName = "Aquino", Role = "Teacher", Password = "@Teach2025"  },
+            new { UserName = "mlnavarro", Email = "mlnavarro@school.edu.ph", FirstName = "Manuel", MiddleName = "Lopez", LastName = "Navarro", Role = "Teacher", Password = "@Teach2025"  },
+            new { UserName = "tvcastillo", Email = "tvcastillo@school.edu.ph", FirstName = "Teresa", MiddleName = "Villamor", LastName = "Castillo", Role = "Teacher", Password = "@Teach2025"  },
+            new { UserName = "asvillanueva", Email = "asvillanueva@school.edu.ph", FirstName = "Alfredo", MiddleName = "Santos", LastName = "Villanueva", Role = "Teacher", Password = "@Teach2025"  }
         };
 
         // 3. Create each user if missing
@@ -64,56 +75,57 @@ public static class DbSeeder
         {
             // context.Subjects.RemoveRange(context.Subjects);
             // await context.SaveChangesAsync();
-            var subjects = new List<Models.Subject>
-        {
-            // Core Subjects (All Tracks)
-            new Models.Subject { Name = "Oral Communication" },
-            new Models.Subject { Name = "Reading and Writing" },
-            new Models.Subject { Name = "Komunikasyon sa Wika at Kulturang Pilipino" },
-            new Models.Subject { Name = "21st Century Literature" },
-            new Models.Subject { Name = "General Mathematics" },
-            new Models.Subject { Name = "Earth and Life Science" },
-            new Models.Subject { Name = "Understanding Culture, Society and Politics" },
-            new Models.Subject { Name = "Media and Information Literacy" },
-            new Models.Subject { Name = "Statistics and Probability" },
-            new Models.Subject { Name = "Personal Development" },
+            var subjects = new List<Subject>
+            {
+                // Core Subjects (All Tracks)
+                new Subject { Name = "Oral Communication", Track = "Core Subject (All Tracks)" },
+                new Subject { Name = "Reading and Writing", Track = "Core Subject (All Tracks)" },
+                new Subject { Name = "Komunikasyon sa Wika at Kulturang Pilipino", Track = "Core Subject (All Tracks)" },
+                new Subject { Name = "21st Century Literature", Track = "Core Subject (All Tracks)" },
+                new Subject { Name = "General Mathematics", Track = "Core Subject (All Tracks)" },
+                new Subject { Name = "Earth and Life Science", Track = "Core Subject (All Tracks)" },
+                new Subject { Name = "Understanding Culture, Society and Politics", Track = "Core Subject (All Tracks)" },
+                new Subject { Name = "Media and Information Literacy", Track = "Core Subject (All Tracks)" },
+                new Subject { Name = "Statistics and Probability", Track = "Core Subject (All Tracks)" },
+                new Subject { Name = "Personal Development", Track = "Core Subject (All Tracks)" },
 
-            // STEM Track
-            new Models.Subject { Name = "Pre-Calculus" },
-            new Models.Subject { Name = "Basic Calculus" },
-            new Models.Subject { Name = "General Biology 1" },
-            new Models.Subject { Name = "General Chemistry 1" },
-            new Models.Subject { Name = "General Physics 1" },
-            new Models.Subject { Name = "General Biology 2" },
-            new Models.Subject { Name = "General Chemistry 2" },
-            new Models.Subject { Name = "General Physics 2" },
+                // STEM Track (Academic)
+                new Subject { Name = "Pre-Calculus", Track = "Academic Track (except Immersion)" },
+                new Subject { Name = "Basic Calculus", Track = "Academic Track (except Immersion)" },
+                new Subject { Name = "General Biology 1", Track = "Academic Track (except Immersion)" },
+                new Subject { Name = "General Chemistry 1", Track = "Academic Track (except Immersion)" },
+                new Subject { Name = "General Physics 1", Track = "Academic Track (except Immersion)" },
+                new Subject { Name = "General Biology 2", Track = "Academic Track (except Immersion)" },
+                new Subject { Name = "General Chemistry 2", Track = "Academic Track (except Immersion)" },
+                new Subject { Name = "General Physics 2", Track = "Academic Track (except Immersion)" },
 
-            // ABM Track
-            new Models.Subject { Name = "Business Math" },
-            new Models.Subject { Name = "Organization and Management" },
-            new Models.Subject { Name = "Principles of Marketing" },
-            new Models.Subject { Name = "Business Finance" },
-            new Models.Subject { Name = "Applied Economics" },
-            new Models.Subject { Name = "Business Ethics and Social Responsibility" },
+                // ABM Track (Academic)
+                new Subject { Name = "Business Math", Track = "Academic Track (except Immersion)" },
+                new Subject { Name = "Organization and Management", Track = "Academic Track (except Immersion)" },
+                new Subject { Name = "Principles of Marketing", Track = "Academic Track (except Immersion)" },
+                new Subject { Name = "Business Finance", Track = "Academic Track (except Immersion)" },
+                new Subject { Name = "Applied Economics", Track = "Academic Track (except Immersion)" },
+                new Subject { Name = "Business Ethics and Social Responsibility", Track = "Academic Track (except Immersion)" },
 
-            // HUMSS Track
-            new Models.Subject { Name = "Creative Writing" },
-            new Models.Subject { Name = "Philippine Politics and Governance" },
-            new Models.Subject { Name = "World Religions and Belief Systems" },
-            new Models.Subject { Name = "Community Engagement" },
-            new Models.Subject { Name = "Disciplines and Ideas in Social Sciences" },
+                // HUMSS Track (Academic)
+                new Subject { Name = "Creative Writing", Track = "Academic Track (except Immersion)" },
+                new Subject { Name = "Philippine Politics and Governance", Track = "Academic Track (except Immersion)" },
+                new Subject { Name = "World Religions and Belief Systems", Track = "Academic Track (except Immersion)" },
+                new Subject { Name = "Community Engagement", Track = "Academic Track (except Immersion)" },
+                new Subject { Name = "Disciplines and Ideas in Social Sciences", Track = "Academic Track (except Immersion)" },
 
-            // TVL Track (sample subjects)
-            new Models.Subject { Name = "Bread and Pastry Production" },
-            new Models.Subject { Name = "Computer Systems Servicing" },
-            new Models.Subject { Name = "Cookery" },
+                // TVL / Sports / Arts and Design Track
+                new Subject { Name = "Bread and Pastry Production", Track = "TVL/ Sports/ Arts and Design Track" },
+                new Subject { Name = "Computer Systems Servicing", Track = "TVL/ Sports/ Arts and Design Track" },
+                new Subject { Name = "Cookery", Track = "TVL/ Sports/ Arts and Design Track" },
 
-            // Work Immersion / Culminating Activity
-            new Models.Subject { Name = "Practical Research 1" },
-            new Models.Subject { Name = "Practical Research 2" },
-            new Models.Subject { Name = "Work Immersion" },
-            new Models.Subject { Name = "Inquiries, Investigations and Immersion" }
-        };
+                // Work Immersion / Culminating Activity (Academic)
+                new Subject { Name = "Practical Research 1", Track = "Work Immersion/ Culminating Activity (for Academic Track)" },
+                new Subject { Name = "Practical Research 2", Track = "Work Immersion/ Culminating Activity (for Academic Track)" },
+                new Subject { Name = "Work Immersion", Track = "Work Immersion/ Culminating Activity (for Academic Track)" },
+                new Subject { Name = "Inquiries, Investigations and Immersion", Track = "Work Immersion/ Culminating Activity (for Academic Track)" }
+            };
+
 
             context.Subjects.AddRange(subjects);
             await context.SaveChangesAsync();
@@ -129,7 +141,7 @@ public static class DbSeeder
             var grade11Names = new[] { "Orion", "Cassiopeia", "Lyra", "Andromeda", "Pegasus" };
             var grade12Names = new[] { "Socrates", "Plato", "Aristotle", "Pythagoras", "Epicurus" };
 
-            // Define strands per track
+            // Define strands
             var academicStrands = new[] { "STEM", "ABM", "HUMSS", "GAS" };
             var tvlStrands = new[] { "Home Economics", "ICT", "Industrial Arts", "Agri-Fishery Arts" };
             var artsSportsStrands = new[] { "Arts and Design", "Sports" };
@@ -141,44 +153,32 @@ public static class DbSeeder
                     ? grade11Names[i / 2 % grade11Names.Length]
                     : grade12Names[i / 2 % grade12Names.Length];
 
-                string track;
                 string strand;
 
-                switch (i % 4)
+                switch (i % 3) // rotate between Academic, TVL, Arts/Sports
                 {
                     case 0:
-                        track = "Core Subject (All Tracks)";
-                        strand = "N/A"; // Core subjects apply to all strands
+                        strand = academicStrands[i % academicStrands.Length];
                         break;
                     case 1:
-                        track = "Academic Track (except Immersion)";
-                        strand = academicStrands[i % academicStrands.Length];
-                        break;
-                    case 2:
-                        track = "Work Immersion/ Culminating Activity (for Academic Track)";
-                        strand = academicStrands[i % academicStrands.Length];
+                        strand = tvlStrands[i % tvlStrands.Length];
                         break;
                     default:
-                        track = "TVL/ Sports/ Arts and Design Track";
-                        // Alternate between TVL and Arts/Sports strands
-                        strand = (i % 2 == 0)
-                            ? tvlStrands[i % tvlStrands.Length]
-                            : artsSportsStrands[i % artsSportsStrands.Length];
+                        strand = artsSportsStrands[i % artsSportsStrands.Length];
                         break;
                 }
 
-                return new Models.Section
+                return new Section
                 {
                     Name = name,
-                    Track = track,
                     YearLevel = isGrade11 ? 11 : 12,
                     Strand = strand
                 };
             }).ToList();
 
+
             context.Sections.AddRange(sections);
             await context.SaveChangesAsync();
-
 
         }
 
@@ -188,20 +188,36 @@ public static class DbSeeder
         {
             // context.Students.RemoveRange(context.Students);
             // await context.SaveChangesAsync();
-            var students = Enumerable.Range(1, 10).Select(i => new Models.Student
+            var students = new List<Student>
             {
-                LastName = $"LastName {i}",
-                FirstName = $"FirstName {i}",
-                MiddleName = $"M{i}",
-                Gender = (i % 2 == 0) ? 'F' : 'M',
-                Age = 13 + (i % 6),
-                BirthDate = DateTime.Now.AddYears(-13 - (i % 6)).AddDays(i),
-                Address = $"{i} Main St",
-                SectionId = null // You can assign SectionId if you want to relate
-            }).ToList();
+                new Student { FirstName = "Juan", MiddleName = "Miguel", LastName = "Cruz", Gender = 'M' },
+                new Student { FirstName = "Maria", MiddleName = "Isabel", LastName = "Reyes", Gender = 'F' },
+                new Student { FirstName = "Carlo", MiddleName = "Antonio", LastName = "Santos", Gender = 'M' },
+                new Student { FirstName = "Angela", MiddleName = "Marie", LastName = "Dela Cruz", Gender = 'F' },
+                new Student { FirstName = "Paolo", MiddleName = "Jose", LastName = "Mendoza", Gender = 'M' },
+                new Student { FirstName = "Kristine", MiddleName = "Anne", LastName = "Bautista", Gender = 'F' },
+                new Student { FirstName = "Mark", MiddleName = "Anthony", LastName = "Villanueva", Gender = 'M' },
+                new Student { FirstName = "Camille", MiddleName = "Rose", LastName = "Navarro", Gender = 'F' },
+                new Student { FirstName = "Joshua", MiddleName = "David", LastName = "Fernandez", Gender = 'M' },
+                new Student { FirstName = "Patricia", MiddleName = "Mae", LastName = "Aquino", Gender = 'F' },
+                new Student { FirstName = "Adrian", MiddleName = "Paul", LastName = "Garcia", Gender = 'M' },
+                new Student { FirstName = "Nicole", MiddleName = "Joy", LastName = "Castillo", Gender = 'F' },
+                new Student { FirstName = "Francis", MiddleName = "Leo", LastName = "Ramos", Gender = 'M' },
+                new Student { FirstName = "Denise", MiddleName = "Claire", LastName = "Lopez", Gender = 'F' },
+                new Student { FirstName = "Kevin", MiddleName = "John", LastName = "Villamor", Gender = 'M' },
+                new Student { FirstName = "Shaira", MiddleName = "Lyn", LastName = "Cruz", Gender = 'F' },
+                new Student { FirstName = "Jerome", MiddleName = "Patrick", LastName = "Reyes", Gender = 'M' },
+                new Student { FirstName = "Hannah", MiddleName = "Mae", LastName = "Santos", Gender = 'F' },
+                new Student { FirstName = "Vincent", MiddleName = "Carlo", LastName = "Dela Cruz", Gender = 'M' },
+                new Student { FirstName = "Alyssa", MiddleName = "Marie", LastName = "Mendoza", Gender = 'F' },
+                new Student { FirstName = "Gabriel", MiddleName = "Luis", LastName = "Bautista", Gender = 'M' },
+                new Student { FirstName = "Charlene", MiddleName = "Faith", LastName = "Villanueva", Gender = 'F' },
+                new Student { FirstName = "Raymond", MiddleName = "Paul", LastName = "Navarro", Gender = 'M' },
+                new Student { FirstName = "Erika", MiddleName = "Jane", LastName = "Fernandez", Gender = 'F' },
+                new Student { FirstName = "Daniel", MiddleName = "James", LastName = "Aquino", Gender = 'M' }
+            };
             context.Students.AddRange(students);
             await context.SaveChangesAsync();
         }
-
     }
 }
