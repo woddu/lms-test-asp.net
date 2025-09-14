@@ -4,14 +4,14 @@ namespace lms_test1.Models;
 
 public class TeacherSubject
 {
+    public int Id { get; set; }
+
     public string TeacherId { get; set; }
     public LMSUser Teacher { get; set; }
 
     public int SubjectId { get; set; }
     public Subject Subject { get; set; }
-
-    public int? SectionId { get; set; }
-    public Section Section { get; set; }
+    public ICollection<Section> Sections { get; set; }
 
     public ICollection<Score> Scores { get; set; } = new List<Score>();
 
