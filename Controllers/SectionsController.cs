@@ -16,6 +16,8 @@ public class SectionsController : Controller
 {
     private readonly ApplicationDbContext _context;
 
+    private readonly List<string> _strands = new List<string> { "STEM", "ABM", "HUMSS", "GAS", "TVL", "ICT", "Home Economics", "ICT", "Industrial Arts", "Agri-Fishery Arts", "Arts and Design", "Sports" };
+
     public SectionsController(ApplicationDbContext context)
     {
         _context = context;
@@ -52,6 +54,7 @@ public class SectionsController : Controller
     // GET: Section/Create
     public IActionResult Create()
     {
+        ViewData["Strands"] = _strands;
         return View();
     }
 
@@ -84,6 +87,7 @@ public class SectionsController : Controller
         {
             return NotFound();
         }
+        ViewData["Strands"] = _strands;
         return View(section);
     }
 
