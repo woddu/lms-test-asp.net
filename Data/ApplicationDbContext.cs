@@ -21,10 +21,11 @@ public class ApplicationDbContext : IdentityDbContext<LMSUser>
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-        
-        // Composite key for TeacherSubject
-        builder.Entity<TeacherSubject>()
-            .HasKey(ts => new { ts.TeacherId, ts.SubjectId });
+
+        // Composite key for TeacherSubject -- OLD
+        // builder.Entity<TeacherSubject>()
+        //     .HasKey(ts => new { ts.TeacherId, ts.SubjectId });
+        //     .IsUnique();
 
         // TeacherSubject → Teacher(LMSUser)
         builder.Entity<TeacherSubject>()
@@ -38,12 +39,15 @@ public class ApplicationDbContext : IdentityDbContext<LMSUser>
             .WithMany(s => s.TeacherSubjects)
             .HasForeignKey(ts => ts.SubjectId);
 
-        // TeacherSubject → Section
         builder.Entity<TeacherSubject>()
-            .HasOne(ts => ts.Section)
+            .HasIndex(ts => new { ts.TeacherId, ts.SubjectId })
+            .IsUnique();
+
+        // TeacherSubject <-> Section
+        builder.Entity<TeacherSubject>()
+            .HasMany(ts => ts.Sections)
             .WithMany(s => s.TeacherSubjects)
-            .HasForeignKey(ts => ts.SectionId)
-            .IsRequired(false);
+            .UsingEntity(j => j.ToTable("TeacherSubjectSections"));
 
 
         // Score → Student
@@ -55,8 +59,9 @@ public class ApplicationDbContext : IdentityDbContext<LMSUser>
 
         // Score → TeacherSubject (composite FK)
         builder.Entity<Score>()
-        .HasOne(s => s.TeacherSubject)
-        .WithMany(ts => ts.Scores)
-        .HasForeignKey(s => new { s.TeacherId, s.SubjectId });
+            .HasOne(s => s.TeacherSubject)
+            .WithMany(ts => ts.Scores)
+            .HasForeignKey(s => s.TeacherSubjectId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
