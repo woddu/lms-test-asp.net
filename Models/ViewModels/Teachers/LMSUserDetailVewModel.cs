@@ -27,8 +27,12 @@ public class LMSUserDetailViewModel
 
     public Section? AdvisorySection { get; set; }
 
-    // Optional: for display only, not editable
-    public ICollection<Subject>? Subjects { get; set; }
+     // New property for TeacherSubjects and their Sections
+    public List<TeacherSubjectDetail> TeacherSubjects { get; set; } = new();
+}
 
-    
+public class TeacherSubjectDetail
+{
+    public string SubjectName { get; set; } = string.Empty;
+    public List<string> SectionNames { get; set; } = new();
 }
