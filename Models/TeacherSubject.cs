@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using lms_test1.Areas.Identity.Data;
 
 namespace lms_test1.Models;
@@ -7,10 +8,14 @@ public class TeacherSubject
     public int Id { get; set; }
 
     public string TeacherId { get; set; }
+    [JsonIgnore]
     public LMSUser Teacher { get; set; }
 
     public int SubjectId { get; set; }
+    [JsonIgnore]
     public Subject Subject { get; set; }
+
+    [JsonIgnore]
     public ICollection<Section> Sections { get; set; }
 
     public ICollection<Score> Scores { get; set; } = new List<Score>();
