@@ -1,4 +1,4 @@
-@model lms_test1.Areas.Identity.Data.LMSUser
+@model lms_test1.Models.ViewModels.Teachers.LMSUserDetailViewModel
 
 @{
     ViewData["Title"] = "Delete";
@@ -17,9 +17,11 @@
     .prevent-overflow.px-8>*>* {
         margin-bottom: 1rem;
     }
+
     .prevent-overflow.px-8>* {
         margin-bottom: 1rem;
     }
+
     .button-error {
         background: rgb(202, 60, 60);
         color: white;
@@ -67,87 +69,15 @@
             @Html.DisplayFor(model => model.UserName)
         </div>
         <div class="pure-u-1 pure-u-md-1-3">
-            <strong>@Html.DisplayNameFor(model => model.NormalizedUserName)</strong>
-        </div>
-        <div class="pure-u-1 pure-u-md-2-3">
-            @Html.DisplayFor(model => model.NormalizedUserName)
-        </div>
-        <div class="pure-u-1 pure-u-md-1-3">
             <strong>@Html.DisplayNameFor(model => model.Email)</strong>
         </div>
         <div class="pure-u-1 pure-u-md-2-3">
             @Html.DisplayFor(model => model.Email)
         </div>
-        <div class="pure-u-1 pure-u-md-1-3">
-            <strong>@Html.DisplayNameFor(model => model.NormalizedEmail)</strong>
-        </div>
-        <div class="pure-u-1 pure-u-md-2-3">
-            @Html.DisplayFor(model => model.NormalizedEmail)
-        </div>
-        <div class="pure-u-1 pure-u-md-1-3">
-            <strong>@Html.DisplayNameFor(model => model.EmailConfirmed)</strong>
-        </div>
-        <div class="pure-u-1 pure-u-md-2-3">
-            @Html.DisplayFor(model => model.EmailConfirmed)
-        </div>
-        <div class="pure-u-1 pure-u-md-1-3">
-            <strong>@Html.DisplayNameFor(model => model.PasswordHash)</strong>
-        </div>
-        <div class="pure-u-1 pure-u-md-2-3">
-            @Html.DisplayFor(model => model.PasswordHash)
-        </div>
-        <div class="pure-u-1 pure-u-md-1-3">
-            <strong>@Html.DisplayNameFor(model => model.SecurityStamp)</strong>
-        </div>
-        <div class="pure-u-1 pure-u-md-2-3">
-            @Html.DisplayFor(model => model.SecurityStamp)
-        </div>
-        <div class="pure-u-1 pure-u-md-1-3">
-            <strong>@Html.DisplayNameFor(model => model.ConcurrencyStamp)</strong>
-        </div>
-        <div class="pure-u-1 pure-u-md-2-3">
-            @Html.DisplayFor(model => model.ConcurrencyStamp)
-        </div>
-        <div class="pure-u-1 pure-u-md-1-3">
-            <strong>@Html.DisplayNameFor(model => model.PhoneNumber)</strong>
-        </div>
-        <div class="pure-u-1 pure-u-md-2-3">
-            @Html.DisplayFor(model => model.PhoneNumber)
-        </div>
-        <div class="pure-u-1 pure-u-md-1-3">
-            <strong>@Html.DisplayNameFor(model => model.PhoneNumberConfirmed)</strong>
-        </div>
-        <div class="pure-u-1 pure-u-md-2-3">
-            @Html.DisplayFor(model => model.PhoneNumberConfirmed)
-        </div>
-        <div class="pure-u-1 pure-u-md-1-3">
-            <strong>@Html.DisplayNameFor(model => model.TwoFactorEnabled)</strong>
-        </div>
-        <div class="pure-u-1 pure-u-md-2-3">
-            @Html.DisplayFor(model => model.TwoFactorEnabled)
-        </div>
-        <div class="pure-u-1 pure-u-md-1-3">
-            <strong>@Html.DisplayNameFor(model => model.LockoutEnd)</strong>
-        </div>
-        <div class="pure-u-1 pure-u-md-2-3">
-            @Html.DisplayFor(model => model.LockoutEnd)
-        </div>
-        <div class="pure-u-1 pure-u-md-1-3">
-            <strong>@Html.DisplayNameFor(model => model.LockoutEnabled)</strong>
-        </div>
-        <div class="pure-u-1 pure-u-md-2-3">
-            @Html.DisplayFor(model => model.LockoutEnabled)
-        </div>
-        <div class="pure-u-1 pure-u-md-1-3">
-            <strong>@Html.DisplayNameFor(model => model.AccessFailedCount)</strong>
-        </div>
-        <div class="pure-u-1 pure-u-md-2-3">
-            @Html.DisplayFor(model => model.AccessFailedCount)
-        </div>
     </div>
-    
+
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="pure-button button-error" />        
+        <input type="submit" value="Delete" class="pure-button button-error" />
     </form>
 </div>
