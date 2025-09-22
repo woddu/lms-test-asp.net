@@ -1,0 +1,167 @@
+@model lms_test1.Models.ViewModels.Teachers.AssignTeacherViewModel
+
+@{
+    ViewData["Title"] = "Assign Subjects and Section to Teacher";
+}
+
+@section Styles {
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+}
+
+<header>
+    <div class="breadcrumbs">
+        <a asp-area="" asp-controller="Teachers" asp-action="Index">Teacher Management</a> > <a
+            href="#0/">@ViewData["Title"]</a>
+    </div>
+
+    <h2 class="title font-bold text-2xl">Assign Subjects and Section to @Model.TeacherName</h2>
+</header>
+<div class="prevent-overflow px-8">
+    <form class="pure-form pure-form-stacked" asp-action="Assign" method="post">
+        <fieldset>
+            <legend>
+                <a asp-action="Index">Back to List</a>
+            </legend>
+            <input type="hidden" asp-for="TeacherId" />
+            <div class="pure-g">
+                <div class="pure-u-1 pure-u-md-1-2">
+                    <label asp-for="Role">Role</label>
+                    <select asp-for="Role" class="pure-u-23-24">
+                        @foreach (var role in Model.Roles)
+                        {
+                            <option value="@role"
+                                selected="@(Model.Role == role ? "selected" : null)">
+                                @role
+                            </option>
+                        }
+                    </select>
+                    <span asp-validation-for="Role" class="text-danger"></span>
+                </div>  
+
+                <div class="pure-u-1 pure-u-md-1-2">
+                    <label asp-for="AdvisorySectionId">Advisory Section</label>
+                    <select asp-for="AdvisorySectionId" class="pure-u-23-24">
+                        <option value="">None</option>
+                        @foreach (var group in (IEnumerable<IGrouping<int, Section>>)ViewData["AllSectionsGrouped"])
+                        {
+                            <optgroup label="Grade @group.Key">
+                                @foreach (var advisorySection in group)
+                                {
+                                    <option value="@advisorySection.Id"
+                                        selected="@(Model.AdvisorySectionId == advisorySection.Id ? "selected" : null)">
+                                        @advisorySection.Name
+                                    </option>
+                                }
+                            </optgroup>
+                        }
+                    </select>
+                    <span asp-validation-for="AdvisorySectionId" class="text-danger"></span>
+                </div>
+
+                <div class="pure-u-1 pure-u-md-1-2">
+                    <label>Subjects</label>
+                    <select id="subjectsSelect" asp-for="SelectedSubjectIds" multiple="multiple" class="pure-u-23-24">
+                        @foreach (var group in (IEnumerable<IGrouping<string, Subject>>)ViewData["AllSubjectsGrouped"])
+                        {
+                            <optgroup label="@group.Key">
+                                @foreach (var subject in group)
+                                {
+                                    <option value="@subject.Id"
+                                        selected="@(Model.SelectedSubjectIds.Contains(subject.Id) ? "selected" : null)">
+                                        @subject.Name
+                                    </option>
+                                }
+                            </optgroup>
+                        }
+                    </select>
+                    <span asp-validation-for="SelectedSubjectIds" class="text-danger"></span>
+                </div>
+
+                <div class="pure-u-1 pure-u-md-1-2">
+                    <div id="sectionsContainer">
+
+                    </div>
+                    <span asp-validation-for="SubjectSections" class="text-danger"></span>
+                </div>
+
+
+
+                <div class="pure-u-1" style="margin-top: 1rem;">
+                    <input type="submit" value="Save" class="pure-button pure-button-primary" />
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+
+@section Scripts {
+
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(function () {
+            $('#subjectsSelect').select2({
+                placeholder: "Search and select subjects",
+                allowClear: true,
+                width: '95%'
+            });
+
+            var allSections = @Html.Raw(Json.Serialize(ViewData["AllSections"]));
+            var subjectSections = @Html.Raw(Json.Serialize(@Model.SubjectSections));
+
+            var renderedSubjects = new Map(); // subjectId → index
+
+            // Initial render from model
+            subjectSections.forEach(function (subject, index) {
+                renderedSubjects.set(subject.subjectId.toString(), index);
+                renderSectionSelect(subject.subjectId, subject.sectionIds, index);
+            });
+
+            function renderSectionSelect(subjectId, selectedSectionIds = [], index) {
+                var subjectName = $('#subjectsSelect option[value="' + subjectId + '"]').text();
+                var allowedSections = allSections[subjectId] || [];
+
+                var optionsHtml = allowedSections.map(function (s) {
+                    var selected = selectedSectionIds.includes(s.id) ? 'selected' : '';
+                    return `<option ${selected} value="${s.id}">${s.name}</option>`;
+                }).join('');
+
+                var html = `
+                    <div class="subject-section-block" data-subject-id="${subjectId}">
+                        <label>Sections for ${subjectName}</label>
+                        <select name="SubjectSections[${index}].SectionIds" multiple class="section-select">
+                            ${optionsHtml}
+                        </select>
+                        <input type="hidden" name="SubjectSections[${index}].SubjectId" value="${subjectId}" />
+                    </div>
+                `;
+                $('#sectionsContainer').append(html);
+                $('#sectionsContainer').find('.section-select').last().select2({ width: '95%' });
+            }
+
+            $('#subjectsSelect').on('change', function () {
+                var selectedSubjects = $(this).val() || [];
+                var container = $('#sectionsContainer');
+
+                // Remove selects for subjects that were deselected
+                container.find('.subject-section-block').each(function () {
+                    var subjectId = $(this).data('subject-id').toString();
+                    if (!selectedSubjects.includes(subjectId)) {
+                        $(this).remove();
+                        renderedSubjects.delete(subjectId);
+                    }
+                });
+
+                // Add selects for newly selected subjects
+                selectedSubjects.forEach(function (subjectId) {
+                    subjectId = subjectId.toString();
+                    if (!renderedSubjects.has(subjectId)) {
+                        var newIndex = renderedSubjects.size;
+                        renderedSubjects.set(subjectId, newIndex);
+                        renderSectionSelect(subjectId, [], newIndex);
+                    }
+                });
+            });
+        });
+
+    </script>
+}
