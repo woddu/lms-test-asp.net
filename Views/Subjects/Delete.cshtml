@@ -1,0 +1,42 @@
+@model lms_test1.Models.Subject
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<header>
+    <div class="breadcrumbs">
+        <a asp-area="" asp-controller="Subject" asp-action="Index">Subject Management</a> > <a
+            href="#0/">@ViewData["Title"]</a>
+    </div>
+    <h2 class="title">@ViewData["Title"] - @Model.Name</h2>
+</header>
+
+<style>
+    .prevent-overflow.px-8>*>* {
+        margin-bottom: 1rem;
+    }
+
+    .prevent-overflow.px-8>* {
+        margin-bottom: 1rem;
+    }
+
+    .button-error {
+        background: rgb(202, 60, 60);
+        color: white;
+    }
+</style>
+<div class="prevent-overflow px-8">
+    <a asp-action="Index">Back to List</a>
+    <hr />
+    <div class="pure-g">
+        <div class="pure-u-1 pure-u-md-1-3"><strong>@Html.DisplayNameFor(model => model.Name)</strong></div>
+        <div class="pure-u-1 pure-u-md-2-3">@Html.DisplayFor(model => model.Name)</div>
+        <div class="pure-u-1 pure-u-md-1-3"><strong>@Html.DisplayNameFor(model => model.Track)</strong></div>
+        <div class="pure-u-1 pure-u-md-2-3">@Html.DisplayFor(model => model.Track)</div>
+    </div>
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Delete" class="pure-button button-error" />
+    </form>
+</div>
