@@ -27,7 +27,8 @@ public class StudentsController : Controller
     // GET: Student
     public async Task<IActionResult> Index()
     {
-        var applicationDbContext = _context.Students.Include(s => s.Section);
+        var applicationDbContext = _context.Students
+            .Include(s => s.Section);
         return View(await applicationDbContext.ToListAsync());
     }
 
@@ -51,9 +52,21 @@ public class StudentsController : Controller
     }
 
     // GET: Student/Create
-    public IActionResult Create()
+    public async Task<IActionResult> Create()
     {
-        ViewData["SectionId"] = new SelectList(_context.Sections, "Id", "Id");
+        // grouped selection of sections by year level
+        var sections = await _context.Sections
+            .OrderBy(s => s.YearLevel)
+            .ThenBy(s => s.Name)
+            .GroupBy(s => s.YearLevel)
+            .ToListAsync();
+        ViewData["SectionId"] = sections;
+        ViewData["Gender"] = new List<(string label, char value)>
+            {
+                ("Male", 'M'),
+                ("Female", 'F'),
+                ("Other", 'O')
+            };
         return View();
     }
 
@@ -70,7 +83,18 @@ public class StudentsController : Controller
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        ViewData["SectionId"] = new SelectList(_context.Sections, "Id", "Id", student.SectionId);
+        var sections = await _context.Sections
+            .OrderBy(s => s.YearLevel)
+            .ThenBy(s => s.Name)
+            .GroupBy(s => s.YearLevel)
+            .ToListAsync();
+        ViewData["SectionId"] = sections;
+        ViewData["Gender"] = new List<(string label, char value)>
+            {
+                ("Male", 'M'),
+                ("Female", 'F'),
+                ("Other", 'O')
+            };
         return View(student);
     }
 
@@ -87,7 +111,19 @@ public class StudentsController : Controller
         {
             return NotFound();
         }
-        ViewData["SectionId"] = new SelectList(_context.Sections, "Id", "Name", student.SectionId);
+        // grouped selection of sections by year level
+        var sections = await _context.Sections
+            .OrderBy(s => s.YearLevel)
+            .ThenBy(s => s.Name)
+            .GroupBy(s => s.YearLevel)
+            .ToListAsync();
+        ViewData["SectionId"] = sections;
+        ViewData["Gender"] = new List<(string label, char value)>
+            {
+                ("Male", 'M'),
+                ("Female", 'F'),
+                ("Other", 'O')
+            };
         return View(student);
     }
 
@@ -123,7 +159,19 @@ public class StudentsController : Controller
             }
             return RedirectToAction(nameof(Index));
         }
-        ViewData["SectionId"] = new SelectList(_context.Sections, "Id", "Id", student.SectionId);
+        // grouped selection of sections by year level
+        var sections = await _context.Sections
+            .OrderBy(s => s.YearLevel)
+            .ThenBy(s => s.Name)
+            .GroupBy(s => s.YearLevel)
+            .ToListAsync();
+        ViewData["SectionId"] = sections;
+        ViewData["Gender"] = new List<(string label, char value)>
+            {
+                ("Male", 'M'),
+                ("Female", 'F'),
+                ("Other", 'O')
+            };
         return View(student);
     }
 
