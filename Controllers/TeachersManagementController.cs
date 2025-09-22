@@ -16,12 +16,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 namespace lms_test1.Controllers;
 
 [Authorize(Roles = "Admin")]
-public class TeachersController : Controller
+public class TeachersManagementController : Controller
 {
     private readonly UserManager<LMSUser> _userManager;
     private readonly ApplicationDbContext _context;
 
-    public TeachersController(UserManager<LMSUser> userManager, ApplicationDbContext context)
+    public TeachersManagementController(UserManager<LMSUser> userManager, ApplicationDbContext context)
     {
         _userManager = userManager;
         _context = context;
@@ -117,8 +117,10 @@ public class TeachersController : Controller
         };
 
         var result = await _userManager.CreateAsync(user, model.Password);
+        
+        var roleResult = await _userManager.AddToRoleAsync(user, "Teacher");
 
-        if (result.Succeeded)
+        if (result.Succeeded && roleResult.Succeeded)
             return RedirectToAction("Index");
 
         foreach (var error in result.Errors)
@@ -260,6 +262,30 @@ public class TeachersController : Controller
             return NotFound();
 
         await using var transaction = await _context.Database.BeginTransactionAsync();
+
+        // Update role if changed
+        var currentRoles = await _userManager.GetRolesAsync(user);
+        if (model.Role != (currentRoles.FirstOrDefault() ?? ""))
+        {
+            if (currentRoles.Any())
+            {
+                var removeResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
+                if (!removeResult.Succeeded)
+                {
+                    foreach (var error in removeResult.Errors)
+                        ModelState.AddModelError("", error.Description);
+                    return View(model);
+                }
+            }
+
+            var addResult = await _userManager.AddToRoleAsync(user, model.Role);
+            if (!addResult.Succeeded)
+            {
+                foreach (var error in addResult.Errors)
+                    ModelState.AddModelError("", error.Description);
+                return View(model);
+            }
+        }
 
         // Update advisory section
         user.AdvisorySection = model.AdvisorySectionId.HasValue
