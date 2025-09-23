@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using lms_test1.Data;
 using lms_test1.Models;
@@ -11,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace lms_test1.Controllers;
 
-[Authorize(Roles = "Admin,HeadTeacher")]
+[Authorize(Policy = "VerifiedOnly", Roles = "Admin,HeadTeacher")]
 public class SectionsController : Controller
 {
     private readonly ApplicationDbContext _context;
@@ -42,13 +37,35 @@ public class SectionsController : Controller
         }
 
         var section = await _context.Sections
+            .Include(s => s.Students)
+            .Include(s => s.TeacherSubjects)
+                .ThenInclude(ts => ts.Subject)
             .FirstOrDefaultAsync(m => m.Id == id);
+
         if (section == null)
         {
             return NotFound();
         }
 
-        return View(section);
+        var sectionDetails = new Models.ViewModels.Sections.SectionDetails
+        {
+            Section = section,
+            Students = section.Students
+                .Select(s => new Models.DTO.Student.StudentInListDTO(
+                    s.Id,
+                    s.LastName,
+                    s.FirstName,
+                    s.MiddleName ?? ""
+                ))
+                .OrderBy(s => s.LastName)
+                .ThenBy(s => s.FirstName)
+                .ToList(),
+            Subjects = section.TeacherSubjects
+                .Select(ts => ts.Subject)
+                .ToList()
+        };
+
+        return View(sectionDetails);
     }
 
     // GET: Section/Create

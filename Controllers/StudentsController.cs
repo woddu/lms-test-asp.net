@@ -1,10 +1,4 @@
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using lms_test1.Data;
 using lms_test1.Models;
@@ -14,7 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace lms_test1.Controllers;
 
-[Authorize(Roles = "Admin")]
+[Authorize(Policy = "VerifiedOnly", Roles = "Admin, HeadTeacher")]
 public class StudentsController : Controller
 {
     private readonly ApplicationDbContext _context;
@@ -43,6 +37,7 @@ public class StudentsController : Controller
         var student = await _context.Students
             .Include(s => s.Section)
             .FirstOrDefaultAsync(m => m.Id == id);
+            
         if (student == null)
         {
             return NotFound();

@@ -1,17 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using lms_test1.Areas.Identity.Data;
 using lms_test1.Data;
 using Microsoft.AspNetCore.Identity;
-using lms_test1.Models.ViewModels.Teachers;
+using lms_test1.Models.ViewModels.TeachersManagement;
 using Microsoft.AspNetCore.Authorization;
 using lms_test1.Models;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace lms_test1.Controllers;
 
