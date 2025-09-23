@@ -78,7 +78,7 @@
             <strong>@Html.DisplayNameFor(model => model.Section)</strong>
         </div>
         <div class="pure-u-1 pure-u-md-2-3">
-            @Html.DisplayFor(model => model.Section.Id)
+            <a asp-controller="Sections" asp-action="Details" asp-route-id="@Model?.Section?.Id">@Model?.Section?.Name</a>
         </div>
     </div>
 </div>
