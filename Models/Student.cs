@@ -19,5 +19,5 @@ public class Student
     
     public int? SectionId { get; set; }
     public Section? Section { get; set; }
-    public ICollection<Score>? Scores { get; set; }
+    public ICollection<Score>? Scores { get; set; } = new List<Score>();
 }
