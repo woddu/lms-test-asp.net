@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace lms_test1.Models.ViewModels.Teachers;
+namespace lms_test1.Models.ViewModels.TeachersManagement;
 
 public class LMSUserEditViewModel
 {

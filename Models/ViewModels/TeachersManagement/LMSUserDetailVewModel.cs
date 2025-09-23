@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace lms_test1.Models.ViewModels.Teachers;
+namespace lms_test1.Models.ViewModels.TeachersManagement;
 
 public class LMSUserDetailViewModel
 {

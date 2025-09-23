@@ -1,4 +1,4 @@
-namespace lms_test1.Models.ViewModels.Teachers;
+namespace lms_test1.Models.ViewModels.TeachersManagement;
 public class LMSUserCreateViewModel
 {
     public string FirstName { get; set; } = string.Empty;
