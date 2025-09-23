@@ -1,15 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using lms_test1.Data;
 using lms_test1.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace lms_test1.Controllers
 {
+    [Authorize(Policy = "VerifiedOnly", Roles = "Admin, HeadTeacher")]
     public class SubjectsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -39,19 +36,40 @@ namespace lms_test1.Controllers
             }
 
             var subject = await _context.Subjects
+                .Include(s => s.TeacherSubjects)
+                    .ThenInclude(ts => ts.Teacher)
+                .Include(s => s.TeacherSubjects)
+                    .ThenInclude(ts => ts.Sections)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (subject == null)
             {
                 return NotFound();
             }
 
-            return View(subject);
+            var subjectDetails = new Models.ViewModels.Subject.SubjectDetails
+            {
+                Subject = subject,
+                Teachers = subject.TeacherSubjects
+                    .Select(ts => new Models.DTO.Teacher.TeacherInListDTO(
+                        ts.Teacher.Id,
+                        ts.Teacher.LastName,
+                        ts.Teacher.FirstName,
+                        ts.Teacher.MiddleName ?? ""
+                    ))
+                    .ToList(),
+                Sections = subject.TeacherSubjects
+                    .SelectMany(ts => ts.Sections)
+                    .ToList()
+            };
+
+            return View(subjectDetails);
         }
 
         // GET: Subject/Create
         public IActionResult Create()
         {
-            ViewData["Tracks"] = _tracks;   
+            ViewData["Tracks"] = _tracks;
             return View();
         }
 
