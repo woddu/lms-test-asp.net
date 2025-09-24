@@ -1,0 +1,51 @@
+@model IEnumerable<lms_test1.Models.TeacherSubject>
+
+@{
+    ViewData["Title"] = "My Subjects";
+}
+<header>
+    <div class="breadcrumbs mx-auto">
+        <a href="#0/">@ViewData["Title"]</a>
+    </div>
+
+    <h2 class="title">@ViewData["Title"]</h2>
+</header>
+<div class="prevent-overflow px-8">
+    <table class="pure-table">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Subject.Name)</th>
+                <th>@Html.DisplayNameFor(model => model.Sections.First().Name)</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="subjectTableBody">
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="4" style="text-align: center; font-style: italic; color: #888;">
+                        No subjects found.
+                    </td>
+                </tr>
+            }
+            else
+            {
+                foreach (var item in Model)
+                {
+                    foreach (var Section in item.Sections!)
+                    {
+                        var rowspan = (item.Sections?.Count() ?? 0) / 2;
+                        <tr>
+                            <td rowspan="@rowspan">@Html.DisplayFor(modelItem => item.Subject.Name)</td>
+                            <td>@Html.DisplayFor(modelItem => Section.Name)</td>
+                            <td>
+                                <a asp-area="" asp-controller="Grades" asp-action="SectionStudents"
+                                    asp-route-sectionId="@Section.Id">Students</a>
+                            </td>
+                        </tr>
+                    }
+                }
+            }
+        </tbody>
+    </table>
+</div>
