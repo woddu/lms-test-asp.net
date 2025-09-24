@@ -26,11 +26,18 @@ public class AdvisoryController : Controller
 
         return View(advisories);
     }
-    
-    public async Task<IActionResult> Section(int id)
+
+    public async Task<IActionResult> Students(int id)
     {
         var section = await _context.Sections
-            .Include(s => s.Students)
+            .Include(
+                s => s.Students!
+                .OrderBy(st => st.Gender)
+                .ThenBy(st => st.LastName)
+                .ThenBy(st => st.FirstName)
+            )
+                .ThenInclude(st => st.Scores!)
+                    .ThenInclude(sc => sc.TeacherSubject)
             .FirstOrDefaultAsync(s => s.Id == id);
 
         if (section == null)
@@ -39,6 +46,21 @@ public class AdvisoryController : Controller
         }
 
         return View(section);
+    }
+    
+    public async Task<IActionResult> StudentDetails(int id)
+    {
+        var student = await _context.Students
+            .Include(st => st.Scores!)
+                .ThenInclude(sc => sc.TeacherSubject)
+            .FirstOrDefaultAsync(st => st.Id == id);
+
+        if (student == null)
+        {
+            return NotFound();
+        }
+
+        return View(student);
     }
 
 }
