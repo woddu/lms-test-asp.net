@@ -1,0 +1,48 @@
+@model lms_test1.Models.Section
+
+@{
+    ViewData["Title"] = "Students in " + Model.Name;
+}
+
+<header>
+    <div class="breadcrumbs mx-auto">
+        <a href="#0/">@ViewData["Title"]</a>
+    </div>
+
+    <h2 class="title">@ViewData["Title"]</h2>
+</header>
+
+<div class="prevent-overflow px-8">
+    <table class="pure-table">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Students!.First().FirstName)</th>
+                <th>@Html.DisplayNameFor(model => model.Students!.First().LastName)</th>                
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="studentTableBody">
+            @if (Model.Students == null || !Model.Students.Any())
+            {
+                <tr>
+                    <td colspan="4" style="text-align: center; font-style: italic; color: #888;">
+                        No students found.
+                    </td>
+                </tr>
+            }
+            else
+            {
+                foreach (var student in Model.Students)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => student.FirstName)</td>
+                        <td>@Html.DisplayFor(modelItem => student.LastName)</td>                        
+                        <td>
+                            <a asp-area="" asp-controller="Advisory" asp-action="StudentDetails" asp-route-id="@student.Id">Details</a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

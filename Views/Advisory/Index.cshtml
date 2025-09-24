@@ -1,0 +1,50 @@
+@model IEnumerable<lms_test1.Models.Section>
+
+@{
+    ViewData["Title"] = "Advisories";
+}
+
+<header>
+    <div class="breadcrumbs mx-auto">
+        <a href="#0/">@ViewData["Title"]</a>
+    </div>
+
+    <h2 class="title">@ViewData["Title"]</h2>
+</header>
+
+<div class="prevent-overflow px-8">
+    <table class="pure-table">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Name)</th>
+                <th>@Html.DisplayNameFor(model => model.Strand)</th>
+                <th>@Html.DisplayNameFor(model => model.YearLevel)</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="sectionTableBody">
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="4" style="text-align: center; font-style: italic; color: #888;">
+                        No sections found.
+                    </td>
+                </tr>
+            }
+            else
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Strand)</td>
+                        <td>@Html.DisplayFor(modelItem => item.YearLevel)</td>
+                        <td>
+                            <a asp-area="" asp-controller="Advisory" asp-action="Students" asp-route-id="@item.Id">Students</a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
