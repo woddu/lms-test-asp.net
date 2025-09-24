@@ -88,7 +88,24 @@
                                 <a asp-area="" asp-controller="Subjects" asp-action="Index">Subjects</a>
                             </li>
                         }
-                        
+                        @if (User.IsInRole("HeadTeacher") || User.IsInRole("Teacher"))
+                        {
+                            <li @if(Context.Request.Path.Value?.ToLower().StartsWith("/grades") == true) {
+                            <text>class="active"</text>
+                                                        }
+                                >
+                                <a asp-area="" asp-controller="Grades" asp-action="Index">Grades</a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Teacher"))
+                        {
+                            <li @if(Context.Request.Path.Value?.ToLower().StartsWith("/advisory") == true) {
+                            <text>class="active"</text>
+                                                        }
+                                >
+                                <a asp-area="" asp-controller="Advisory" asp-action="Index">Advisory</a>
+                            </li>
+                        }
                     </ul>
                     <div class="note">
                         <h3>Your Monthly Report</h3>
