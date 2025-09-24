@@ -35,8 +35,7 @@ public class GradeController : Controller
         var teacherSubject = await _context.TeacherSubjects
             .Include(ts => ts.Subject)
             .Include(ts => ts.Sections)
-                .ThenInclude(s => s.Students!)
-                    .ThenInclude(st => st.Scores)
+                .ThenInclude(s => s.Students)
             .FirstOrDefaultAsync(ts => ts.Id == id);
 
         if (teacherSubject == null)
@@ -45,5 +44,21 @@ public class GradeController : Controller
         }
 
         return View(teacherSubject);
+    }
+
+    public async Task<IActionResult> StudentGrades(int id)
+    {
+        var student = await _context.Students
+            .Include(st => st.Scores!)
+                .ThenInclude(sc => sc.TeacherSubject)
+                    .ThenInclude(ts => ts.Subject)
+            .FirstOrDefaultAsync(st => st.Id == id);
+
+        if (student == null)
+        {
+            return NotFound();
+        }
+
+        return View(student);
     }
 }
