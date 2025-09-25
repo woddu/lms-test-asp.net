@@ -1,0 +1,31 @@
+@model IEnumerable<lms_test1.Models.DTO.Student.StudentInListDTO>
+
+@if (!Model.Any())
+{
+    <tr>
+        <td colspan="3" style="text-align: center; font-style: italic; color: #888;">
+            No students found.
+        </td>
+    </tr>
+}
+else
+{
+    <tr><td>Male</td></tr>
+    foreach (var student in Model.Where(s => s.Gender == 'M'))
+    {
+        <tr>
+            <td>@Html.DisplayFor(m => student.FirstName)</td>
+            <td>@Html.DisplayFor(m => student.LastName)</td>
+            <td>@Html.DisplayFor(m => student.MiddleName)</td>
+        </tr>
+    }
+    <tr><td>Female</td></tr>
+    foreach (var student in Model.Where(s => s.Gender == 'F'))
+    {
+        <tr>
+            <td>@Html.DisplayFor(m => student.FirstName)</td>
+            <td>@Html.DisplayFor(m => student.LastName)</td>
+            <td>@Html.DisplayFor(m => student.MiddleName)</td>
+        </tr>
+    }
+}
