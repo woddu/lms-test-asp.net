@@ -128,7 +128,7 @@
                 var html = `
                     <div class="subject-section-block" data-subject-id="${subjectId}">
                         <label>Sections for ${subjectName}</label>
-                        <select name="SubjectSections[${index}].SectionIds" multiple class="section-select">
+                        <select name="SubjectSections[${index}].SectionIds" multiple class="section-select" required>
                             ${optionsHtml}
                         </select>
                         <input type="hidden" name="SubjectSections[${index}].SubjectId" value="${subjectId}" />
