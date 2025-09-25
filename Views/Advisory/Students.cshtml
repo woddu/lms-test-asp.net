@@ -1,7 +1,7 @@
-@model lms_test1.Models.Section
+@model lms_test1.Models.DTO.Section.SectionWithStudentsDTO
 
 @{
-    ViewData["Title"] = "Students in " + Model.Name;
+    ViewData["Title"] = "Students in " + Model.Section.Name;
 }
 
 <header>
@@ -13,11 +13,22 @@
 </header>
 
 <div class="prevent-overflow px-8">
+    <form class="pure-form" style="position: relative; display: inline-block; margin-bottom: 1rem;">
+        <svg style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; pointer-events: none; color: #888;"
+            xmlns="http://www.w3.org/2000/svg" height="24" width="24" viewBox="0 0 24 24" fill="currentColor">
+            <path
+                d="M15.5 14h-.79l-.28-.27a6.471 6.471 0 001.48-5.34C15.02 5.59 12.43 3 9.5 3S4 5.59 4 8.5 6.59 14 9.5 14c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+        </svg>
+
+        <input id="searchBox" type="text" placeholder="Search..."
+            style="padding-left: 36px; font-size: 1rem; border: 1px solid #ccc; border-radius: 4px;" />
+
+    </form>
     <table class="pure-table">
         <thead>
             <tr>
                 <th>@Html.DisplayNameFor(model => model.Students!.First().FirstName)</th>
-                <th>@Html.DisplayNameFor(model => model.Students!.First().LastName)</th>                
+                <th>@Html.DisplayNameFor(model => model.Students!.First().LastName)</th>
                 <th></th>
             </tr>
         </thead>
@@ -25,24 +36,50 @@
             @if (Model.Students == null || !Model.Students.Any())
             {
                 <tr>
-                    <td colspan="4" style="text-align: center; font-style: italic; color: #888;">
+                    <td colspan="3" style="text-align: center; font-style: italic; color: #888;">
                         No students found.
                     </td>
                 </tr>
             }
             else
             {
-                foreach (var student in Model.Students)
+                <tr>
+                    <td>Male</td>
+                </tr>
+                foreach (var student in Model.Students.Where(s => s.Gender == 'M'))
                 {
                     <tr>
-                        <td>@Html.DisplayFor(modelItem => student.FirstName)</td>
-                        <td>@Html.DisplayFor(modelItem => student.LastName)</td>                        
-                        <td>
-                            <a asp-area="" asp-controller="Advisory" asp-action="StudentDetails" asp-route-id="@student.Id">Details</a>
-                        </td>
+                        <td>@Html.DisplayFor(m => student.FirstName)</td>
+                        <td>@Html.DisplayFor(m => student.LastName)</td>
+                        <td>@Html.DisplayFor(m => student.MiddleName)</td>
+                    </tr>
+                }
+                <tr>
+                    <td>Female</td>
+                </tr>
+                foreach (var student in Model.Students.Where(s => s.Gender == 'F'))
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(m => student.FirstName)</td>
+                        <td>@Html.DisplayFor(m => student.LastName)</td>
+                        <td>@Html.DisplayFor(m => student.MiddleName)</td>
                     </tr>
                 }
             }
         </tbody>
     </table>
 </div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            $("#searchBox").on("keyup", function () {
+                var query = $(this).val();
+
+                $.get('@Url.Action("SearchStudent", "Advisory")', { searchTerm: query, sectionId: '@Model.Section.Id' }, function (data) {
+                    $("#studentTableBody").html(data);
+                });
+            });
+        });
+    </script>
+}
