@@ -4,5 +4,6 @@ public record StudentInListDTO(
     int Id,
     string LastName,
     string FirstName,
+    char Gender,
     string MiddleName = ""
 );
