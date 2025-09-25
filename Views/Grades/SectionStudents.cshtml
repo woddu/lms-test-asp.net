@@ -12,7 +12,7 @@
     <h2 class="title">@ViewData["Title"]</h2>
 </header>
 
-<div class="prevent-overflow">
+<div class="prevent-overflow px-8">
     <form class="pure-form" style="position: relative; display: inline-block; margin-bottom: 1rem;">
         <svg style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; pointer-events: none; color: #888;"
             xmlns="http://www.w3.org/2000/svg" height="24" width="24" viewBox="0 0 24 24" fill="currentColor">
@@ -30,13 +30,14 @@
                 <th>@Html.DisplayNameFor(m => m.Students.First().FirstName)</th>
                 <th>@Html.DisplayNameFor(m => m.Students.First().LastName)</th>
                 <th>@Html.DisplayNameFor(m => m.Students.First().MiddleName)</th>
+                <th></th>
             </tr>
         </thead>
         <tbody id="studentTableBody">
             @if (!Model.Students.Any())
             {
                 <tr>
-                    <td colspan="3" style="text-align: center; font-style: italic; color: #888;">
+                    <td colspan="4" style="text-align: center; font-style: italic; color: #888;">
                         No students found in this section.
                     </td>
                 </tr>
@@ -50,6 +51,9 @@
                         <td>@Html.DisplayFor(m => student.FirstName)</td>
                         <td>@Html.DisplayFor(m => student.LastName)</td>
                         <td>@Html.DisplayFor(m => student.MiddleName)</td>
+                        <th>
+                            <a asp-controller="Grades" asp-action="StudentGrades" asp-route-id="@student.Id">Grade</a>
+                        </th>
                     </tr>
                 }
                 <tr><td>Female</td></tr>
@@ -59,6 +63,9 @@
                         <td>@Html.DisplayFor(m => student.FirstName)</td>
                         <td>@Html.DisplayFor(m => student.LastName)</td>
                         <td>@Html.DisplayFor(m => student.MiddleName)</td>
+                        <th>
+                            <a asp-controller="Grades" asp-action="StudentGrades" asp-route-id="@student.Id">Grade</a>
+                        </th>
                     </tr>
                 }
             }
