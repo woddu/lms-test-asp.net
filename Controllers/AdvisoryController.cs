@@ -1,5 +1,7 @@
 using System.Security.Claims;
 using lms_test1.Data;
+using lms_test1.Models.DTO.Section;
+using lms_test1.Models.DTO.Student;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -30,14 +32,6 @@ public class AdvisoryController : Controller
     public async Task<IActionResult> Students(int id)
     {
         var section = await _context.Sections
-            .Include(
-                s => s.Students!
-                .OrderBy(st => st.Gender)
-                .ThenBy(st => st.LastName)
-                .ThenBy(st => st.FirstName)
-            )
-                .ThenInclude(st => st.Scores!)
-                    .ThenInclude(sc => sc.TeacherSubject)
             .FirstOrDefaultAsync(s => s.Id == id);
 
         if (section == null)
@@ -45,9 +39,28 @@ public class AdvisoryController : Controller
             return NotFound();
         }
 
-        return View(section);
+        var students = await _context.Students
+            .Include(st => st.Scores!)
+                .ThenInclude(sc => sc.TeacherSubject)
+            .Where(st => st.SectionId == id)
+            .Select(st => new Models.DTO.Student.StudentInListDTO(
+                st.Id,
+                st.LastName,
+                st.FirstName,
+                st.Gender,
+                st.MiddleName ?? ""
+            ))
+            .ToListAsync();
+
+        var dto = new SectionWithStudentsDTO
+        (
+            Section: section,
+            Students: students
+        );
+
+        return View(dto);
     }
-    
+
     public async Task<IActionResult> StudentDetails(int id)
     {
         var student = await _context.Students
@@ -61,6 +74,31 @@ public class AdvisoryController : Controller
         }
 
         return View(student);
+    }
+    
+    public async Task<IActionResult> SearchStudent(string searchTerm, int sectionId)
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            return Json(new { results = new List<object>() });
+        }
+
+        var students = await _context.Students
+            .Where(st => st.SectionId == sectionId &&
+                        (st.LastName.ToLower().Contains(searchTerm.ToLower()) ||
+                         st.FirstName.ToLower().Contains(searchTerm.ToLower())
+                        ))
+            .Select(st => new StudentInListDTO
+            (
+                st.Id,
+                st.FirstName,
+                st.LastName,
+                st.Gender,
+                st.MiddleName
+            ))
+            .ToListAsync();
+
+        return PartialView("_StudentTableRows", students);
     }
 
 }
