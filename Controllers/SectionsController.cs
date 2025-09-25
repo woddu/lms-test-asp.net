@@ -38,7 +38,7 @@ public class SectionsController : Controller
 
         var section = await _context.Sections
             .Include(s => s.Students)
-            .Include(s => s.TeacherSubjects)
+            .Include(s => s.TeacherSubjects!)
                 .ThenInclude(ts => ts.Subject)
             .FirstOrDefaultAsync(m => m.Id == id);
 
@@ -50,17 +50,18 @@ public class SectionsController : Controller
         var sectionDetails = new Models.ViewModels.Sections.SectionDetails
         {
             Section = section,
-            Students = section.Students
+            Students = section.Students!
                 .Select(s => new Models.DTO.Student.StudentInListDTO(
                     s.Id,
                     s.LastName,
                     s.FirstName,
+                    s.Gender,
                     s.MiddleName ?? ""
                 ))
                 .OrderBy(s => s.LastName)
                 .ThenBy(s => s.FirstName)
                 .ToList(),
-            Subjects = section.TeacherSubjects
+            Subjects = section.TeacherSubjects!
                 .Select(ts => ts.Subject)
                 .ToList()
         };
