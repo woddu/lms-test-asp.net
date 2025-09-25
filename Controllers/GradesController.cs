@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore;
 namespace lms_test1.Controllers;
 
 [Authorize(Policy = "VerifiedOnly", Roles = "HeadTeacher,Teacher")]
-public class GradeController : Controller
+public class GradesController : Controller
 {
     private readonly ApplicationDbContext _context;
 
-    public GradeController(ApplicationDbContext context)
+    public GradesController(ApplicationDbContext context)
     {
         _context = context;
     }
