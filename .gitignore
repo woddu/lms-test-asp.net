@@ -484,6 +484,8 @@ $RECYCLE.BIN/
 *.swp
 
 app.db
+app.db-shm
+app.db-wal
 
 .vscode
 
