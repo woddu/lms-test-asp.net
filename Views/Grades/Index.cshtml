@@ -10,12 +10,20 @@
 
     <h2 class="title">@ViewData["Title"]</h2>
 </header>
+
+<style>
+    .subject-end {
+        border-bottom: 1px solid #c9c7c7;
+        /* or any style you like */
+    }
+</style>
+
 <div class="prevent-overflow px-8">
     <table class="pure-table">
         <thead>
             <tr>
-                <th>@Html.DisplayNameFor(model => model.Subject.Name)</th>
-                <th>@Html.DisplayNameFor(model => model.Sections.First().Name)</th>
+                <th>Subject</th>
+                <th>Sections</th>
                 <th></th>
             </tr>
         </thead>
@@ -30,17 +38,24 @@
             }
             else
             {
-                foreach (var item in Model)
+                @foreach (var item in Model)
                 {
+                    var sectionCount = item.Sections?.Count() ?? 0;
+                    var index = 0;
+
                     foreach (var Section in item.Sections!)
                     {
-                        var rowspan = (item.Sections?.Count() ?? 0) / 2;
-                        <tr>
-                            <td rowspan="@rowspan">@Html.DisplayFor(modelItem => item.Subject.Name)</td>
+                        var isLast = (++index == sectionCount);
+
+                        <tr class="@(isLast ? "subject-end" : "")">
+                            @if (index == 1)
+                            {
+                                <td rowspan="@sectionCount">@Html.DisplayFor(modelItem => item.Subject.Name)</td>
+                            }
                             <td>@Html.DisplayFor(modelItem => Section.Name)</td>
                             <td>
                                 <a asp-area="" asp-controller="Grades" asp-action="SectionStudents"
-                                    asp-route-sectionId="@Section.Id">Students</a>
+                                    asp-route-id="@Section.Id">Students</a>
                             </td>
                         </tr>
                     }
