@@ -1,6 +1,8 @@
 
 using System.Security.Claims;
 using lms_test1.Data;
+using lms_test1.Models.ViewModels.Grade;
+using lms_test1.Models;
 using lms_test1.Models.DTO.Student;
 using lms_test1.Models.DTO.TeacherSubject;
 using Microsoft.AspNetCore.Authorization;
@@ -41,7 +43,7 @@ public class GradesController : Controller
                 .ThenInclude(tss => tss.Section)
             .FirstOrDefaultAsync(ts => ts.Id == teacherSubjectId && ts.TeacherId == userId);
 
-        if (teacherSubject == null) return NotFound();        
+        if (teacherSubject == null) return NotFound();
 
         return View(teacherSubject);
     }
@@ -56,7 +58,12 @@ public class GradesController : Controller
                 ts => ts.TeacherSubjectSections.Where(s => s.Section.Id == sectionId)
             )
                 .ThenInclude(tss => tss.Section)
-                    .ThenInclude(s => s.Students)
+                    .ThenInclude(
+                        s => s.Students!
+                            .OrderBy(st => st.Gender)
+                            .ThenBy(st => st.LastName)
+                            .ThenBy(st => st.FirstName)
+                    )
             .FirstOrDefaultAsync(ts => ts.Id == teacherSubjectId && ts.TeacherId == userId);
 
         if (teacherSubject == null) return NotFound();
@@ -79,8 +86,8 @@ public class GradesController : Controller
         return View(dto);
     }
 
-    //Get the grades of a specific student for a specific teacher's subject
-    public async Task<IActionResult> StudentGrades(int studentId, int teacherSubjectId)
+    //Get the scores of a specific student for a specific teacher's subject
+    public async Task<IActionResult> StudentScores(int studentId, int teacherSubjectId)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -88,21 +95,78 @@ public class GradesController : Controller
             .Include(st => st.Scores!.Where(sc => sc.TeacherSubject.Id == teacherSubjectId))
                 .ThenInclude(sc => sc.TeacherSubject)
                     .ThenInclude(ts => ts.Subject)
+            .Include(st => st.Scores!.Where(sc => sc.TeacherSubject.Id == teacherSubjectId))
+                .ThenInclude(sc => sc.TeacherSubject)
+                    .ThenInclude(ts => ts.TeacherSubjectSections)
+                        .ThenInclude(tss => tss.Section)
             .FirstOrDefaultAsync(st => st.Id == studentId);
 
         if (student == null) return NotFound();
-        
 
-        return View(student);
+        if (student.Scores == null || student.Scores.Count == 0)
+        {
+            // create a new score entry for the student for this teacher subject
+            var teacherSubject = await _context.TeacherSubjects
+                .Include(ts => ts.TeacherSubjectSections)
+                    .ThenInclude(tss => tss.Section)
+                .FirstOrDefaultAsync(ts => ts.Id == teacherSubjectId && ts.TeacherId == userId);
+            if (teacherSubject == null) return NotFound();
+            var newScore = new Score
+            {
+                StudentId = student.Id,
+                Student = student,
+                TeacherSubject = teacherSubject,
+                TeacherSubjectId = teacherSubject.Id,
+            };
+            _context.Scores.Add(newScore);
+            await _context.SaveChangesAsync();
+
+            var viewModel = new StudentScoresViewModel
+            {
+                TeacherSubject = teacherSubject,
+                Student = new StudentInListDTO
+            (
+                student.Id,
+                student.FirstName,
+                student.LastName,
+                student.Gender,
+                student.MiddleName
+            ),
+                StudentScore = newScore
+            };
+            return View(viewModel);
+            
+        }
+        else
+        {
+            // ensure the teacher subject belongs to the logged-in teacher
+            var score = student.Scores.First();
+            if (score.TeacherSubject.TeacherId != userId) return NotFound();
+            var viewModel = new StudentScoresViewModel
+            {
+                TeacherSubject = student.Scores!.First().TeacherSubject,
+                Student = new StudentInListDTO
+            (
+                student.Id,
+                student.FirstName,
+                student.LastName,
+                student.Gender,
+                student.MiddleName
+            ),
+                StudentScore = student.Scores!.First()
+            };
+            return View(viewModel);
+        }
+
     }
 
     public async Task<IActionResult> SearchStudent(string searchTerm, int sectionId, int teacherSubjectId)
-    {        
+    {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var teacherSubject = await _context.TeacherSubjects
             .Include(ts => ts.TeacherSubjectSections.Where(s => s.Section.Id == sectionId))
                 .ThenInclude(tss => tss.Section)
-                    .ThenInclude(s => s.Students!.Where(st => 
+                    .ThenInclude(s => s.Students!.Where(st =>
                         string.IsNullOrEmpty(searchTerm) ||
                         st.LastName.ToLower().Contains(searchTerm.ToLower()) ||
                         st.FirstName.ToLower().Contains(searchTerm.ToLower())
@@ -110,7 +174,7 @@ public class GradesController : Controller
             .FirstOrDefaultAsync(ts => ts.Id == teacherSubjectId && ts.TeacherId == userId);
 
         if (teacherSubject == null) return NotFound();
-        
+
 
         var students = teacherSubject!.TeacherSubjectSections.First().Section.Students!
             .Select(st => new StudentInListDTO
