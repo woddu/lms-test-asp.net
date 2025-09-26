@@ -1,7 +1,7 @@
-@model lms_test1.Models.DTO.Section.SectionWithStudentsDTO
+@model lms_test1.Models.DTO.TeacherSubject.TeacherSubjectWithStudentsDTO
 
 @{
-    ViewData["Title"] = "Students in Section " + Model.Section.Name;
+    ViewData["Title"] = "Students in Section " + Model.TeacherSubject.TeacherSubjectSections.First().Section.Name;
 }
 
 <header>
@@ -44,7 +44,7 @@
             }
             else
             {
-                <tr><td>Male</td></tr>
+                <tr style="border-bottom: 1px solid #888;"><td>Male</td></tr>
                 foreach (var student in Model.Students.Where(s => s.Gender == 'M'))
                 {
                     <tr>
@@ -52,11 +52,11 @@
                         <td>@Html.DisplayFor(m => student.LastName)</td>
                         <td>@Html.DisplayFor(m => student.MiddleName)</td>
                         <th>
-                            <a asp-controller="Grades" asp-action="StudentGrades" asp-route-id="@student.Id">Grade</a>
+                            <a asp-controller="Grades" asp-action="StudentGrades" asp-route-studentId="@student.Id" asp-route-teacherSubjectId="@Model.TeacherSubject.Id">Grade</a>
                         </th>
                     </tr>
                 }
-                <tr><td>Female</td></tr>
+                <tr style="border-bottom: 1px solid #888; border-top: 1px solid #888;"><td>Female</td></tr>
                 foreach (var student in Model.Students.Where(s => s.Gender == 'F'))
                 {
                     <tr>
@@ -64,7 +64,7 @@
                         <td>@Html.DisplayFor(m => student.LastName)</td>
                         <td>@Html.DisplayFor(m => student.MiddleName)</td>
                         <th>
-                            <a asp-controller="Grades" asp-action="StudentGrades" asp-route-id="@student.Id">Grade</a>
+                            <a asp-controller="Grades" asp-action="StudentGrades" asp-route-studentId="@student.Id" asp-route-teacherSubjectId="@Model.TeacherSubject.Id">Grade</a>
                         </th>
                     </tr>
                 }
@@ -79,7 +79,7 @@
             $("#searchBox").on("keyup", function () {
                 var query = $(this).val();
 
-                $.get('@Url.Action("SearchStudent", "Grades")', { searchTerm: query, sectionId: '@Model.Section.Id' }, function (data) {
+                $.get('@Url.Action("SearchStudent", "Grades")', { searchTerm: query, sectionId: '@Model.TeacherSubject.TeacherSubjectSections.First().Section.Id', teacherSubjectId: '@Model.TeacherSubject.Id' }, function (data) {
                     $("#studentTableBody").html(data);
                 });
             });
