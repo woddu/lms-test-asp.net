@@ -1,15 +1,16 @@
 @model lms_test1.Models.TeacherSubject
 
 @{
-    ViewData["Title"] = "Subject Details";
+    ViewData["Title"] = @Model.Subject.Name + " Details";
 }
 
 <header>
     <div class="breadcrumbs mx-auto">
-        <a href="#0/">@ViewData["Title"]</a>
+        <a asp-controller="Grades" asp-action="Index">My Subjects</a> >
+        <span>@ViewData["Title"]</span>
     </div>
 
-    <h2 class="title">@ViewData["Title"] - @Model.Subject.Name</h2>
+    <h2 class="title">@ViewData["Title"]</h2>
 </header>
 
 <div class="prevent-overflow px-8">    
