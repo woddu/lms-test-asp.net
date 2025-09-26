@@ -19,11 +19,15 @@ builder.Services.AddDefaultIdentity<LMSUser>(options => options.SignIn.RequireCo
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddScoped<IAuthorizationHandler, VerifiedUserHandler>();
-builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IAuthorizationHandler, SameOwnerOfTeacherSubjectHandler>();
 
 builder.Services.AddAuthorizationBuilder()
     .AddPolicy("VerifiedOnly", policy =>
-        policy.Requirements.Add(new VerifiedUserRequirement()));
+        policy.Requirements.Add(new VerifiedUserRequirement()))
+    .AddPolicy("SameOwnerOfTeacherSubject", policy =>
+        policy.Requirements.Add(new SameOwnerRequirement()));
+
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddControllersWithViews();
 
