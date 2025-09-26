@@ -2,7 +2,7 @@
 using System.Security.Claims;
 using lms_test1.Data;
 using lms_test1.Models.DTO.Student;
-using lms_test1.Models.DTO.Section;
+using lms_test1.Models.DTO.TeacherSubject;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,82 +19,100 @@ public class GradesController : Controller
         _context = context;
     }
 
+    //Get all the teacher's subjects
     public async Task<IActionResult> Index()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         var teacherSubjects = await _context.TeacherSubjects
             .Include(ts => ts.Subject)
-            .Include(ts => ts.Sections)
             .Where(ts => ts.TeacherId == userId)
             .ToListAsync();
 
         return View(teacherSubjects);
     }
 
-    public async Task<IActionResult> SectionStudents(int id)
+    public async Task<IActionResult> SubjectDetails(int teacherSubjectId)
     {
-        var section = await _context.Sections
-            .FirstOrDefaultAsync(s => s.Id == id);
-        
-        if (section == null)
-        {
-            return NotFound();
-        }
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var teacherSubject = await _context.TeacherSubjects
+            .Include(ts => ts.Subject)
+            .Include(ts => ts.TeacherSubjectSections)
+                .ThenInclude(tss => tss.Section)
+            .FirstOrDefaultAsync(ts => ts.Id == teacherSubjectId && ts.TeacherId == userId);
 
-        // trim the student data to include only necessary information
-        var students = await _context.Students
-            .OrderBy(st => st.Gender)
-            .ThenBy(st => st.LastName)
-            .ThenBy(st => st.FirstName)
-            .Where(st => st.SectionId == id)
-            .Select(st => new StudentInListDTO
-            (
-                st.Id,
-                st.FirstName,
-                st.LastName,
-                st.Gender,
-                st.MiddleName
-            ))
-            .ToListAsync();
+        if (teacherSubject == null) return NotFound();        
 
-        var dto = new SectionWithStudentsDTO
+        return View(teacherSubject);
+    }
+
+    //Get the students in a section for a specific teacher's subject
+    public async Task<IActionResult> SectionStudents(int sectionId, int teacherSubjectId)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var teacherSubject = await _context.TeacherSubjects
+            .Include(ts => ts.Subject)
+            .Include(
+                ts => ts.TeacherSubjectSections.Where(s => s.Section.Id == sectionId)
+            )
+                .ThenInclude(tss => tss.Section)
+                    .ThenInclude(s => s.Students)
+            .FirstOrDefaultAsync(ts => ts.Id == teacherSubjectId && ts.TeacherId == userId);
+
+        if (teacherSubject == null) return NotFound();
+
+        var dto = new TeacherSubjectWithStudentsDTO
         (
-            Section: section,
-            Students: students
+            TeacherSubject: teacherSubject,
+            Students: teacherSubject.TeacherSubjectSections.First().Section.Students!
+                .Select(st => new StudentInListDTO
+                (
+                    st.Id,
+                    st.FirstName,
+                    st.LastName,
+                    st.Gender,
+                    st.MiddleName
+                ))
+                .ToList()
         );
 
         return View(dto);
     }
 
-    public async Task<IActionResult> StudentGrades(int id)
-    {        
+    //Get the grades of a specific student for a specific teacher's subject
+    public async Task<IActionResult> StudentGrades(int studentId, int teacherSubjectId)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
         var student = await _context.Students
-            .Include(st => st.Scores!)
+            .Include(st => st.Scores!.Where(sc => sc.TeacherSubject.Id == teacherSubjectId))
                 .ThenInclude(sc => sc.TeacherSubject)
                     .ThenInclude(ts => ts.Subject)
-            .FirstOrDefaultAsync(st => st.Id == id);
+            .FirstOrDefaultAsync(st => st.Id == studentId);
 
-        if (student == null)
-        {
-            return NotFound();
-        }
+        if (student == null) return NotFound();
+        
 
         return View(student);
     }
 
-    public async Task<IActionResult> SearchStudent(string searchTerm, int sectionId)
-    {
-        if (string.IsNullOrWhiteSpace(searchTerm))
-        {
-            return Json(new { results = new List<object>() });
-        }
+    public async Task<IActionResult> SearchStudent(string searchTerm, int sectionId, int teacherSubjectId)
+    {        
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var teacherSubject = await _context.TeacherSubjects
+            .Include(ts => ts.TeacherSubjectSections.Where(s => s.Section.Id == sectionId))
+                .ThenInclude(tss => tss.Section)
+                    .ThenInclude(s => s.Students!.Where(st => 
+                        string.IsNullOrEmpty(searchTerm) ||
+                        st.LastName.ToLower().Contains(searchTerm.ToLower()) ||
+                        st.FirstName.ToLower().Contains(searchTerm.ToLower())
+                ))
+            .FirstOrDefaultAsync(ts => ts.Id == teacherSubjectId && ts.TeacherId == userId);
 
-        var students = await _context.Students
-            .Where(st => st.SectionId == sectionId &&
-                        (st.LastName.ToLower().Contains(searchTerm.ToLower()) ||
-                         st.FirstName.ToLower().Contains(searchTerm.ToLower())
-                        ))
+        if (teacherSubject == null) return NotFound();
+        
+
+        var students = teacherSubject!.TeacherSubjectSections.First().Section.Students!
             .Select(st => new StudentInListDTO
             (
                 st.Id,
@@ -103,7 +121,7 @@ public class GradesController : Controller
                 st.Gender,
                 st.MiddleName
             ))
-            .ToListAsync();
+            .ToList();
 
         return PartialView("_StudentTableRows", students);
     }
