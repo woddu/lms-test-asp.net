@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using lms_test1.Data;
 
@@ -10,9 +11,11 @@ using lms_test1.Data;
 namespace lms_test1.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250925143843_TeacherSubjetUniquePerSection")]
+    partial class TeacherSubjetUniquePerSection
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.8");
@@ -147,6 +150,22 @@ namespace lms_test1.Data.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("TeacherSubjectSections", b =>
+                {
+                    b.Property<int>("TeacherSubjectId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SectionId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("TeacherSubjectId", "SectionId");
+
+                    b.HasIndex("SectionId", "TeacherSubjectId")
+                        .IsUnique();
+
+                    b.ToTable("TeacherSubjectSections");
                 });
 
             modelBuilder.Entity("lms_test1.Areas.Identity.Data.LMSUser", b =>
@@ -616,25 +635,6 @@ namespace lms_test1.Data.Migrations
                     b.ToTable("TeacherSubjects");
                 });
 
-            modelBuilder.Entity("lms_test1.Models.TeacherSubjectSection", b =>
-                {
-                    b.Property<int>("TeacherSubjectId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SectionId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SubjectId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("TeacherSubjectId", "SectionId");
-
-                    b.HasIndex("SectionId", "SubjectId")
-                        .IsUnique();
-
-                    b.ToTable("TeacherSubjectSections");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -682,6 +682,21 @@ namespace lms_test1.Data.Migrations
                     b.HasOne("lms_test1.Areas.Identity.Data.LMSUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("TeacherSubjectSections", b =>
+                {
+                    b.HasOne("lms_test1.Models.Section", null)
+                        .WithMany()
+                        .HasForeignKey("SectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("lms_test1.Models.TeacherSubject", null)
+                        .WithMany()
+                        .HasForeignKey("TeacherSubjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -742,25 +757,6 @@ namespace lms_test1.Data.Migrations
                     b.Navigation("Teacher");
                 });
 
-            modelBuilder.Entity("lms_test1.Models.TeacherSubjectSection", b =>
-                {
-                    b.HasOne("lms_test1.Models.Section", "Section")
-                        .WithMany("TeacherSubjectSections")
-                        .HasForeignKey("SectionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("lms_test1.Models.TeacherSubject", "TeacherSubject")
-                        .WithMany("TeacherSubjectSections")
-                        .HasForeignKey("TeacherSubjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Section");
-
-                    b.Navigation("TeacherSubject");
-                });
-
             modelBuilder.Entity("lms_test1.Areas.Identity.Data.LMSUser", b =>
                 {
                     b.Navigation("AdvisorySection");
@@ -771,8 +767,6 @@ namespace lms_test1.Data.Migrations
             modelBuilder.Entity("lms_test1.Models.Section", b =>
                 {
                     b.Navigation("Students");
-
-                    b.Navigation("TeacherSubjectSections");
                 });
 
             modelBuilder.Entity("lms_test1.Models.Student", b =>
@@ -788,8 +782,6 @@ namespace lms_test1.Data.Migrations
             modelBuilder.Entity("lms_test1.Models.TeacherSubject", b =>
                 {
                     b.Navigation("Scores");
-
-                    b.Navigation("TeacherSubjectSections");
                 });
 #pragma warning restore 612, 618
         }
