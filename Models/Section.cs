@@ -11,5 +11,5 @@ public class Section
     public string? AdviserId { get; set; }
     public LMSUser? Adviser { get; set; } 
     public ICollection<Student>? Students { get; set; } = new List<Student>();
-    public ICollection<TeacherSubject>? TeacherSubjects { get; set; } = new List<TeacherSubject>(); 
+    public ICollection<TeacherSubjectSection> TeacherSubjectSections { get; set; } = new List<TeacherSubjectSection>();
 }

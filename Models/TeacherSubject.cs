@@ -16,7 +16,7 @@ public class TeacherSubject
     public Subject Subject { get; set; }
 
     [JsonIgnore]
-    public ICollection<Section> Sections { get; set; }
+    public ICollection<TeacherSubjectSection> TeacherSubjectSections { get; set; } = new List<TeacherSubjectSection>();
 
     public ICollection<Score> Scores { get; set; } = new List<Score>();
 
