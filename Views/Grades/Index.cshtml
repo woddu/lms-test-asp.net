@@ -11,19 +11,11 @@
     <h2 class="title">@ViewData["Title"]</h2>
 </header>
 
-<style>
-    .subject-end {
-        border-bottom: 1px solid #c9c7c7;
-        /* or any style you like */
-    }
-</style>
-
 <div class="prevent-overflow px-8">
     <table class="pure-table">
         <thead>
             <tr>
                 <th>Subject</th>
-                <th>Sections</th>
                 <th></th>
             </tr>
         </thead>
@@ -31,34 +23,21 @@
             @if (!Model.Any())
             {
                 <tr>
-                    <td colspan="4" style="text-align: center; font-style: italic; color: #888;">
+                    <td colspan="2" style="text-align: center; font-style: italic; color: #888;">
                         No subjects found.
                     </td>
                 </tr>
             }
             else
             {
-                @foreach (var item in Model)
+                @foreach (var teacherSubject in Model)
                 {
-                    var sectionCount = item.Sections?.Count() ?? 0;
-                    var index = 0;
-
-                    foreach (var Section in item.Sections!)
-                    {
-                        var isLast = (++index == sectionCount);
-
-                        <tr class="@(isLast ? "subject-end" : "")">
-                            @if (index == 1)
-                            {
-                                <td rowspan="@sectionCount">@Html.DisplayFor(modelItem => item.Subject.Name)</td>
-                            }
-                            <td>@Html.DisplayFor(modelItem => Section.Name)</td>
-                            <td>
-                                <a asp-area="" asp-controller="Grades" asp-action="SectionStudents"
-                                    asp-route-id="@Section.Id">Students</a>
-                            </td>
-                        </tr>
-                    }
+                    <tr>
+                        <td>@teacherSubject.Subject.Name</td>
+                        <td>
+                            <a asp-action="SubjectDetails" asp-route-teacherSubjectId="@teacherSubject.Id">Details</a>
+                        </td>
+                    </tr>
                 }
             }
         </tbody>
