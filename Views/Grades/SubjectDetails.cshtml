@@ -1,0 +1,128 @@
+@model lms_test1.Models.TeacherSubject
+
+@{
+    ViewData["Title"] = "Subject Details";
+}
+
+<header>
+    <div class="breadcrumbs mx-auto">
+        <a href="#0/">@ViewData["Title"]</a>
+    </div>
+
+    <h2 class="title">@ViewData["Title"] - @Model.Subject.Name</h2>
+</header>
+
+<div class="prevent-overflow px-8">    
+    <table class="pure-table">
+        <thead>
+            <tr>
+                @* up to #10 *@
+                <th>Quarter</th>
+                <th>Scores</th>
+                <th>#1</th>
+                <th>#2</th>
+                <th>#3</th>
+                <th>#4</th>
+                <th>#5</th>
+                <th>#6</th>
+                <th>#7</th>
+                <th>#8</th>
+                <th>#9</th>
+                <th>#10</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1st</td>
+                <td rowspan="2">Written Works</td>                
+                <td>@Model.WW1_First</td>
+                <td>@Model.WW2_First</td>
+                <td>@Model.WW3_First</td>
+                <td>@Model.WW4_First</td>
+                <td>@Model.WW5_First</td>
+                <td>@Model.WW6_First</td>
+                <td>@Model.WW7_First</td>
+                <td>@Model.WW8_First</td>
+                <td>@Model.WW9_First</td>
+                <td>@Model.WW10_First</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #c9c7c7;">
+                <td>2nd</td>              
+                <td>@Model.WW1_Second</td>
+                <td>@Model.WW2_Second</td>
+                <td>@Model.WW3_Second</td>
+                <td>@Model.WW4_Second</td>
+                <td>@Model.WW5_Second</td>
+                <td>@Model.WW6_Second</td>
+                <td>@Model.WW7_Second</td>
+                <td>@Model.WW8_Second</td>
+                <td>@Model.WW9_Second</td>
+                <td>@Model.WW10_Second</td>
+            </tr>
+            <tr>
+                <td>1st</td>
+                <td rowspan="2">Performance Task</td>
+                <td>@Model.PT1_First</td>
+                <td>@Model.PT2_First</td>
+                <td>@Model.PT3_First</td>
+                <td>@Model.PT4_First</td>
+                <td>@Model.PT5_First</td>
+                <td>@Model.PT6_First</td>
+                <td>@Model.PT7_First</td>
+                <td>@Model.PT8_First</td>
+                <td>@Model.PT9_First</td>
+                <td>@Model.PT10_First</td>                
+            </tr>
+            <tr>
+                <td>2nd</td>
+                <td>@Model.PT1_Second</td>
+                <td>@Model.PT2_Second</td>
+                <td>@Model.PT3_Second</td>
+                <td>@Model.PT4_Second</td>
+                <td>@Model.PT5_Second</td>
+                <td>@Model.PT6_Second</td>
+                <td>@Model.PT7_Second</td>
+                <td>@Model.PT8_Second</td>
+                <td>@Model.PT9_Second</td>
+                <td>@Model.PT10_Second</td>                
+            </tr>
+        </tbody>
+    </table>
+    <h3 style="margin: 1rem 0rem;">Sections</h3>
+    <table class="pure-table">
+        <thead>
+            <tr>
+                <th>Section Name</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="sectionTableBody">
+            @if (!Model.TeacherSubjectSections.Any())
+            {
+                <tr>
+                    <td colspan="2" style="text-align: center; font-style: italic; color: #888;">
+                        No sections found for this subject.
+                    </td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var tss in Model.TeacherSubjectSections)
+                {
+                    <tr>
+                        <td>@tss.Section.Name</td>
+                        <td>
+                            <a asp-action="SectionStudents" asp-controller="Grades" asp-route-teacherSubjectId="@Model.Id" asp-route-sectionId="@tss.Section.Id">View Students</a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        
+    </script>
+}
