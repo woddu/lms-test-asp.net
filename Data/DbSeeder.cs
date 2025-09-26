@@ -24,6 +24,7 @@ public static class DbSeeder
         // 2. Define users to seed
         var usersToSeed = new[]
         {
+
             new { UserName = "admin", Email = "admin@admin.com", FirstName = "System", MiddleName="Admin", LastName = "Administrator", Role = "Admin", Password = "@Admin2025" },
             new { UserName = "headteacher1", Email = "headteacher@school.com", FirstName = "Bea Rhumeyla", MiddleName="Sejera", LastName = "Talion", Role = "HeadTeacher", Password = "@Head2025" },
             new { UserName = "teacher1", Email = "teacher@school.com", FirstName = "Ron Neil", MiddleName="Navea", LastName = "Castro", Role = "Teacher", Password = "@Teach2025" },
@@ -183,11 +184,15 @@ public static class DbSeeder
         }
 
 
-        // Seed 10 Students
+        // Seed 100 Students
         if (!context.Students.Any())
         {
             // context.Students.RemoveRange(context.Students);
             // await context.SaveChangesAsync();
+
+            var sectionIds = context.Sections.Select(s => s.Id).ToList();
+            var random = new Random();
+
             var students = new List<Student>
             {
                 new Student { FirstName = "Juan", MiddleName = "Miguel", LastName = "Cruz", Gender = 'M' },
@@ -274,8 +279,35 @@ public static class DbSeeder
                 new Student { FirstName = "Ronald", MiddleName = "Patrick", LastName = "Dela Cruz", Gender = 'M' },
                 new Student { FirstName = "Janine", MiddleName = "Mae", LastName = "Mendoza", Gender = 'F' },
                 new Student { FirstName = "Arvin", MiddleName = "Paul", LastName = "Bautista", Gender = 'M' },
-                new Student { FirstName = "Rowella", MiddleName = "Joy", LastName = "Villanueva", Gender = 'F' }
+                new Student { FirstName = "Rowella", MiddleName = "Joy", LastName = "Villanueva", Gender = 'F' },
+                new Student { FirstName = "Leo", MiddleName = "Andres", LastName = "Martinez", Gender = 'M' },
+                new Student { FirstName = "Samantha", MiddleName = "Claire", LastName = "Gonzales", Gender = 'F' },
+                new Student { FirstName = "Ivan", MiddleName = "Paul", LastName = "Santiago", Gender = 'M' },
+                new Student { FirstName = "Therese", MiddleName = "Anne", LastName = "Cortez", Gender = 'F' },
+                new Student { FirstName = "Arnold", MiddleName = "James", LastName = "Villanueva", Gender = 'M' },
+                new Student { FirstName = "Louise", MiddleName = "Marie", LastName = "Domingo", Gender = 'F' },
+                new Student { FirstName = "Christian", MiddleName = "Mark", LastName = "Torres", Gender = 'M' },
+                new Student { FirstName = "Angela", MiddleName = "Rose", LastName = "Castro", Gender = 'F' },
+                new Student { FirstName = "Jerald", MiddleName = "Anthony", LastName = "Reyes", Gender = 'M' },
+                new Student { FirstName = "Clarisse", MiddleName = "Joy", LastName = "Mendoza", Gender = 'F' },
+                new Student { FirstName = "Roderick", MiddleName = "Luis", LastName = "Aquino", Gender = 'M' },
+                new Student { FirstName = "Marianne", MiddleName = "Mae", LastName = "Lopez", Gender = 'F' },
+                new Student { FirstName = "Xavier", MiddleName = "Paul", LastName = "Santos", Gender = 'M' },
+                new Student { FirstName = "Bea", MiddleName = "Anne", LastName = "Villamor", Gender = 'F' },
+                new Student { FirstName = "Allan", MiddleName = "John", LastName = "Navarro", Gender = 'M' },
+                new Student { FirstName = "Czarina", MiddleName = "Mae", LastName = "Garcia", Gender = 'F' },
+                new Student { FirstName = "Dominic", MiddleName = "James", LastName = "Ramos", Gender = 'M' },
+                new Student { FirstName = "Elaine", MiddleName = "Rose", LastName = "Bautista", Gender = 'F' },
+                new Student { FirstName = "Patrick", MiddleName = "Joseph", LastName = "Fernandez", Gender = 'M' },
+                new Student { FirstName = "Joanna", MiddleName = "Claire", LastName = "Cruz", Gender = 'F' }
             };
+
+            // Assign each student to a random section
+            foreach (var student in students)
+            {
+                student.SectionId = sectionIds[random.Next(sectionIds.Count)];
+            }
+
             context.Students.AddRange(students);
             await context.SaveChangesAsync();
         }
