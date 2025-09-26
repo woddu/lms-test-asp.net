@@ -13,11 +13,11 @@
     <h2 class="title">@ViewData["Title"]</h2>
 </header>
 
-<div class="prevent-overflow px-8">    
+<div class="prevent-overflow px-8">  
+    <h3 style="margin: 1rem 0rem;">Highest Scores</h3>      
     <table class="pure-table">
         <thead>
             <tr>
-                @* up to #10 *@
                 <th>Quarter</th>
                 <th>Scores</th>
                 <th>#1</th>
@@ -34,8 +34,8 @@
         </thead>
         <tbody>
             <tr>
-                <td>1st</td>
-                <td rowspan="2">Written Works</td>                
+                <td rowspan="3">1st</td>                
+                <td>Written Works</td>
                 <td>@Model.WW1_First</td>
                 <td>@Model.WW2_First</td>
                 <td>@Model.WW3_First</td>
@@ -47,8 +47,26 @@
                 <td>@Model.WW9_First</td>
                 <td>@Model.WW10_First</td>
             </tr>
-            <tr style="border-bottom: 1px solid #c9c7c7;">
-                <td>2nd</td>              
+            <tr>
+                <td>Performance Tasks</td>
+                <td>@Model.PT1_First</td>
+                <td>@Model.PT2_First</td>
+                <td>@Model.PT3_First</td>
+                <td>@Model.PT4_First</td>
+                <td>@Model.PT5_First</td>
+                <td>@Model.PT6_First</td>
+                <td>@Model.PT7_First</td>
+                <td>@Model.PT8_First</td>
+                <td>@Model.PT9_First</td>
+                <td>@Model.PT10_First</td>                
+            </tr>
+            <tr style="border-bottom: 1px solid #c9c7c7;">                
+                <td>Exam</td>
+                <td colspan="10">@Model.Exam_First</td>
+            </tr>
+            <tr>
+                <td rowspan="3">2nd</td>
+                <td>Written Works</td>
                 <td>@Model.WW1_Second</td>
                 <td>@Model.WW2_Second</td>
                 <td>@Model.WW3_Second</td>
@@ -61,21 +79,7 @@
                 <td>@Model.WW10_Second</td>
             </tr>
             <tr>
-                <td>1st</td>
-                <td rowspan="2">Performance Task</td>
-                <td>@Model.PT1_First</td>
-                <td>@Model.PT2_First</td>
-                <td>@Model.PT3_First</td>
-                <td>@Model.PT4_First</td>
-                <td>@Model.PT5_First</td>
-                <td>@Model.PT6_First</td>
-                <td>@Model.PT7_First</td>
-                <td>@Model.PT8_First</td>
-                <td>@Model.PT9_First</td>
-                <td>@Model.PT10_First</td>                
-            </tr>
-            <tr>
-                <td>2nd</td>
+                <td>Performance Tasks</td>
                 <td>@Model.PT1_Second</td>
                 <td>@Model.PT2_Second</td>
                 <td>@Model.PT3_Second</td>
@@ -86,6 +90,10 @@
                 <td>@Model.PT8_Second</td>
                 <td>@Model.PT9_Second</td>
                 <td>@Model.PT10_Second</td>                
+            </tr>
+            <tr>
+                <td>Exam</td>
+                <td colspan="10">@Model.Exam_Second</td>
             </tr>
         </tbody>
     </table>
