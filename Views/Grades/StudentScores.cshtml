@@ -1,0 +1,21 @@
+@model lms_test1.Models.ViewModels.Grade.StudentScoresViewModel
+
+@{
+    ViewData["Title"] = "Scores of " + Model.Student.LastName + ", " + Model.Student.FirstName;
+}
+
+<header>
+    <div class="breadcrumbs mx-auto">
+        <a asp-controller="Grades" asp-action="Index">My Subjects</a> >
+        <a asp-controller="Grades" asp-action="SubjectDetails" asp-route-teacherSubjectId="@Model.TeacherSubject.Id">
+            @Model.TeacherSubject.Subject.Name Details 
+        </a> >
+        <a asp-controller="Grades" asp-action="SectionStudents" asp-route-teacherSubjectId="@Model.TeacherSubject.Id" asp-route-sectionId="@Model.TeacherSubject.TeacherSubjectSections.First().Section.Id">
+            Students in @Model.TeacherSubject.TeacherSubjectSections.First().Section.Name  
+        </a> >
+        <span>@ViewData["Title"]</span>
+    </div>
+
+    <h2 class="title">@ViewData["Title"] in @Model.TeacherSubject.Subject.Name</h2>
+
+</header>
