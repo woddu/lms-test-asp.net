@@ -12,6 +12,7 @@ public class ApplicationDbContext : IdentityDbContext<LMSUser>
     public DbSet<Subject> Subjects { get; set; }
     public DbSet<Score> Scores { get; set; }
     public DbSet<TeacherSubject> TeacherSubjects { get; set; }
+    public DbSet<TeacherSubjectSection> TeacherSubjectSections { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
@@ -43,11 +44,24 @@ public class ApplicationDbContext : IdentityDbContext<LMSUser>
             .HasIndex(ts => new { ts.TeacherId, ts.SubjectId })
             .IsUnique();
 
-        // TeacherSubject <-> Section
-        builder.Entity<TeacherSubject>()
-            .HasMany(ts => ts.Sections)
-            .WithMany(s => s.TeacherSubjects)
-            .UsingEntity(j => j.ToTable("TeacherSubjectSections"));
+        builder.Entity<TeacherSubjectSection>()
+            .HasKey(tss => new { tss.TeacherSubjectId, tss.SectionId });
+
+        builder.Entity<TeacherSubjectSection>()
+            .HasOne(tss => tss.TeacherSubject)
+            .WithMany(ts => ts.TeacherSubjectSections)
+            .HasForeignKey(tss => tss.TeacherSubjectId);
+
+        builder.Entity<TeacherSubjectSection>()
+            .HasOne(tss => tss.Section)
+            .WithMany(s => s.TeacherSubjectSections)
+            .HasForeignKey(tss => tss.SectionId);
+
+        // Enforce uniqueness: one Subject per Section
+        builder.Entity<TeacherSubjectSection>()
+            .HasIndex(tss => new { tss.SectionId, tss.SubjectId })
+            .IsUnique();
+
 
 
         // Score → Student
