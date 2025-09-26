@@ -38,8 +38,9 @@ public class SectionsController : Controller
 
         var section = await _context.Sections
             .Include(s => s.Students)
-            .Include(s => s.TeacherSubjects!)
-                .ThenInclude(ts => ts.Subject)
+            .Include(s => s.TeacherSubjectSections!)
+                .ThenInclude(tss => tss.TeacherSubject)
+                    .ThenInclude(ts => ts.Subject)
             .FirstOrDefaultAsync(m => m.Id == id);
 
         if (section == null)
@@ -61,8 +62,8 @@ public class SectionsController : Controller
                 .OrderBy(s => s.LastName)
                 .ThenBy(s => s.FirstName)
                 .ToList(),
-            Subjects = section.TeacherSubjects!
-                .Select(ts => ts.Subject)
+            Subjects = section.TeacherSubjectSections!
+                .Select(tss => tss.TeacherSubject.Subject)
                 .ToList()
         };
 

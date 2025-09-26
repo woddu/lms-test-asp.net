@@ -36,10 +36,11 @@ namespace lms_test1.Controllers
             }
 
             var subject = await _context.Subjects
-                .Include(s => s.TeacherSubjects)
+                .Include(s => s.TeacherSubjects!)
                     .ThenInclude(ts => ts.Teacher)
-                .Include(s => s.TeacherSubjects)
-                    .ThenInclude(ts => ts.Sections)
+                .Include(s => s.TeacherSubjects!)
+                    .ThenInclude(ts => ts.TeacherSubjectSections)
+                        .ThenInclude(tss => tss.Section)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (subject == null)
@@ -50,7 +51,7 @@ namespace lms_test1.Controllers
             var subjectDetails = new Models.ViewModels.Subject.SubjectDetails
             {
                 Subject = subject,
-                Teachers = subject.TeacherSubjects
+                Teachers = subject.TeacherSubjects!
                     .Select(ts => new Models.DTO.Teacher.TeacherInListDTO(
                         ts.Teacher.Id,
                         ts.Teacher.LastName,
@@ -59,7 +60,8 @@ namespace lms_test1.Controllers
                     ))
                     .ToList(),
                 Sections = subject.TeacherSubjects
-                    .SelectMany(ts => ts.Sections)
+                    .SelectMany(ts => ts.TeacherSubjectSections)
+                        .Select(tss => tss.Section)
                     .ToList()
             };
 
