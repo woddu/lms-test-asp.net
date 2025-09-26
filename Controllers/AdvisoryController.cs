@@ -43,10 +43,10 @@ public class AdvisoryController : Controller
             .Include(st => st.Scores!)
                 .ThenInclude(sc => sc.TeacherSubject)
             .Where(st => st.SectionId == id)
-            .Select(st => new Models.DTO.Student.StudentInListDTO(
+            .Select(st => new StudentInListDTO(
                 st.Id,
-                st.LastName,
                 st.FirstName,
+                st.LastName,
                 st.Gender,
                 st.MiddleName ?? ""
             ))
