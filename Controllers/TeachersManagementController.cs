@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using lms_test1.Models.ViewModels.TeachersManagement;
 using Microsoft.AspNetCore.Authorization;
 using lms_test1.Models;
+using Microsoft.Data.Sqlite;
 
 namespace lms_test1.Controllers;
 
@@ -49,23 +50,19 @@ public class TeachersManagementController : Controller
     // GET: Teachers/Details/5
     public async Task<IActionResult> Details(string id)
     {
-        if (id == null)
-        {
-            return NotFound();
-        }
+        if (id == null) return NotFound();
+        
 
         var userEntity = await _userManager.Users
             .Include(u => u.AdvisorySection)
             .Include(u => u.TeacherSubjects)
                 .ThenInclude(ts => ts.Subject)
             .Include(u => u.TeacherSubjects)
-                .ThenInclude(ts => ts.Sections)
+                .ThenInclude(ts => ts.TeacherSubjectSections)
+                    .ThenInclude(tss => tss.Section)
             .FirstOrDefaultAsync(u => u.Id == id);
 
-        if (userEntity == null)
-        {
-            return NotFound();
-        }
+        if (userEntity == null) return NotFound();
 
         var user = new LMSUserDetailViewModel
         {
@@ -80,7 +77,7 @@ public class TeachersManagementController : Controller
             .Select(ts => new TeacherSubjectDetail
             {
                 SubjectName = ts.Subject.Name,
-                SectionNames = ts.Sections.Select(s => s.Name).ToList()
+                SectionNames = ts.TeacherSubjectSections.Select(tss => tss.Section.Name).ToList()
             })
             .ToList()
         };
@@ -140,11 +137,11 @@ public class TeachersManagementController : Controller
             .Include(u => u.TeacherSubjects)
                 .ThenInclude(ts => ts.Subject)
             .Include(u => u.TeacherSubjects)
-                .ThenInclude(ts => ts.Sections)
+                .ThenInclude(ts => ts.TeacherSubjectSections)
+                    .ThenInclude(tss => tss.Section)
             .FirstOrDefaultAsync(u => u.Id == id);
 
-        if (user == null)
-            return NotFound();
+        if (user == null) return NotFound();
 
         var groupedSubjects = await _context.Subjects
             .OrderBy(s => s.Track)
@@ -159,21 +156,9 @@ public class TeachersManagementController : Controller
             .GroupBy(sec => sec.YearLevel)
             .ToListAsync();
 
-        //get role of user
         var userRoles = await _userManager.GetRolesAsync(user);
 
-        //get roles from database
         var roles = await _context.Roles.ToListAsync();
-
-        // var allSections = await _context.Sections
-        //     .OrderBy(sec => sec.YearLevel)
-        //     .ThenBy(sec => sec.Name)
-        //     .GroupBy(sec => sec.YearLevel)
-        //     .Select(g => new {
-        //         year = g.Key,
-        //         sections = g.Select(s => new { id = s.Id, name = s.Name }).ToList()
-        //     })
-        //     .ToListAsync();
 
         var vm = new AssignTeacherViewModel
         {
@@ -189,21 +174,32 @@ public class TeachersManagementController : Controller
             SubjectSections = user.TeacherSubjects.Select(ts => new SubjectSectionSelection
             {
                 SubjectId = ts.SubjectId,
-                SectionIds = ts.Sections.Select(s => s.Id).ToList()
+                SectionIds = ts.TeacherSubjectSections.Select(tss => tss.Section.Id).ToList()
             }).ToList()
         };
 
         var subjects = await _context.Subjects.ToListAsync();
-        var sections = await _context.Sections.ToListAsync();
+        var sections = await _context.Sections
+            .Include(s => s.TeacherSubjectSections)
+                .ThenInclude(tss => tss.TeacherSubject)
+                    .ThenInclude(ts => ts.Subject)
+            .ToListAsync();
 
         var subjectSectionOptions = subjects.ToDictionary(
             subj => subj.Id,
             subj => sections
-                .Where(sec => IsSectionAllowedForSubject(subj, sec))
+                .Where(sec =>
+                    IsSectionAllowedForSubject(subj, sec) &&
+                    !sec.TeacherSubjectSections.Any(tss =>
+                        tss.TeacherSubject.SubjectId == subj.Id &&
+                        tss.TeacherSubject.TeacherId != user.Id // exclude if another teacher already has it
+                    )
+                )
                 .OrderBy(sec => sec.YearLevel)
                 .ThenBy(sec => sec.Name)
                 .ToList()
         );
+
 
         ViewData["AllSections"] = subjectSectionOptions;
         ViewData["AllSectionsGrouped"] = groupedSections;
@@ -253,8 +249,7 @@ public class TeachersManagementController : Controller
         var user = await _userManager.Users
             .FirstOrDefaultAsync(u => u.Id == model.TeacherId);
 
-        if (user == null)
-            return NotFound();
+        if (user == null) return NotFound();
 
         await using var transaction = await _context.Database.BeginTransactionAsync();
 
@@ -269,6 +264,7 @@ public class TeachersManagementController : Controller
                 {
                     foreach (var error in removeResult.Errors)
                         ModelState.AddModelError("", error.Description);
+                    Console.WriteLine("Failed to remove existing roles.");
                     return View(model);
                 }
             }
@@ -278,6 +274,7 @@ public class TeachersManagementController : Controller
             {
                 foreach (var error in addResult.Errors)
                     ModelState.AddModelError("", error.Description);
+                Console.WriteLine("Failed to add new role.");
                 return View(model);
             }
         }
@@ -289,7 +286,8 @@ public class TeachersManagementController : Controller
 
         // Get all TeacherSubjects currently in DB for this teacher
         var existingTeacherSubjects = await _context.TeacherSubjects
-            .Include(ts => ts.Sections)
+            .Include(ts => ts.TeacherSubjectSections)
+                .ThenInclude(tss => tss.Section)
             .Where(ts => ts.TeacherId == model.TeacherId)
             .ToListAsync();
 
@@ -314,12 +312,12 @@ public class TeachersManagementController : Controller
             if (existing != null)
             {
                 // Compare current vs new section IDs
-                var currentIds = existing.Sections.Select(s => s.Id).ToHashSet();
+                var currentIds = existing.TeacherSubjectSections.Select(s => s.Section.Id).ToHashSet();
                 var newIds = subjectSelection.SectionIds.ToHashSet();
 
                 if (!currentIds.SetEquals(newIds))
                 {
-                    existing.Sections.Clear();
+                    existing.TeacherSubjectSections.Clear();
 
                     var sections = await _context.Sections
                         .Where(s => newIds.Contains(s.Id))
@@ -327,7 +325,11 @@ public class TeachersManagementController : Controller
 
                     foreach (var section in sections)
                     {
-                        existing.Sections.Add(section);
+                        existing.TeacherSubjectSections.Add(new TeacherSubjectSection
+                        {
+                            Section = section,
+                            SubjectId = subjectSelection.SubjectId,
+                        });
                     }
                 }
             }
@@ -342,16 +344,85 @@ public class TeachersManagementController : Controller
                 {
                     TeacherId = model.TeacherId,
                     SubjectId = subjectSelection.SubjectId,
-                    Sections = sections
+                    TeacherSubjectSections = sections.Select(s => new TeacherSubjectSection
+                    {
+                        Section = s,
+                        SubjectId = subjectSelection.SubjectId,
+                    }).ToList()
                 };
 
                 _context.TeacherSubjects.Add(teacherSubject);
             }
         }
 
-        await _userManager.UpdateAsync(user);
-        await _context.SaveChangesAsync();
-        await transaction.CommitAsync();
+
+        try
+        {
+            await _userManager.UpdateAsync(user);
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
+        }
+        catch (DbUpdateException ex) when (ex.InnerException is SqliteException sqliteEx &&
+                                        sqliteEx.SqliteErrorCode == 19)
+        {
+            // Handle unique constraint violation
+            
+            await transaction.RollbackAsync();
+
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            var roles = await _context.Roles.ToListAsync();
+
+            var user1 = await _userManager.Users
+                .Include(u => u.AdvisorySection)
+                .Include(u => u.TeacherSubjects)
+                    .ThenInclude(ts => ts.Subject)
+                .Include(u => u.TeacherSubjects)
+                    .ThenInclude(ts => ts.TeacherSubjectSections)
+                        .ThenInclude(tss => tss.Section)
+                .FirstOrDefaultAsync(u => u.Id == model.TeacherId);
+            var groupedSubjects = await _context.Subjects
+                .OrderBy(s => s.Track)
+                .ThenBy(s => s.Name)
+                .GroupBy(s => s.Track)
+                .ToListAsync();
+
+            var groupedSections = await _context.Sections
+                .Where(sec => sec.AdviserId == null || sec.AdviserId == user1!.Id)
+                .OrderBy(sec => sec.YearLevel)
+                .ThenBy(sec => sec.Name)
+                .GroupBy(sec => sec.YearLevel)
+                .ToListAsync();                            
+
+            var subjects = await _context.Subjects.ToListAsync();
+            var sections = await _context.Sections
+                .ToListAsync();
+
+            var subjectSectionOptions = subjects.ToDictionary(
+                subj => subj.Id,
+                subj => sections
+                    .Where(sec =>
+                        IsSectionAllowedForSubject(subj, sec) &&
+                        !sec.TeacherSubjectSections.Any(tss =>
+                            tss.TeacherSubject.SubjectId == subj.Id &&
+                            tss.TeacherSubject.TeacherId != user.Id // exclude if another teacher already has it
+                        )
+                    )
+                    .OrderBy(sec => sec.YearLevel)
+                    .ThenBy(sec => sec.Name)
+                    .ToList()
+            );
+
+
+            ViewData["AllSections"] = subjectSectionOptions;
+            ViewData["AllSectionsGrouped"] = groupedSections;
+            ViewData["AllSubjectsGrouped"] = groupedSubjects;
+            model.Roles = roles.Select(r => r.Name).ToList();
+            model.Role = userRoles.FirstOrDefault() ?? "";
+
+            ModelState.AddModelError("", $"Section {sections.Where(s => s.Id == model.SubjectSections.FirstOrDefault()?.SectionIds.FirstOrDefault()).Select(s => s.Name).FirstOrDefault()} already has that {subjects.Where(s => s.Id == model.SubjectSections.FirstOrDefault()?.SubjectId).Select(s => s.Name).FirstOrDefault()} assigned.");
+            return View(model);
+        }
 
         return RedirectToAction("Index");
     }
@@ -370,10 +441,8 @@ public class TeachersManagementController : Controller
                 .ThenInclude(ts => ts.Subject)
             .FirstOrDefaultAsync(u => u.Id == id);
 
-        if (lMSUser == null)
-        {
-            return NotFound();
-        }
+        if (lMSUser == null) return NotFound();
+        
 
         var viewModel = new LMSUserEditViewModel
         {
@@ -412,8 +481,7 @@ public class TeachersManagementController : Controller
     public async Task<IActionResult> Edit(LMSUserEditViewModel model)
     {
         var user = await _userManager.FindByIdAsync(model.Id);
-        if (user == null)
-            return NotFound();
+        if (user == null) return NotFound();
 
         user.FirstName = model.FirstName;
         user.LastName = model.LastName;
@@ -437,23 +505,19 @@ public class TeachersManagementController : Controller
     // GET: Teachers/Delete/5
     public async Task<IActionResult> Delete(string id)
     {
-        if (id == null)
-        {
-            return NotFound();
-        }
-
+        if (id == null) return NotFound();
+        
         var userEntity = await _userManager.Users
             .Include(u => u.AdvisorySection)
             .Include(u => u.TeacherSubjects)
                 .ThenInclude(ts => ts.Subject)
             .Include(u => u.TeacherSubjects)
-                .ThenInclude(ts => ts.Sections)
+                .ThenInclude(ts => ts.TeacherSubjectSections)
+                    .ThenInclude(tss => tss.Section)
             .FirstOrDefaultAsync(u => u.Id == id);
 
-        if (userEntity == null)
-        {
-            return NotFound();
-        }
+        if (userEntity == null) return NotFound();
+        
 
         var user = new LMSUserDetailViewModel
         {
@@ -468,7 +532,7 @@ public class TeachersManagementController : Controller
             .Select(ts => new TeacherSubjectDetail
             {
                 SubjectName = ts.Subject.Name,
-                SectionNames = ts.Sections.Select(s => s.Name).ToList()
+                SectionNames = ts.TeacherSubjectSections.Select(tss => tss.Section.Name).ToList()
             })
             .ToList()
         };
@@ -482,8 +546,8 @@ public class TeachersManagementController : Controller
     public async Task<IActionResult> DeleteConfirmed(string id)
     {
         var user = await _userManager.FindByIdAsync(id);
-        if (user == null)
-            return NotFound();
+        if (user == null) return NotFound();
+
         var result = await _userManager.DeleteAsync(user);
 
         if (result.Succeeded)
