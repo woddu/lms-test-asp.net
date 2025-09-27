@@ -13,8 +13,8 @@
     <h2 class="title">@ViewData["Title"]</h2>
 </header>
 
-<div class="prevent-overflow px-8">  
-    <h3 style="margin: 1rem 0rem;">Highest Scores</h3>      
+<div class="prevent-overflow px-8">
+    <h3 style="margin: 1rem 0rem;">Highest Scores</h3>
     <table class="pure-table">
         <thead>
             <tr>
@@ -34,69 +34,159 @@
         </thead>
         <tbody>
             <tr>
-                <td rowspan="3">1st</td>                
+                <td rowspan="3">1st</td>
                 <td>Written Works</td>
-                <td>@Model.WW1_First</td>
-                <td>@Model.WW2_First</td>
-                <td>@Model.WW3_First</td>
-                <td>@Model.WW4_First</td>
-                <td>@Model.WW5_First</td>
-                <td>@Model.WW6_First</td>
-                <td>@Model.WW7_First</td>
-                <td>@Model.WW8_First</td>
-                <td>@Model.WW9_First</td>
-                <td>@Model.WW10_First</td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW1_First" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW2_First" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW3_First" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW4_First" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW5_First" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW6_First" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW7_First" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW8_First" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW9_First" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW10_First" />
+                </td>
             </tr>
             <tr>
                 <td>Performance Tasks</td>
-                <td>@Model.PT1_First</td>
-                <td>@Model.PT2_First</td>
-                <td>@Model.PT3_First</td>
-                <td>@Model.PT4_First</td>
-                <td>@Model.PT5_First</td>
-                <td>@Model.PT6_First</td>
-                <td>@Model.PT7_First</td>
-                <td>@Model.PT8_First</td>
-                <td>@Model.PT9_First</td>
-                <td>@Model.PT10_First</td>                
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT1_First" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT2_First" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT3_First" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT4_First" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT5_First" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT6_First" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT7_First" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT8_First" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT9_First" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT10_First" />
+                </td>
             </tr>
-            <tr style="border-bottom: 1px solid #c9c7c7;">                
+            <tr style="border-bottom: 1px solid #c9c7c7;">
                 <td>Exam</td>
-                <td colspan="10">@Model.Exam_First</td>
+                <td colspan="10">
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="Exam_First" />
+                </td>
             </tr>
             <tr>
                 <td rowspan="3">2nd</td>
                 <td>Written Works</td>
-                <td>@Model.WW1_Second</td>
-                <td>@Model.WW2_Second</td>
-                <td>@Model.WW3_Second</td>
-                <td>@Model.WW4_Second</td>
-                <td>@Model.WW5_Second</td>
-                <td>@Model.WW6_Second</td>
-                <td>@Model.WW7_Second</td>
-                <td>@Model.WW8_Second</td>
-                <td>@Model.WW9_Second</td>
-                <td>@Model.WW10_Second</td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW1_Second" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW2_Second" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW3_Second" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW4_Second" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW5_Second" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW6_Second" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW7_Second" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW8_Second" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW9_Second" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW10_Second" />
+                </td>
             </tr>
             <tr>
                 <td>Performance Tasks</td>
-                <td>@Model.PT1_Second</td>
-                <td>@Model.PT2_Second</td>
-                <td>@Model.PT3_Second</td>
-                <td>@Model.PT4_Second</td>
-                <td>@Model.PT5_Second</td>
-                <td>@Model.PT6_Second</td>
-                <td>@Model.PT7_Second</td>
-                <td>@Model.PT8_Second</td>
-                <td>@Model.PT9_Second</td>
-                <td>@Model.PT10_Second</td>                
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT1_Second" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT2_Second" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT3_Second" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT4_Second" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT5_Second" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT6_Second" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT7_Second" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT8_Second" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT9_Second" />
+                </td>
+                <td>
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT10_Second" />
+                </td>
             </tr>
             <tr>
                 <td>Exam</td>
-                <td colspan="10">@Model.Exam_Second</td>
+                <td colspan="10">
+                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="Exam_Second" />
+                </td>
             </tr>
         </tbody>
     </table>
+    <button id="saveBtn" disabled class="pure-button pure-button-primary" asp-controller="Grades"
+        asp-action="SaveSubjectScoresChanges" style="margin-top: 1rem;">Save Changes</button>
+    <form id="scoresForm" style="display: hidden;">
+        @Html.AntiForgeryToken()
+    </form>
+
     <h3 style="margin: 1rem 0rem;">Sections</h3>
     <table class="pure-table">
         <thead>
@@ -121,7 +211,8 @@
                     <tr>
                         <td>@tss.Section.Name</td>
                         <td>
-                            <a asp-action="SectionStudents" asp-controller="Grades" asp-route-teacherSubjectId="@Model.Id" asp-route-sectionId="@tss.Section.Id">View Students</a>
+                            <a asp-action="SectionStudents" asp-controller="Grades" asp-route-teacherSubjectId="@Model.Id"
+                                asp-route-sectionId="@tss.Section.Id">View Students</a>
                         </td>
                     </tr>
                 }
@@ -132,6 +223,89 @@
 
 @section Scripts {
     <script>
-        
+        const model = @Html.Raw(Json.Serialize(@Model))
+
+        function hasChanges() {
+            let changed = false;
+            $("input[type='number']").each(function () {
+                const fieldName = this.name; // matches asp-for property
+                const currentValue = this.value;
+                const originalValue = model[fieldName.charAt(0).toLowerCase() + fieldName.slice(1)];
+                    
+                // normalize null/undefined and string vs number
+                if (currentValue !== String(originalValue ?? "")) {
+                    changed = true;
+                    return false; // break loop
+                }
+            });
+            return changed;
+        } 
+
+        // Enable save button only if something changed
+        $("input[type='number']").on("input", function () {
+            if (hasChanges()) {
+                $("#saveBtn").prop("disabled", false);
+            } else {
+                $("#saveBtn").prop("disabled", true);
+            }
+        });
+
+        // Warn before leaving if there are changes
+        $(window).on("beforeunload", function () {
+            if (hasChanges()) {
+                return "You have unsaved changes!";
+            }
+        });
+
+        function getChangedFields() {
+            const changes = {};
+            $("input[type='number']").each(function () {
+                const fieldName = this.name;
+                const currentValue = this.value;
+                const originalValue = model[fieldName.charAt(0).toLowerCase() + fieldName.slice(1)];
+
+                if (currentValue !== String(originalValue ?? "")) {
+                    changes[fieldName.charAt(0).toLowerCase() + fieldName.slice(1)] = currentValue;
+                }
+            });
+            return changes;
+        }
+
+
+        $("#saveBtn").click(function (e) {
+            e.preventDefault();
+
+            const changes = getChangedFields()
+
+            Object.keys(changes).forEach(key => {
+                model[key] = changes[key];
+            });
+
+            var token = $('input[name="__RequestVerificationToken"]').val();
+
+            $.ajax({
+                url: '@Url.Action("SaveSubjectScoresChanges", "Grades")',
+                type: 'POST',
+                contentType: 'application/json',
+                headers: { 'RequestVerificationToken': token },
+                data: JSON.stringify(model),
+                success: function (response) {
+                    $("input[type='number']").each(function () {
+                        initialValues[this.name] = this.value;
+                    });
+                    alert("Changes saved successfully!");
+
+                    if (response.redirectUrl) {
+                        window.location.href = response.redirectUrl;
+                    }
+                    // reset initial values so button disables again
+                    $("#saveBtn").prop("disabled", true);
+                },
+                error: function (xhr) {
+                    alert("Error saving changes: " + xhr.responseText);
+                }
+            });
+        });
+
     </script>
 }
