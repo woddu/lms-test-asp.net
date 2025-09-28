@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace lms_test1.Models;
 
@@ -18,6 +19,8 @@ public class Student
     public string? Address { get; set; }
     
     public int? SectionId { get; set; }
+    [JsonIgnore]
     public Section? Section { get; set; }
+    [JsonIgnore]
     public ICollection<Score>? Scores { get; set; } = new List<Score>();
 }

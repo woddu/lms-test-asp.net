@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using lms_test1.Areas.Identity.Data;
 
 namespace lms_test1.Models;
@@ -11,7 +12,8 @@ public class Score
     public required Student Student { get; set; }
 
     public required int TeacherSubjectId { get; set; }
-    public required TeacherSubject TeacherSubject { get; set; }
+    [JsonIgnore]
+    public TeacherSubject TeacherSubject { get; set; }
 
     // Written Works
     public double WW1_First { get; set; } = 0;
