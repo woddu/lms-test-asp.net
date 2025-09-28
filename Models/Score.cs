@@ -155,13 +155,42 @@ public class Score
     {
         get
         {
-            double wwTotal = WW1_First + WW2_First + WW3_First + WW4_First + WW5_First + WW6_First + WW7_First + WW8_First + WW9_First + WW10_First;
-            double ptTotal = PT1_First + PT2_First + PT3_First + PT4_First + PT5_First + PT6_First + PT7_First + PT8_First + PT9_First + PT10_First;
+            
+            double wwTotal = 0;
+            double ptTotal = 0;
+            
+            for (int i = 1; i <= 10; i++)
+            {
+                foreach (var prop in TeacherSubject.GetType().GetProperties())
+                {
+                    if (prop.Name == $"WW{i}_First" && (double)prop.GetValue(TeacherSubject)! != 0)
+                    {
+                        foreach (var sProp in this.GetType().GetProperties())
+                        {
+                            if (sProp.Name == $"WW{i}_First" && (double?)sProp.GetValue(this) != 0)
+                            {
+                                wwTotal += (double)sProp.GetValue(this)!;
+                            }
+                        }
+                    }
+                    if (prop.Name == $"PT{i}_First" && (double)prop.GetValue(TeacherSubject)! != 0)
+                    {
+                        foreach (var sProp in this.GetType().GetProperties())
+                        {
+                            if (sProp.Name == $"PT{i}_First" && (double)sProp.GetValue(this)! != 0)
+                            {
+                                ptTotal += (double)sProp.GetValue(this)!;
+                            }
+                        }
+                    }
+                }
+            }  
 
-            double wwWeighted = wwTotal / (TeacherSubject?.WWTotal_First ?? 1) * 100 / WWPercentage;
-            double ptWeighted = ptTotal / (TeacherSubject?.PTTotal_First ?? 1) * 100 / PTPercentage;
-            double examTotal = TeacherSubject?.Exam_First ?? 1;
-            double examWeighted = Exam_First / (examTotal < 1 ? 1 : examTotal) * 100 / ExamPercentage;
+            double wwWeighted = wwTotal / TeacherSubject.WWTotal_First * 100 * WWPercentage;
+            double ptWeighted = ptTotal / TeacherSubject.PTTotal_First * 100 * PTPercentage;
+            double examWeighted = TeacherSubject.Exam_First > 0
+                ? Exam_First / TeacherSubject.Exam_First * 100 * ExamPercentage
+                : 0;
 
             double initialGrade = wwWeighted + ptWeighted + examWeighted;
 
@@ -174,13 +203,42 @@ public class Score
     {
         get
         {
-            double wwTotal = WW1_Second + WW2_Second + WW3_Second + WW4_Second + WW5_Second + WW6_Second + WW7_Second + WW8_Second + WW9_Second + WW10_Second;
-            double ptTotal = PT1_Second + PT2_Second + PT3_Second + PT4_Second + PT5_Second + PT6_Second + PT7_Second + PT8_Second + PT9_Second + PT10_Second;
+            
+            double wwTotal = 0;
+            double ptTotal = 0;
+            
+            for (int i = 1; i <= 10; i++)
+            {
+                foreach (var prop in TeacherSubject.GetType().GetProperties())
+                {
+                    if (prop.Name == $"WW{i}_Second" && (double)prop.GetValue(TeacherSubject)! != 0)
+                    {
+                        foreach (var sProp in this.GetType().GetProperties())
+                        {
+                            if (sProp.Name == $"WW{i}_Second" && (double?)sProp.GetValue(this) != 0)
+                            {
+                                wwTotal += (double)sProp.GetValue(this)!;
+                            }
+                        }
+                    }
+                    if (prop.Name == $"PT{i}_Second" && (double)prop.GetValue(TeacherSubject)! != 0)
+                    {
+                        foreach (var sProp in this.GetType().GetProperties())
+                        {
+                            if (sProp.Name == $"PT{i}_Second" && (double)sProp.GetValue(this)! != 0)
+                            {
+                                ptTotal += (double)sProp.GetValue(this)!;
+                            }
+                        }
+                    }
+                }
+            }  
 
-            double wwWeighted = wwTotal / (TeacherSubject?.WWTotal_Second ?? 1) * 100 / WWPercentage;
-            double ptWeighted = ptTotal / (TeacherSubject?.PTTotal_Second ?? 1) * 100 / PTPercentage;
-            double examTotal = TeacherSubject?.Exam_Second ?? 1;
-            double examWeighted = Exam_Second / (examTotal < 1 ? 1 : examTotal) * 100 / ExamPercentage;
+            double wwWeighted = wwTotal / TeacherSubject.WWTotal_Second * 100 * WWPercentage;
+            double ptWeighted = ptTotal / TeacherSubject.PTTotal_Second * 100 * PTPercentage;
+            double examWeighted = TeacherSubject.Exam_Second > 0
+                ? Exam_Second / TeacherSubject.Exam_Second * 100 * ExamPercentage
+                : 0;
 
             double initialGrade = wwWeighted + ptWeighted + examWeighted;
 
