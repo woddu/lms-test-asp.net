@@ -7,50 +7,40 @@
     int ptcount_First = 0;
     int ptcount_Second = 0;
 
-    if(Model.TeacherSubject.WW1_First != 0) wwcount_First++;
-    if(Model.TeacherSubject.WW2_First != 0) wwcount_First++;
-    if(Model.TeacherSubject.WW3_First != 0) wwcount_First++;
-    if(Model.TeacherSubject.WW4_First != 0) wwcount_First++;
-    if(Model.TeacherSubject.WW5_First != 0) wwcount_First++;
-    if(Model.TeacherSubject.WW6_First != 0) wwcount_First++;
-    if(Model.TeacherSubject.WW7_First != 0) wwcount_First++;
-    if(Model.TeacherSubject.WW8_First != 0) wwcount_First++;
-    if(Model.TeacherSubject.WW9_First != 0) wwcount_First++;
-    if(Model.TeacherSubject.WW10_First != 0) wwcount_First++;
-
-    if(Model.TeacherSubject.WW1_Second != 0) wwcount_Second++;
-    if(Model.TeacherSubject.WW2_Second != 0) wwcount_Second++;
-    if(Model.TeacherSubject.WW3_Second != 0) wwcount_Second++;
-    if(Model.TeacherSubject.WW4_Second != 0) wwcount_Second++;
-    if(Model.TeacherSubject.WW5_Second != 0) wwcount_Second++;
-    if(Model.TeacherSubject.WW6_Second != 0) wwcount_Second++;
-    if(Model.TeacherSubject.WW7_Second != 0) wwcount_Second++;
-    if(Model.TeacherSubject.WW8_Second != 0) wwcount_Second++;
-    if(Model.TeacherSubject.WW9_Second != 0) wwcount_Second++;
-    if(Model.TeacherSubject.WW10_Second != 0) wwcount_Second++;
-
-
-    if(Model.TeacherSubject.PT1_First != 0) ptcount_First++;
-    if(Model.TeacherSubject.PT2_First != 0) ptcount_First++;
-    if(Model.TeacherSubject.PT3_First != 0) ptcount_First++;
-    if(Model.TeacherSubject.PT4_First != 0) ptcount_First++;
-    if(Model.TeacherSubject.PT5_First != 0) ptcount_First++;
-    if(Model.TeacherSubject.PT6_First != 0) ptcount_First++;
-    if(Model.TeacherSubject.PT7_First != 0) ptcount_First++;
-    if(Model.TeacherSubject.PT8_First != 0) ptcount_First++;
-    if(Model.TeacherSubject.PT9_First != 0) ptcount_First++;
-    if(Model.TeacherSubject.PT10_First != 0) ptcount_First++;
-
-    if(Model.TeacherSubject.PT1_Second != 0) ptcount_Second++;
-    if(Model.TeacherSubject.PT2_Second != 0) ptcount_Second++;
-    if(Model.TeacherSubject.PT3_Second != 0) ptcount_Second++;
-    if(Model.TeacherSubject.PT4_Second != 0) ptcount_Second++;
-    if(Model.TeacherSubject.PT5_Second != 0) ptcount_Second++;
-    if(Model.TeacherSubject.PT6_Second != 0) ptcount_Second++;
-    if(Model.TeacherSubject.PT7_Second != 0) ptcount_Second++;
-    if(Model.TeacherSubject.PT8_Second != 0) ptcount_Second++;
-    if(Model.TeacherSubject.PT9_Second != 0) ptcount_Second++;
-    if(Model.TeacherSubject.PT10_Second != 0) ptcount_Second++;
+    for (int i = 1; i <= 10; i++)
+    {
+        foreach (var prop in Model.TeacherSubject.GetType().GetProperties())
+        {            
+            if (prop.Name == $"WW{i}_First")
+            {
+                if((double)prop.GetValue(Model.TeacherSubject)! != 0)
+                {
+                    wwcount_First++;
+                }
+            } 
+            if (prop.Name == $"WW{i}_Second")
+            {
+                if((double)prop.GetValue(Model.TeacherSubject)! != 0)
+                {
+                    wwcount_Second++;
+                }
+            } 
+            if (prop.Name == $"PT{i}_First")
+            {
+                if((double)prop.GetValue(Model.TeacherSubject)! != 0)
+                {
+                    ptcount_First++; 
+                }
+            } 
+            if (prop.Name == $"PT{i}_Second")
+            {
+                if((double)prop.GetValue(Model.TeacherSubject)! != 0)
+                {
+                    ptcount_Second++;
+                }
+            } 
+        }
+    }
 }
 
 <header>
@@ -76,16 +66,16 @@
                 @if(wwcount_First == 0) { <th>No Written Works</th> }
                 else
                 {
-                    @if(Model.TeacherSubject.WW1_First != 0) { <th>@Model.TeacherSubject.WW1_First</th> }
-                    @if(Model.TeacherSubject.WW2_First != 0) { <th>@Model.TeacherSubject.WW2_First</th> }
-                    @if(Model.TeacherSubject.WW3_First != 0) { <th>@Model.TeacherSubject.WW3_First</th> }
-                    @if(Model.TeacherSubject.WW4_First != 0) { <th>@Model.TeacherSubject.WW4_First</th> }
-                    @if(Model.TeacherSubject.WW5_First != 0) { <th>@Model.TeacherSubject.WW5_First</th> }
-                    @if(Model.TeacherSubject.WW6_First != 0) { <th>@Model.TeacherSubject.WW6_First</th> }
-                    @if(Model.TeacherSubject.WW7_First != 0) { <th>@Model.TeacherSubject.WW7_First</th> }
-                    @if(Model.TeacherSubject.WW8_First != 0) { <th>@Model.TeacherSubject.WW8_First</th> }
-                    @if(Model.TeacherSubject.WW9_First != 0) { <th>@Model.TeacherSubject.WW9_First</th> }
-                    @if(Model.TeacherSubject.WW10_First != 0) { <th>@Model.TeacherSubject.WW10_First</th> }
+                    for (int i = 1; i <= 10; i++)
+                    {
+                        foreach (var prop in Model.TeacherSubject.GetType().GetProperties())
+                        {            
+                            if (prop.Name == $"WW{i}_First" && (double)prop.GetValue(Model.TeacherSubject)! != 0)
+                            {
+                                <th>@prop.GetValue(Model.TeacherSubject)</th>
+                            }
+                        }
+                    }
                 }
             </tr>
         </thead>
@@ -95,46 +85,26 @@
                 @if(wwcount_First == 0) { <th>No Written Works</th> }
                 else
                 {
-                    @if(Model.TeacherSubject.WW1_First != 0) { <td>
-                        <input type="number" min="0" max="@Model.TeacherSubject.WW1_First" 
-                            asp-for="StudentScore.WW1_First"/>
-                    </td> }
-                    @if(Model.TeacherSubject.WW2_First != 0) { <td>
-                        <input type="number" min="0" max="@Model.TeacherSubject.WW2_First" 
-                            asp-for="StudentScore.WW2_First"/>
-                    </td> }
-                    @if(Model.TeacherSubject.WW3_First != 0) { <td>
-                        <input type="number" min="0" max="@Model.TeacherSubject.WW3_First" 
-                            asp-for="StudentScore.WW3_First"/>
-                    </td> }
-                    @if(Model.TeacherSubject.WW4_First != 0) { <td>
-                        <input type="number" min="0" max="@Model.TeacherSubject.WW4_First" 
-                            asp-for="StudentScore.WW4_First"/>
-                    </td> }
-                    @if(Model.TeacherSubject.WW5_First != 0) { <td>
-                        <input type="number" min="0" max="@Model.TeacherSubject.WW5_First" 
-                            asp-for="StudentScore.WW5_First"/>
-                    </td> }
-                    @if(Model.TeacherSubject.WW6_First != 0) { <td>
-                        <input type="number" min="0" max="@Model.TeacherSubject.WW6_First" 
-                            asp-for="StudentScore.WW6_First"/>
-                    </td> }
-                    @if(Model.TeacherSubject.WW7_First != 0) { <td>
-                        <input type="number" min="0" max="@Model.TeacherSubject.WW7_First" 
-                            asp-for="StudentScore.WW7_First"/>
-                    </td> }
-                    @if(Model.TeacherSubject.WW8_First != 0) { <td>
-                        <input type="number" min="0" max="@Model.TeacherSubject.WW8_First" 
-                            asp-for="StudentScore.WW8_First"/>
-                    </td> }
-                    @if(Model.TeacherSubject.WW9_First != 0) { <td>
-                        <input type="number" min="0" max="@Model.TeacherSubject.WW9_First" 
-                            asp-for="StudentScore.WW9_First"/>
-                    </td> }
-                    @if(Model.TeacherSubject.WW10_First != 0) { <td>
-                        <input type="number" min="0" max="@Model.TeacherSubject.WW10_First" 
-                            asp-for="StudentScore.WW10_First"/>
-                    </td> }
+                    for (int i = 1; i <= 10; i++)
+                    {
+                        foreach (var prop in Model.TeacherSubject.GetType().GetProperties())
+                        {
+                            if (prop.Name == $"WW{i}_First" && (double)prop.GetValue(Model.TeacherSubject)! != 0)
+                            {
+                                foreach (var scoreProp in @Model.StudentScore.GetType().GetProperties())
+                                {
+                                    if (scoreProp.Name == prop.Name)
+                                    {
+                                        <td>
+                                            <input type="number" min="0" max="@prop.GetValue(Model.TeacherSubject)"
+                                                name="@scoreProp.Name" id="@scoreProp.Name" 
+                                                value="@scoreProp.GetValue(Model.StudentScore)" style="width: 2rem;"/>
+                                        </td>
+                                    }
+                                }
+                            }
+                        }
+                    }                    
                 }
             </tr>        
         </tbody>    
@@ -146,16 +116,16 @@
                 @if(ptcount_First == 0) { <th>No Performance Tasks</th> }
                 else
                 {
-                    @if(Model.TeacherSubject.PT1_First != 0) { <th>@Model.TeacherSubject.PT1_First</th> }
-                    @if(Model.TeacherSubject.PT2_First != 0) { <th>@Model.TeacherSubject.PT2_First</th> }
-                    @if(Model.TeacherSubject.PT3_First != 0) { <th>@Model.TeacherSubject.PT3_First</th> }
-                    @if(Model.TeacherSubject.PT4_First != 0) { <th>@Model.TeacherSubject.PT4_First</th> }
-                    @if(Model.TeacherSubject.PT5_First != 0) { <th>@Model.TeacherSubject.PT5_First</th> }
-                    @if(Model.TeacherSubject.PT6_First != 0) { <th>@Model.TeacherSubject.PT6_First</th> }
-                    @if(Model.TeacherSubject.PT7_First != 0) { <th>@Model.TeacherSubject.PT7_First</th> }
-                    @if(Model.TeacherSubject.PT8_First != 0) { <th>@Model.TeacherSubject.PT8_First</th> }
-                    @if(Model.TeacherSubject.PT9_First != 0) { <th>@Model.TeacherSubject.PT9_First</th> }
-                    @if(Model.TeacherSubject.PT10_First != 0) { <th>@Model.TeacherSubject.PT10_First</th> }
+                    for (int i = 1; i <= 10; i++)
+                    {
+                        foreach (var prop in Model.TeacherSubject.GetType().GetProperties())
+                        {            
+                            if (prop.Name == $"PT{i}_First" && (double)prop.GetValue(Model.TeacherSubject)! != 0)
+                            {
+                                <th>@prop.GetValue(Model.TeacherSubject)</th>
+                            }
+                        }
+                    }
                 }
             </tr>
         </thead>
@@ -165,46 +135,26 @@
                 @if(ptcount_First == 0) { <th>No Performance Tasks</th> }
                 else
                 {
-                    @if(Model.TeacherSubject.PT1_First != 0) { <td>
-                        <input type="number" min="0" max="@Model.TeacherSubject.PT1_First" 
-                            asp-for="StudentScore.PT1_First"/>
-                    </td> }
-                    @if(Model.TeacherSubject.PT2_First != 0) { <td>
-                        <input type="number" min="0" max="@Model.TeacherSubject.PT2_First" 
-                            asp-for="StudentScore.PT2_First"/>
-                    </td> }
-                    @if(Model.TeacherSubject.PT3_First != 0) { <td>
-                        <input type="number" min="0" max="@Model.TeacherSubject.PT3_First" 
-                            asp-for="StudentScore.PT3_First"/>
-                    </td> }
-                    @if(Model.TeacherSubject.PT4_First != 0) { <td>
-                        <input type="number" min="0" max="@Model.TeacherSubject.PT4_First" 
-                            asp-for="StudentScore.PT4_First"/>
-                    </td> }
-                    @if(Model.TeacherSubject.PT5_First != 0) { <td>
-                        <input type="number" min="0" max="@Model.TeacherSubject.PT5_First" 
-                            asp-for="StudentScore.PT5_First"/>
-                    </td> }
-                    @if(Model.TeacherSubject.PT6_First != 0) { <td>
-                        <input type="number" min="0" max="@Model.TeacherSubject.PT6_First" 
-                            asp-for="StudentScore.PT6_First"/>
-                    </td> }
-                    @if(Model.TeacherSubject.PT7_First != 0) { <td>
-                        <input type="number" min="0" max="@Model.TeacherSubject.PT7_First" 
-                            asp-for="StudentScore.PT7_First"/>
-                    </td> }
-                    @if(Model.TeacherSubject.PT8_First != 0) { <td>
-                        <input type="number" min="0" max="@Model.TeacherSubject.PT8_First" 
-                            asp-for="StudentScore.PT8_First"/>
-                    </td> }
-                    @if(Model.TeacherSubject.PT9_First != 0) { <td>
-                        <input type="number" min="0" max="@Model.TeacherSubject.PT9_First" 
-                            asp-for="StudentScore.PT9_First"/>
-                    </td> }
-                    @if(Model.TeacherSubject.PT10_First != 0) { <td>
-                        <input type="number" min="0" max="@Model.TeacherSubject.PT10_First" 
-                            asp-for="StudentScore.PT10_First"/>
-                    </td> }
+                    for (int i = 1; i <= 10; i++)
+                    {
+                        foreach (var prop in Model.TeacherSubject.GetType().GetProperties())
+                        {
+                            if (prop.Name == $"PT{i}_First" && (double)prop.GetValue(Model.TeacherSubject)! != 0)
+                            {
+                                foreach (var scoreProp in @Model.StudentScore.GetType().GetProperties())
+                                {
+                                    if (scoreProp.Name == prop.Name)
+                                    {
+                                        <td>
+                                            <input type="number" min="0" max="@prop.GetValue(Model.TeacherSubject)"
+                                                name="@scoreProp.Name" id="@scoreProp.Name" 
+                                                value="@scoreProp.GetValue(Model.StudentScore)" style="width: 2rem;"/>
+                                        </td>
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             </tr>        
         </tbody>    
@@ -219,7 +169,22 @@
 
 @section Scripts{
     <script>
-        const model = @Html.Raw(Json.Serialize(Model));
+        $(document).on("input", "input[type=number]", function () {
+            var max = parseFloat($(this).attr("max"));
+            var min = parseFloat($(this).attr("min"));
+            var val = parseFloat($(this).val());
+
+            if (!isNaN(max) && val > max) {
+                $(this).val(max); // silently clamp to max
+            }
+            if (!isNaN(min) && val < min) {
+                $(this).val(min); // silently clamp to min
+            }
+        });
+
+        const tsmodel = @Html.Raw(Json.Serialize(Model.TeacherSubject));
+
+        const model = @Html.Raw(Json.Serialize(Model.StudentScore));
 
         function hasChanges() {
             let changed = false;
@@ -255,22 +220,34 @@
 
         function getChangedFields() {
             const changes = {};
+            let error = false;
             $("input[type='number']").each(function () {
                 const fieldName = this.name;
                 const currentValue = this.value;
                 const originalValue = model[fieldName.charAt(0).toLowerCase() + fieldName.slice(1)];
+                const highestValue = tsmodel[fieldName.charAt(0).toLowerCase() + fieldName.slice(1)];
 
                 if (currentValue !== String(originalValue ?? "")) {
+                    console.log({ fieldName, currentValue, originalValue, highestValue });
+                    if (Number(currentValue) > Number(highestValue)) {                        
+                        $(this).css("border", "1px solid red");       
+                        $(this).focus().css("outline", "1px solid red").focus();                                         
+                        $("#saveBtn").prop("disabled", true);
+                        error = true;
+                        return;
+                    }
                     changes[fieldName.charAt(0).toLowerCase() + fieldName.slice(1)] = currentValue;
                 }
             });
-            return changes;
+            return { changes, error };
         }
 
         $("#saveBtn").click(function (e) {
             e.preventDefault();
 
-            const changes = getChangedFields()
+            const { changes, error } = getChangedFields();
+
+            if (error) return;
 
             Object.keys(changes).forEach(key => {
                 model[key] = changes[key];
@@ -284,10 +261,7 @@
                 contentType: 'application/json',
                 headers: { 'RequestVerificationToken': token },
                 data: JSON.stringify(model),
-                success: function (response) {
-                    $("input[type='number']").each(function () {
-                        initialValues[this.name] = this.value;
-                    });
+                success: function (response) {                    
                     alert("Changes saved successfully!");
 
                     if (response.redirectUrl) {
