@@ -12,9 +12,61 @@ using lms_test1.Models.DTO.Score;
 
 namespace lms_test1.Controllers;
 
+
+
 [Authorize(Policy = "VerifiedOnly", Roles = "HeadTeacher,Teacher")]
 public class GradesController : Controller
 {
+    private record GradeRange(
+        double Min,
+        double Max,
+        double Transmuted
+    );
+
+    private readonly static List<GradeRange> _gradeTable = [
+        new GradeRange (100.00, 100.00, 100.00),
+        new GradeRange (98.40, 99.99, 99.00),
+        new GradeRange (96.80, 98.39, 98.00),
+        new GradeRange (95.20, 96.79, 97.00),
+        new GradeRange (93.60, 95.19, 96.00),
+        new GradeRange (92.00, 93.59, 95.00),
+        new GradeRange (90.40, 91.99, 94.00),
+        new GradeRange (88.80, 90.39, 93.00),
+        new GradeRange (87.20, 88.79, 92.00),
+        new GradeRange (85.60, 87.19, 91.00),
+        new GradeRange (84.00, 85.59, 90.00),
+        new GradeRange (82.40, 83.99, 89.00),
+        new GradeRange (80.80, 82.39, 88.00),
+        new GradeRange (79.20, 80.79, 87.00),
+        new GradeRange (77.60, 79.19, 86.00),
+        new GradeRange (76.00, 77.59, 85.00),
+        new GradeRange (74.40, 75.99, 84.00),
+        new GradeRange (72.80, 74.39, 83.00),
+        new GradeRange (71.20, 72.79, 82.00),
+        new GradeRange (69.60, 71.19, 81.00),
+        new GradeRange (68.00, 69.59, 80.00),
+        new GradeRange (66.40, 67.99, 79.00),
+        new GradeRange (64.80, 66.39, 78.00),
+        new GradeRange (63.20, 64.79, 77.00),
+        new GradeRange (61.60, 63.19, 76.00),
+        new GradeRange (60.00, 61.59, 75.00),
+        new GradeRange (56.00, 59.99, 74.00),
+        new GradeRange (52.00, 55.99, 73.00),
+        new GradeRange (48.00, 51.99, 72.00),
+        new GradeRange (44.00, 47.99, 71.00),
+        new GradeRange (40.00, 43.99, 70.00),
+        new GradeRange (36.00, 39.99, 69.00),
+        new GradeRange (32.00, 35.99, 68.00),
+        new GradeRange (28.00, 31.99, 67.00),
+        new GradeRange (24.00, 27.99, 66.00),
+        new GradeRange (20.00, 23.99, 65.00),
+        new GradeRange (16.00, 19.99, 64.00),
+        new GradeRange (12.00, 15.99, 63.00),
+        new GradeRange (8.00,  11.99, 62.00),
+        new GradeRange (4.00,  7.99,  61.00),
+        new GradeRange (0.00,  3.99,  60.00)
+    ];
+
     private readonly ApplicationDbContext _context;
 
     private readonly IAuthorizationService _authorizationService;
@@ -87,9 +139,10 @@ public class GradesController : Controller
 
         if (updatedTs == null) return NotFound();
 
-        return Json(new { 
-            success = true, 
-            redirectUrl = Url.Action("SubjectDetails", "Grades", new { teacherSubjectId = updatedTs.Id }) 
+        return Json(new
+        {
+            success = true,
+            redirectUrl = Url.Action("SubjectDetails", "Grades", new { teacherSubjectId = updatedTs.Id })
         });
 
     }
@@ -186,7 +239,7 @@ public class GradesController : Controller
         else
         {
             // ensure the teacher subject belongs to the logged-in teacher
-            var score = student.Scores.First();
+            var score = student.Scores.First();        
             if (score.TeacherSubject.TeacherId != userId) return NotFound();
             var viewModel = new StudentScoresViewModel
             {
@@ -222,16 +275,19 @@ public class GradesController : Controller
 
         var score = await _context.Scores
             .Include(s => s.TeacherSubject)
+                .ThenInclude(ts => ts.Subject)
             .Where(s => s.Id == model.Id)
             .FirstOrDefaultAsync();
 
         if (score == null) return NotFound();
-        
+
         var result = await _authorizationService.AuthorizeAsync(User, score.TeacherSubject, "SameOwnerOfTeacherSubject");
         if (!result.Succeeded) return Forbid();
 
         ApplyChanges(model, score, _context);
-
+        
+        score.FinalGrade_First = GetTransmutedGrade(score.InitialGrade_First, _gradeTable);
+       
         await _context.SaveChangesAsync();
 
         var updatedScore = await _context.Scores
@@ -240,7 +296,7 @@ public class GradesController : Controller
             .Where(s => s.Id == score.Id)
             .FirstOrDefaultAsync();
 
-        if (updatedScore == null) return NotFound();
+        if (updatedScore == null) return NotFound();                
 
         return Json(new
         {
@@ -291,7 +347,7 @@ public class GradesController : Controller
         return PartialView("_StudentTableRows", dto);
 
     }
-    
+
     public static void ApplyChanges<TSource, TDest>(TSource source, TDest dest, DbContext ctx)
     {
         var srcProps = typeof(TSource).GetProperties();
@@ -314,4 +370,8 @@ public class GradesController : Controller
         }
     }
 
+    private static double GetTransmutedGrade(double initialGrade, List<GradeRange> table) {
+        var match = table.FirstOrDefault(r => initialGrade >= r.Min && initialGrade <= r.Max);
+        return match?.Transmuted ?? 0; // 0 if not found
+    }
 }
