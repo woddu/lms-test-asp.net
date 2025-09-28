@@ -59,11 +59,13 @@
 </header>
 
 <div class="prevent-overflow px-8">
-    <table class="pure-table">
+    <h3 style="margin-bottom: 1rem;">Initial Grade: @Model.StudentScore.InitialGrade_First, Final Grade: @Model.StudentScore.FinalGrade_First</h3>
+
+    <table class="pure-table" style="margin-bottom: 1rem;">
         <thead>
             <tr>
-                <th>Highest</th>
-                @if(wwcount_First == 0) { <th>No Written Works</th> }
+                <th>Written Works</th>
+                @if(wwcount_First == 0) { <th>None</th> }
                 else
                 {
                     for (int i = 1; i <= 10; i++)
@@ -81,7 +83,7 @@
         </thead>
         <tbody>
             <tr>
-                <td>Written Works</td>
+                <td>Scores</td>
                 @if(wwcount_First == 0) { <th>No Written Works</th> }
                 else
                 {
@@ -112,8 +114,8 @@
     <table class="pure-table">
         <thead>
             <tr>
-                <th></th>
-                @if(ptcount_First == 0) { <th>No Performance Tasks</th> }
+                <th>Performance Tasks</th>
+                @if(ptcount_First == 0) { <th>None</th> }
                 else
                 {
                     for (int i = 1; i <= 10; i++)
@@ -131,7 +133,7 @@
         </thead>
         <tbody>
             <tr>
-                <td>Performance Tasks</td>
+                <td>Scores</td>
                 @if(ptcount_First == 0) { <th>No Performance Tasks</th> }
                 else
                 {
@@ -261,8 +263,7 @@
                 contentType: 'application/json',
                 headers: { 'RequestVerificationToken': token },
                 data: JSON.stringify(model),
-                success: function (response) {                    
-                    alert("Changes saved successfully!");
+                success: function (response) {   
 
                     if (response.redirectUrl) {
                         window.location.href = response.redirectUrl;

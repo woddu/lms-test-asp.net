@@ -223,6 +223,19 @@
 
 @section Scripts {
     <script>
+        $(document).on("input", "input[type=number]", function () {
+            var max = parseFloat($(this).attr("max"));
+            var min = parseFloat($(this).attr("min"));
+            var val = parseFloat($(this).val());
+
+            if (!isNaN(max) && val > max) {
+                $(this).val(max); // silently clamp to max
+            }
+            if (!isNaN(min) && val < min) {
+                $(this).val(min); // silently clamp to min
+            }
+        });
+
         const model = @Html.Raw(Json.Serialize(@Model))
 
         function hasChanges() {
@@ -290,11 +303,7 @@
                 headers: { 'RequestVerificationToken': token },
                 data: JSON.stringify(model),
                 success: function (response) {
-                    $("input[type='number']").each(function () {
-                        initialValues[this.name] = this.value;
-                    });
-                    alert("Changes saved successfully!");
-
+                    
                     if (response.redirectUrl) {
                         window.location.href = response.redirectUrl;
                     }
