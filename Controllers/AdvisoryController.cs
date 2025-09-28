@@ -29,10 +29,10 @@ public class AdvisoryController : Controller
         return View(advisories);
     }
 
-    public async Task<IActionResult> Students(int id)
+    public async Task<IActionResult> Students(int sectionId)
     {
         var section = await _context.Sections
-            .FirstOrDefaultAsync(s => s.Id == id);
+            .FirstOrDefaultAsync(s => s.Id == sectionId);
 
         if (section == null)
         {
@@ -42,7 +42,7 @@ public class AdvisoryController : Controller
         var students = await _context.Students
             .Include(st => st.Scores!)
                 .ThenInclude(sc => sc.TeacherSubject)
-            .Where(st => st.SectionId == id)
+            .Where(st => st.SectionId == sectionId)
             .Select(st => new StudentInListDTO(
                 st.Id,
                 st.FirstName,
@@ -75,19 +75,31 @@ public class AdvisoryController : Controller
 
         return View(student);
     }
-    
+
     public async Task<IActionResult> SearchStudent(string searchTerm, int sectionId)
     {
         if (string.IsNullOrWhiteSpace(searchTerm))
         {
             return Json(new { results = new List<object>() });
         }
+        
+        var section = await _context.Sections
+                    .FirstOrDefaultAsync(s => s.Id == sectionId);
+
+        if (section == null)
+        {
+            return NotFound();
+        }
 
         var students = await _context.Students
-            .Where(st => st.SectionId == sectionId &&
-                        (st.LastName.ToLower().Contains(searchTerm.ToLower()) ||
-                         st.FirstName.ToLower().Contains(searchTerm.ToLower())
-                        ))
+            .Where
+            (
+                st => st.SectionId == sectionId &&
+                (
+                    st.LastName.ToLower().Contains(searchTerm.ToLower()) ||
+                    st.FirstName.ToLower().Contains(searchTerm.ToLower())
+                )
+            )
             .Select(st => new StudentInListDTO
             (
                 st.Id,
@@ -97,8 +109,12 @@ public class AdvisoryController : Controller
                 st.MiddleName
             ))
             .ToListAsync();
-
-        return PartialView("_StudentTableRows", students);
+        var dto = new SectionWithStudentsDTO
+        (
+            Section: section,
+            Students: students
+        );
+        return PartialView("_StudentTableRows", dto);
     }
 
 }

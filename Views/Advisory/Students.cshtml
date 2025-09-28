@@ -43,9 +43,12 @@
             }
             else
             {
-                <tr>
-                    <td>Male</td>
-                </tr>
+                if (Model.Students.Where(s => s.Gender == 'M').ToList().Count() > 0)
+                {
+                    <tr style="border-bottom: 1px solid #888;">
+                        <td>Male</td>
+                    </tr>
+                }
                 foreach (var student in Model.Students.Where(s => s.Gender == 'M'))
                 {
                     <tr>
@@ -54,9 +57,12 @@
                         <td>@Html.DisplayFor(m => student.MiddleName)</td>
                     </tr>
                 }
-                <tr>
-                    <td>Female</td>
-                </tr>
+                if (Model.Students.Where(s => s.Gender == 'F').ToList().Count() > 0)
+                {
+                    <tr style="border-bottom: 1px solid #888; border-top: 1px solid #888;">
+                        <td>Female</td>
+                    </tr>
+                }
                 foreach (var student in Model.Students.Where(s => s.Gender == 'F'))
                 {
                     <tr>

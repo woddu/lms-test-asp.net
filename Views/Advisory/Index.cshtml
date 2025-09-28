@@ -33,14 +33,14 @@
             }
             else
             {
-                foreach (var item in Model)
+                foreach (var Section in Model)
                 {
                     <tr>
-                        <td>@Html.DisplayFor(modelItem => item.Name)</td>
-                        <td>@Html.DisplayFor(modelItem => item.Strand)</td>
-                        <td>@Html.DisplayFor(modelItem => item.YearLevel)</td>
+                        <td>@Html.DisplayFor(modelItem => Section.Name)</td>
+                        <td>@Html.DisplayFor(modelItem => Section.Strand)</td>
+                        <td>@Html.DisplayFor(modelItem => Section.YearLevel)</td>
                         <td>
-                            <a asp-area="" asp-controller="Advisory" asp-action="Students" asp-route-id="@item.Id">Students</a>
+                            <a asp-area="" asp-controller="Advisory" asp-action="Students" asp-route-setionId="@Section.Id">Students</a>
                         </td>
                     </tr>
                 }
