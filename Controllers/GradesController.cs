@@ -256,28 +256,39 @@ public class GradesController : Controller
         var teacherSubject = await _context.TeacherSubjects
             .Include(ts => ts.TeacherSubjectSections.Where(s => s.Section.Id == sectionId))
                 .ThenInclude(tss => tss.Section)
-                    .ThenInclude(s => s.Students!.Where(st =>
-                        string.IsNullOrEmpty(searchTerm) ||
-                        st.LastName.ToLower().Contains(searchTerm.ToLower()) ||
-                        st.FirstName.ToLower().Contains(searchTerm.ToLower())
-                ))
+                    .ThenInclude
+                    (
+                        s => s.Students!
+                            .Where(st =>
+                                string.IsNullOrEmpty(searchTerm) ||
+                                st.LastName.ToLower().Contains(searchTerm.ToLower()) ||
+                                st.FirstName.ToLower().Contains(searchTerm.ToLower())
+                            )
+                            .OrderBy(st => st.Gender)
+                            .ThenBy(st => st.LastName)
+                            .ThenBy(st => st.FirstName)
+                )
             .FirstOrDefaultAsync(ts => ts.Id == teacherSubjectId && ts.TeacherId == userId);
 
         if (teacherSubject == null) return NotFound();
 
 
-        var students = teacherSubject!.TeacherSubjectSections.First().Section.Students!
-            .Select(st => new StudentInListDTO
-            (
-                st.Id,
-                st.FirstName,
-                st.LastName,
-                st.Gender,
-                st.MiddleName
-            ))
-            .ToList();
+        var dto = new TeacherSubjectWithStudentsDTO
+        (
+            TeacherSubject: teacherSubject,
+            Students: teacherSubject.TeacherSubjectSections.First().Section.Students!
+                .Select(st => new StudentInListDTO
+                (
+                    st.Id,
+                    st.FirstName,
+                    st.LastName,
+                    st.Gender,
+                    st.MiddleName
+                ))
+                .ToList()
+        );
 
-        return PartialView("_StudentTableRows", students);
+        return PartialView("_StudentTableRows", dto);
 
     }
     
