@@ -72,42 +72,71 @@
             @Html.DisplayFor(model => model.Email)
         </div>
 
-        <div class="pure-u-1 pure-u-md-1-3">
-            <strong>@Html.DisplayNameFor(model => model.AdvisorySection)</strong>
+        <div class="pure-u-1 pure-u-md-12-24">
+            <strong>@Html.DisplayNameFor(model => model.AdvisorySections)</strong>
+            @if (Model!.AdvisorySections != null && Model.AdvisorySections.Any())
+            {
+                <table style="margin-top: 1rem;" class="pure-table">
+                    <thead>
+                        <tr>
+                            <th>Section</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var Section in Model.AdvisorySections)
+                        {
+                            <tr>
+                                <td>@Section.Name</td>
+                                <td>
+                                    <a asp-controller="Sections" asp-action="Details" asp-route-id="@Section.Id">Details</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <em>No advisory sections assigned</em>
+            }
         </div>
-        <div class="pure-u-1 pure-u-md-2-3">
-            @(Model.AdvisorySection?.Id != null ? Html.DisplayFor(model => model.AdvisorySection.Id) : "")
-        </div>
-        <div class="pure-u-1 pure-u-md-1-3">
+        <div class="pure-u-1 pure-u-md-12-24">
             <strong>Subjects</strong>
-        </div>
-        <div class="pure-u-1 pure-u-md-2-3">
-
-            <h3>Subjects and Sections</h3>
 
             @if (Model.TeacherSubjects.Any())
             {
-                <ul>
-                    @foreach (var ts in Model.TeacherSubjects)
-                    {
-                        <li>
-                            <strong>@ts.SubjectName</strong>
-                            @if (ts.SectionNames.Any())
-                            {
-                                <ul>
-                                    @foreach (var sec in ts.SectionNames)
+                <table style="margin-top: 1rem;" class="pure-table">
+
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Sections</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var ts in Model.TeacherSubjects)
+                        {
+                            <tr>
+                                <td>
+                                    <strong>@ts.SubjectName</strong>
+                                </td>
+                                <td>
+                                    @if (ts.SectionNames.Any())
                                     {
-                                        <li>@sec</li>
+                                        @foreach (var sec in ts.SectionNames)
+                                        {
+                                            @sec<br />
+                                        }
                                     }
-                                </ul>
-                            }
-                            else
-                            {
-                                <em>No sections assigned</em>
-                            }
-                        </li>
-                    }
-                </ul>
+                                    else
+                                    {
+                                    <td>No sections assigned</td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             }
             else
             {
