@@ -1,7 +1,6 @@
 using System.Security.Claims;
 using lms_test1.Data;
-using lms_test1.Models.DTO.Section;
-using lms_test1.Models.DTO.Student;
+using lms_test1.Models.DTO.Advisory;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +28,7 @@ public class AdvisoryController : Controller
         return View(advisories);
     }
 
+    //TODO summmary of grades of students in the section, include all their scores and group by subject
     public async Task<IActionResult> Students(int sectionId)
     {
         var section = await _context.Sections
@@ -42,17 +42,15 @@ public class AdvisoryController : Controller
         var students = await _context.Students
             .Include(st => st.Scores!)
                 .ThenInclude(sc => sc.TeacherSubject)
+                    .ThenInclude(ts => ts.Subject)
+            .Include(st => st.Section)
+                .ThenInclude(sec => sec!.TeacherSubjectSections!)
+                    .ThenInclude(ts => ts.TeacherSubject)
+                        .ThenInclude(t => t.Subject)
             .Where(st => st.SectionId == sectionId)
-            .Select(st => new StudentInListDTO(
-                st.Id,
-                st.FirstName,
-                st.LastName,
-                st.Gender,
-                st.MiddleName ?? ""
-            ))
             .ToListAsync();
 
-        var dto = new SectionWithStudentsDTO
+        var dto = new SectionWithStudentsWithScoresDTO
         (
             Section: section,
             Students: students
@@ -92,6 +90,13 @@ public class AdvisoryController : Controller
         }
 
         var students = await _context.Students
+            .Include(st => st.Scores!)
+                .ThenInclude(sc => sc.TeacherSubject)
+                    .ThenInclude(ts => ts.Subject)
+            .Include(st => st.Section)
+                .ThenInclude(sec => sec!.TeacherSubjectSections!)
+                    .ThenInclude(ts => ts.TeacherSubject)
+                        .ThenInclude(t => t.Subject)
             .Where
             (
                 st => st.SectionId == sectionId &&
@@ -100,16 +105,8 @@ public class AdvisoryController : Controller
                     st.FirstName.ToLower().Contains(searchTerm.ToLower())
                 )
             )
-            .Select(st => new StudentInListDTO
-            (
-                st.Id,
-                st.FirstName,
-                st.LastName,
-                st.Gender,
-                st.MiddleName
-            ))
             .ToListAsync();
-        var dto = new SectionWithStudentsDTO
+        var dto = new SectionWithStudentsWithScoresDTO
         (
             Section: section,
             Students: students
