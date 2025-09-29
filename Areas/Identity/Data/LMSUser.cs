@@ -15,5 +15,5 @@ public class LMSUser : IdentityUser
 
     public ICollection<TeacherSubject> TeacherSubjects { get; set; } = new List<TeacherSubject>();
     //TODO turn to one to many relation where one teacher can have manyZz advisory section
-    public Section? AdvisorySection { get; set; }
+    public IEnumerable<Section>? AdvisorySections { get; set; }
 }
