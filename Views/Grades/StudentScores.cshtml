@@ -43,6 +43,19 @@
     }
 }
 
+@section Styles{
+    <style>
+        @@media (max-width: 900px){
+            #saveBtn {
+                position: fixed;
+                bottom: 2rem;
+                right: 2rem;
+                font-size: 125%;
+            }
+        }
+    </style>
+}
+
 <header>
     <div class="breadcrumbs mx-auto">
         <a asp-controller="Grades" asp-action="Index">My Subjects</a> >
@@ -59,6 +72,10 @@
 </header>
 
 <div class="prevent-overflow px-8">
+    <h1>
+        1st Quarter
+    </h1>
+
     <h3 style="margin-bottom: 1rem;">Initial Grade: @Model.StudentScore.InitialGrade_First, Final Grade: @Model.StudentScore.FinalGrade_First</h3>
 
     <table class="pure-table" style="margin-bottom: 1rem;">
@@ -84,7 +101,7 @@
         <tbody>
             <tr>
                 <td>Scores</td>
-                @if(wwcount_First == 0) { <th>No Written Works</th> }
+                @if(wwcount_First == 0) { <th>None</th> }
                 else
                 {
                     for (int i = 1; i <= 10; i++)
@@ -134,7 +151,7 @@
         <tbody>
             <tr>
                 <td>Scores</td>
-                @if(ptcount_First == 0) { <th>No Performance Tasks</th> }
+                @if(ptcount_First == 0) { <th>None</th> }
                 else
                 {
                     for (int i = 1; i <= 10; i++)
@@ -160,7 +177,153 @@
                 }
             </tr>        
         </tbody>    
-    </table>     
+    </table>
+
+    <div class="pure-g">
+        <div class="pure-u-3-24 pure-u-sm-2-24">
+            <h3>Exam: </h3>
+        </div>
+        <div class="pure-u-3-24 pure-u-sm-2-24">
+            <div style="display: flex; height: 100%;">
+                @if (Model.TeacherSubject.Exam_First > 0)
+                {        
+                    <input name="Exam_First" id="Exam_First" value="@Model.StudentScore.Exam_First"
+                     style="width: 2rem; margin-top: auto; margin-bottom: auto;" type="number" min="0" max="@Model.TeacherSubject.Exam_First"/>
+                } 
+                else
+                {
+                    <span style="color: #888; font-style: italic; margin-top: auto; margin-bottom: auto;">None</span>
+                }   
+            </div>
+        </div>
+    </div>
+
+    <h1>
+        2nd Quarter
+    </h1>
+
+    <h3 style="margin-bottom: 1rem;">Initial Grade: @Model.StudentScore.InitialGrade_Second, Final Grade: @Model.StudentScore.FinalGrade_Second</h3>
+
+    <table class="pure-table" style="margin-bottom: 1rem;">
+        <thead>
+            <tr>
+                <th>Written Works</th>
+                @if(wwcount_Second == 0) { <th>None</th> }
+                else
+                {
+                    for (int i = 1; i <= 10; i++)
+                    {
+                        foreach (var prop in Model.TeacherSubject.GetType().GetProperties())
+                        {            
+                            if (prop.Name == $"WW{i}_Second" && (double)prop.GetValue(Model.TeacherSubject)! != 0)
+                            {
+                                <th>@prop.GetValue(Model.TeacherSubject)</th>
+                            }
+                        }
+                    }
+                }
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Scores</td>
+                @if(wwcount_Second == 0) { <th>None</th> }
+                else
+                {
+                    for (int i = 1; i <= 10; i++)
+                    {
+                        foreach (var prop in Model.TeacherSubject.GetType().GetProperties())
+                        {
+                            if (prop.Name == $"WW{i}_Second" && (double)prop.GetValue(Model.TeacherSubject)! != 0)
+                            {
+                                foreach (var scoreProp in @Model.StudentScore.GetType().GetProperties())
+                                {
+                                    if (scoreProp.Name == prop.Name)
+                                    {
+                                        <td>
+                                            <input type="number" min="0" max="@prop.GetValue(Model.TeacherSubject)"
+                                                name="@scoreProp.Name" id="@scoreProp.Name" 
+                                                value="@scoreProp.GetValue(Model.StudentScore)" style="width: 2rem;"/>
+                                        </td>
+                                    }
+                                }
+                            }
+                        }
+                    }                    
+                }
+            </tr>        
+        </tbody>    
+    </table>        
+    <table class="pure-table">
+        <thead>
+            <tr>
+                <th>Performance Tasks</th>
+                @if(ptcount_Second == 0) { <th>None</th> }
+                else
+                {
+                    for (int i = 1; i <= 10; i++)
+                    {
+                        foreach (var prop in Model.TeacherSubject.GetType().GetProperties())
+                        {            
+                            if (prop.Name == $"PT{i}_Second" && (double)prop.GetValue(Model.TeacherSubject)! != 0)
+                            {
+                                <th>@prop.GetValue(Model.TeacherSubject)</th>
+                            }
+                        }
+                    }
+                }
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Scores</td>
+                @if(ptcount_Second == 0) { <th>None</th> }
+                else
+                {
+                    for (int i = 1; i <= 10; i++)
+                    {
+                        foreach (var prop in Model.TeacherSubject.GetType().GetProperties())
+                        {
+                            if (prop.Name == $"PT{i}_Second" && (double)prop.GetValue(Model.TeacherSubject)! != 0)
+                            {
+                                foreach (var scoreProp in @Model.StudentScore.GetType().GetProperties())
+                                {
+                                    if (scoreProp.Name == prop.Name)
+                                    {
+                                        <td>
+                                            <input type="number" min="0" max="@prop.GetValue(Model.TeacherSubject)"
+                                                name="@scoreProp.Name" id="@scoreProp.Name" 
+                                                value="@scoreProp.GetValue(Model.StudentScore)" style="width: 2rem;"/>
+                                        </td>
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            </tr>        
+        </tbody>    
+    </table>
+
+    <div class="pure-g">
+        <div class="pure-u-3-24 pure-u-sm-2-24">
+            <h3>Exam: </h3>
+        </div>
+        <div class="pure-u-3-24 pure-u-sm-2-24">
+            <div style="display: flex; height: 100%;">
+                @if (Model.TeacherSubject.Exam_Second > 0)
+                {        
+                    <input name="Exam_Second" id="Exam_Second" value="@Model.StudentScore.Exam_Second"
+                     style="width: 2rem; margin-top: auto; margin-bottom: auto;" type="number" min="0" max="@Model.TeacherSubject.Exam_Second"/>
+                } 
+                else
+                {
+                    <span style="color: #888; font-style: italic; margin-top: auto; margin-bottom: auto;">None</span>
+                }   
+            </div>
+        </div>
+    </div>    
+
     <button id="saveBtn" disabled class="pure-button pure-button-primary" style="margin-top: 1rem;">
         Save Changes
     </button>
@@ -196,7 +359,7 @@
                 const originalValue = model[fieldName.charAt(0).toLowerCase() + fieldName.slice(1)];
                     
                 // normalize null/undefined and string vs number
-                if (currentValue !== String(originalValue ?? "")) {
+                if (currentValue !== String(originalValue ?? "")) {                    
                     changed = true;
                     return false; // break loop
                 }
@@ -229,8 +392,7 @@
                 const originalValue = model[fieldName.charAt(0).toLowerCase() + fieldName.slice(1)];
                 const highestValue = tsmodel[fieldName.charAt(0).toLowerCase() + fieldName.slice(1)];
 
-                if (currentValue !== String(originalValue ?? "")) {
-                    console.log({ fieldName, currentValue, originalValue, highestValue });
+                if (currentValue !== String(originalValue ?? "")) {                    
                     if (Number(currentValue) > Number(highestValue)) {                        
                         $(this).css("border", "1px solid red");       
                         $(this).focus().css("outline", "1px solid red").focus();                                         
