@@ -11,7 +11,7 @@ public class AssignTeacherViewModel
 
     public List<string?> Roles { get; set; } = new List<string?>();
 
-    public int? AdvisorySectionId { get; set; } = null;
+    public List<int> AdvisorySectionIds { get; set; } = new List<int>();
 
     public List<int> SelectedSubjectIds { get; set; } = new List<int>();
 

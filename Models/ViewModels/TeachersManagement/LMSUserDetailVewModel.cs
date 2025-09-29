@@ -25,7 +25,7 @@ public class LMSUserDetailViewModel
     [Display(Name = "User Name")]
     public string UserName { get; set; } = string.Empty;
 
-    public Section? AdvisorySection { get; set; }
+    public List<Section> AdvisorySections { get; set; } = new();
 
      // New property for TeacherSubjects and their Sections
     public List<TeacherSubjectDetail> TeacherSubjects { get; set; } = new();
