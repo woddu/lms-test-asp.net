@@ -28,6 +28,8 @@ public class TeachersManagementController : Controller
     {
         var users = await _userManager.Users
         .OrderBy(u => u.Verified)
+            .ThenBy(u => u.LastName)
+                .ThenBy(u => u.FirstName)
         .ToListAsync();
 
         var userWithRoles = new List<UserWithRolesViewModel>();
@@ -38,7 +40,7 @@ public class TeachersManagementController : Controller
             userWithRoles.Add(new UserWithRolesViewModel
             {
                 Id = user.Id,
-                Initials = $"{user.LastName}, {user.FirstName[0]}",
+                Initials = $"{user.LastName}, {user.FirstName} {(string.IsNullOrEmpty(user.MiddleName) ? "" : user.MiddleName[0].ToString())}",
                 Verified = user.Verified,
                 Role = roles.FirstOrDefault() ?? ""
             });
@@ -54,7 +56,7 @@ public class TeachersManagementController : Controller
         
 
         var userEntity = await _userManager.Users
-            .Include(u => u.AdvisorySection)
+            .Include(u => u.AdvisorySections)
             .Include(u => u.TeacherSubjects)
                 .ThenInclude(ts => ts.Subject)
             .Include(u => u.TeacherSubjects)
@@ -72,7 +74,7 @@ public class TeachersManagementController : Controller
             Email = userEntity.Email ?? string.Empty,
             FirstName = userEntity.FirstName,
             LastName = userEntity.LastName,
-            AdvisorySection = userEntity.AdvisorySection,
+            AdvisorySections = userEntity.AdvisorySections!.ToList(),
             TeacherSubjects = userEntity.TeacherSubjects
             .Select(ts => new TeacherSubjectDetail
             {
@@ -133,7 +135,7 @@ public class TeachersManagementController : Controller
             return NotFound();
 
         var user = await _userManager.Users
-            .Include(u => u.AdvisorySection)
+            .Include(u => u.AdvisorySections)
             .Include(u => u.TeacherSubjects)
                 .ThenInclude(ts => ts.Subject)
             .Include(u => u.TeacherSubjects)
@@ -166,7 +168,7 @@ public class TeachersManagementController : Controller
             Roles = roles.Select(r => r.Name).ToList(),
             TeacherId = user.Id,
             TeacherName = $"{user.LastName}, {user.FirstName} {(string.IsNullOrEmpty(user.MiddleName) ? "" : user.MiddleName[0].ToString())}",
-            AdvisorySectionId = user.AdvisorySection?.Id,
+            AdvisorySectionIds = user.AdvisorySections!.Select(s => s.Id).ToList(),
             SelectedSubjectIds = user.TeacherSubjects
                 .Where(ts => ts.Subject != null)
                 .Select(ts => ts.Subject!.Id)
@@ -279,9 +281,9 @@ public class TeachersManagementController : Controller
             }
         }
 
-        // Update advisory section
-        user.AdvisorySection = model.AdvisorySectionId.HasValue
-            ? await _context.Sections.FindAsync(model.AdvisorySectionId.Value)
+        // Update advisory sections
+        user.AdvisorySections = model.AdvisorySectionIds.Any()
+            ? await _context.Sections.Where(s => model.AdvisorySectionIds.Contains(s.Id)).ToListAsync()
             : null;
 
         // Get all TeacherSubjects currently in DB for this teacher
@@ -374,7 +376,7 @@ public class TeachersManagementController : Controller
             var roles = await _context.Roles.ToListAsync();
 
             var user1 = await _userManager.Users
-                .Include(u => u.AdvisorySection)
+                .Include(u => u.AdvisorySections)
                 .Include(u => u.TeacherSubjects)
                     .ThenInclude(ts => ts.Subject)
                 .Include(u => u.TeacherSubjects)
@@ -436,7 +438,7 @@ public class TeachersManagementController : Controller
         }
 
         var lMSUser = await _userManager.Users
-            .Include(u => u.AdvisorySection)
+            .Include(u => u.AdvisorySections)
             .Include(u => u.TeacherSubjects)
                 .ThenInclude(ts => ts.Subject)
             .FirstOrDefaultAsync(u => u.Id == id);
@@ -508,7 +510,7 @@ public class TeachersManagementController : Controller
         if (id == null) return NotFound();
         
         var userEntity = await _userManager.Users
-            .Include(u => u.AdvisorySection)
+            .Include(u => u.AdvisorySections)
             .Include(u => u.TeacherSubjects)
                 .ThenInclude(ts => ts.Subject)
             .Include(u => u.TeacherSubjects)
@@ -527,7 +529,7 @@ public class TeachersManagementController : Controller
             Email = userEntity.Email ?? string.Empty,
             FirstName = userEntity.FirstName,
             LastName = userEntity.LastName,
-            AdvisorySection = userEntity.AdvisorySection,
+            AdvisorySections = userEntity.AdvisorySections!.ToList(),
             TeacherSubjects = userEntity.TeacherSubjects
             .Select(ts => new TeacherSubjectDetail
             {
