@@ -20,7 +20,7 @@
 <body>
     <div class="site-wrap">
 
-        <nav class="site-nav">
+        <nav class="site-nav">            
             <div class="side-nav">
                 <div class="name">
                     @User.Identity?.Name
@@ -30,8 +30,8 @@
                             </path>
                         </svg> *@
                 </div>
-                <div class="nav-links">
-                    <ul>
+                @* <div> *@
+                    <ul class="nav-links">
                         <li @if(Context.Request.Path == "/") {
                         <text>class="active"</text>
                                                 }
@@ -107,11 +107,11 @@
                             </li>
                         }
                     </ul>
-                    <div class="note">
+                    @* <div class="note">
                         <h3>Your Monthly Report</h3>
                         <p>Get the info about all your deals, pros, cons. And build your roadmap.</p>
                     </div>
-                </div>
+                </div> *@
             </div>
             <ul style="padding: .5rem 0;">
                 <li>
@@ -120,6 +120,7 @@
                     </form>
                 </li>
             </ul>
+            <button class="menu-toggle" aria-label="Toggle navigation">☰</button>
         </nav>
 
         <main>
@@ -133,6 +134,16 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        const toggle = document.querySelector('.menu-toggle');
+        const navLinks = document.querySelector('.nav-links');
+
+        toggle.addEventListener('click', () => {
+            console.log('clicked');
+            navLinks.classList.toggle('show');
+        });
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 
