@@ -57,10 +57,10 @@
             @Html.DisplayFor(model => model.FirstName)
         </div>
         <div class="pure-u-1 pure-u-md-1-3">
-            <strong>@Html.DisplayNameFor(model => model.AdvisorySection)</strong>
+            <strong>@Html.DisplayNameFor(model => model.AdvisorySections)</strong>
         </div>
         <div class="pure-u-1 pure-u-md-2-3">
-            @(Model.AdvisorySection?.Id != null ? Html.DisplayFor(model => model.AdvisorySection.Id) : "")
+            @(Model.AdvisorySections?.Any() == true ? Html.DisplayFor(model => model.AdvisorySections) : "")
         </div>
         <div class="pure-u-1 pure-u-md-1-3">
             <strong>@Html.DisplayNameFor(model => model.UserName)</strong>

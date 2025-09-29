@@ -22,7 +22,9 @@ public class StudentsController : Controller
     public async Task<IActionResult> Index()
     {
         var applicationDbContext = _context.Students
-            .Include(s => s.Section);
+            .Include(s => s.Section)
+            .OrderBy(s => s.LastName)
+                .ThenBy(s => s.FirstName);
         return View(await applicationDbContext.ToListAsync());
     }
 
@@ -216,11 +218,14 @@ public class StudentsController : Controller
         if (!string.IsNullOrWhiteSpace(term))
         {
             var loweredTerm = term.ToLower();
-            studentsQuery = studentsQuery.Where(s =>
-                s.LastName.ToLower().Contains(loweredTerm) ||
-                s.FirstName.ToLower().Contains(loweredTerm) ||
-                s.MiddleName.ToLower().Contains(loweredTerm)
-            );
+            studentsQuery = studentsQuery
+                .OrderBy(s => s.LastName)
+                    .ThenBy(s => s.FirstName)
+                .Where(s =>
+                    s.LastName.ToLower().Contains(loweredTerm) ||
+                    s.FirstName.ToLower().Contains(loweredTerm) ||
+                    s.MiddleName.ToLower().Contains(loweredTerm)
+                );
         }
         var students = await studentsQuery.ToListAsync();
         return PartialView("_StudentTableRows", students);
