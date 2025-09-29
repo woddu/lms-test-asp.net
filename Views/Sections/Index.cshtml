@@ -12,20 +12,21 @@
     <h2 class="title">@ViewData["Title"]</h2>
 </header>
 
-<div class="prevent-overflow px-8">
-    <div>
-        <p>
-            <a asp-action="Create">Create New</a>
-        </p>
-        <form class="pure-form" style="position: relative; display: inline-block; margin-bottom: 1rem;">
-            <svg style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; pointer-events: none; color: #888;"
-                xmlns="http://www.w3.org/2000/svg" height="24" width="24" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M15.5 14h-.79l-.28-.27a6.471 6.471 0 001.48-5.34C15.02 5.59 12.43 3 9.5 3S4 5.59 4 8.5 6.59 14 9.5 14c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
-            </svg>
+<div style="margin: .5rem 2rem;">
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+    <form class="pure-form" style="position: relative; display: inline-block;">
+        <svg style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; pointer-events: none; color: #888;"
+            xmlns="http://www.w3.org/2000/svg" height="24" width="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M15.5 14h-.79l-.28-.27a6.471 6.471 0 001.48-5.34C15.02 5.59 12.43 3 9.5 3S4 5.59 4 8.5 6.59 14 9.5 14c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+        </svg>
 
-            <input id="searchBox" type="text" placeholder="Search..."
-                style="padding-left: 36px; font-size: 1rem; border: 1px solid #ccc; border-radius: 4px;" />
-        </form>  
+        <input id="searchBox" type="text" placeholder="Search..."
+            style="padding-left: 36px; font-size: 1rem; border: 1px solid #ccc; border-radius: 4px;" />
+    </form>  
+</div>
+<div class="prevent-overflow px-8">
         <table class="pure-table">
             <thead>
                 <tr>
@@ -62,7 +63,6 @@
                 }
             </tbody>
         </table>
-    </div>
 </div>
 
 @section Scripts {
