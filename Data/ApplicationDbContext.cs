@@ -23,6 +23,12 @@ public class ApplicationDbContext : IdentityDbContext<LMSUser>
     {
         base.OnModelCreating(builder);
 
+        builder.Entity<Section>()
+            .HasOne(s => s.Adviser)
+            .WithMany(u => u.AdvisorySections)   // explicitly one-to-many
+            .HasForeignKey(s => s.AdviserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         // Composite key for TeacherSubject -- OLD
         // builder.Entity<TeacherSubject>()
         //     .HasKey(ts => new { ts.TeacherId, ts.SubjectId });
