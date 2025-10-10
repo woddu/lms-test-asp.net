@@ -79,9 +79,10 @@
     <h3 style="margin-bottom: 1rem;">Initial Grade: @Model.StudentScore.InitialGrade_First, Final Grade: @Model.StudentScore.FinalGrade_First</h3>
 
     <table class="pure-table" style="margin-bottom: 1rem;">
+        <h4>Written Works</h4>
         <thead>
             <tr>
-                <th>Written Works</th>
+                <th>Highest</th>
                 @if(wwcount_First == 0) { <th>None</th> }
                 else
                 {
@@ -129,9 +130,10 @@
         </tbody>    
     </table>        
     <table class="pure-table">
+        <h4>Performance Tasks</h4>
         <thead>
             <tr>
-                <th>Performance Tasks</th>
+                <th>Highest</th>
                 @if(ptcount_First == 0) { <th>None</th> }
                 else
                 {
@@ -189,6 +191,7 @@
                 {        
                     <input name="Exam_First" id="Exam_First" value="@Model.StudentScore.Exam_First"
                      style="width: 2rem; margin-top: auto; margin-bottom: auto;" type="number" min="0" max="@Model.TeacherSubject.Exam_First"/>
+                    <label style="padding-left: .25rem ;margin-top: auto; margin-bottom: auto; font-weight: bold; font-size: 1rem;" for="Exam_First"> / @Model.TeacherSubject.Exam_First</label>
                 } 
                 else
                 {
@@ -205,9 +208,10 @@
     <h3 style="margin-bottom: 1rem;">Initial Grade: @Model.StudentScore.InitialGrade_Second, Final Grade: @Model.StudentScore.FinalGrade_Second</h3>
 
     <table class="pure-table" style="margin-bottom: 1rem;">
+        <h4>Written Works</h4>
         <thead>
             <tr>
-                <th>Written Works</th>
+                <th>Highest</th>
                 @if(wwcount_Second == 0) { <th>None</th> }
                 else
                 {
@@ -255,9 +259,10 @@
         </tbody>    
     </table>        
     <table class="pure-table">
+        <h4>Performance Tasks</h4>
         <thead>
             <tr>
-                <th>Performance Tasks</th>
+                <th>Highest</th>
                 @if(ptcount_Second == 0) { <th>None</th> }
                 else
                 {
@@ -315,6 +320,7 @@
                 {        
                     <input name="Exam_Second" id="Exam_Second" value="@Model.StudentScore.Exam_Second"
                      style="width: 2rem; margin-top: auto; margin-bottom: auto;" type="number" min="0" max="@Model.TeacherSubject.Exam_Second"/>
+                    <label style="padding-left: .25rem ;margin-top: auto; margin-bottom: auto; font-weight: bold; font-size: 1rem;" for="Exam_Second"> / @Model.TeacherSubject.Exam_Second</label>
                 } 
                 else
                 {
