@@ -13,6 +13,8 @@ public class ApplicationDbContext : IdentityDbContext<LMSUser>
     public DbSet<Score> Scores { get; set; }
     public DbSet<TeacherSubject> TeacherSubjects { get; set; }
     public DbSet<TeacherSubjectSection> TeacherSubjectSections { get; set; }
+    public DbSet<StudentExtraFieldDefinition> StudentsExtraFieldDefinitions { get; set; }
+    public DbSet<StudentExtraField> StudentsExtraFields { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
@@ -83,5 +85,16 @@ public class ApplicationDbContext : IdentityDbContext<LMSUser>
             .WithMany(ts => ts.Scores)
             .HasForeignKey(s => s.TeacherSubjectId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<StudentExtraField>()
+            .HasOne(sef => sef.Student)
+            .WithMany(s => s.ExtraFields)
+            .HasForeignKey(sef => sef.StudentId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<StudentExtraField>()
+            .HasOne(sef => sef.ExtraFieldDefinition)
+            .WithMany()
+            .HasForeignKey(sef => sef.ExtraFieldDefinitionId);
     }
 }
