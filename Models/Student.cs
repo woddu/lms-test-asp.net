@@ -23,4 +23,6 @@ public class Student
     public Section? Section { get; set; }
     [JsonIgnore]
     public ICollection<Score>? Scores { get; set; } = new List<Score>();
+
+    public ICollection<StudentExtraField> ExtraFields = new List<StudentExtraField>();
 }
