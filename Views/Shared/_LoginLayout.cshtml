@@ -6,8 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <style>
+    <link rel="stylesheet" href="~/css/simplebar.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/theme.min.css" asp-append-version="true" />
+    @* <style>
         body {
             background: #89909f;
             font-size: 12px;
@@ -25,13 +26,44 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             width: 300px;
         }
-    </style>
+    </style> *@
 </head>
 
 <body>
-    <div class="login-container">
-        @RenderBody()
-    </div>
+    <main class="main" id="top">
+        <div class="container" data-layout="container">
+            <div class="row flex-center min-vh-100 py-6">
+                <div class="col-sm-10 col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+                    <div class="card">
+                        <div class="card-body p-4 p-sm-5">
+                            <div class="row flex-between-center mb-2">
+                                <div class="col-auto">
+                                    <h5>Log in</h5>
+                                </div>                                
+                            </div>
+
+                            @RenderBody()
+
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/popper.min.js" asp-append-version="true"></script>
+    <script src="~/js/bootstrap.min.js" asp-append-version="true"></script>
+    <script src="~/js/anchor.min.js" asp-append-version="true"></script>
+    <script src="~/js/is.min.js" asp-append-version="true"></script>
+    <script src="~/js/echarts.min.js" asp-append-version="true"></script>
+    <script src="~/js/all.min.js" asp-append-version="true"></script>
+    <script src="~/js/lodash.min.js" asp-append-version="true"></script>
+    <script src="~/js/list.min.js" asp-append-version="true"></script>
+    <script src="~/js/theme.js" asp-append-version="true"></script>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
