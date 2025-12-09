@@ -12,36 +12,197 @@
     <script type="importmap"></script>
     @* <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" /> *@
     <link rel="stylesheet" href="//cdn.jsdelivr.net/combine/npm/purecss@3.0.0/build/base-min.css,npm/purecss@3.0.0/build/buttons-min.css,npm/purecss@3.0.0/build/forms-min.css,npm/purecss@3.0.0/build/grids-min.css,npm/purecss@3.0.0/build/grids-responsive-min.css,npm/purecss@3.0.0/build/tables-min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/lms_test1.styles.css" asp-append-version="true" />
+    @* <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" /> *@
+    <link rel="stylesheet" href="~/css/simplebar.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/theme.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/htmx_test.styles.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
+    <style>
+        @@media(min-width: 1200px) {
+            .navbar-brand.onside {
+            display: none !important;
+            }
+            .navbar-vertical-collapsed .navbar-brand.onside {
+            display: block !important;
+            }
+            .navbar .avatar {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+
+    </style>
 </head>
 
 <body>
-    <div class="site-wrap">
+    <main class="main" id="top">
+      <div class="container" data-layout="container">
+
+        <nav class="navbar navbar-light navbar-vertical navbar-expand-xl">
+        
+        <div class="d-flex align-items-center">
+            <div class="toggle-icon-wrapper">
+              <button class="btn navbar-toggler-humburger-icon navbar-vertical-toggle" data-bs-toggle="tooltip" data-bs-placement="left" title="Toggle Navigation"><span class="navbar-toggle-icon"><span class="toggle-line"></span></span></button>
+            </div> 
+
+            <a class="navbar-brand onside" href="index.html">
+              <span class="font-sans-serif text-primary">@ViewData["Title"]</span>
+            </a>
+        </div>
+
+          <div class="collapse navbar-collapse" id="navbarVerticalCollapse">
+            <div class="navbar-vertical-content scrollbar">
+                <ul class="navbar-nav flex-column mb-3" id="navbarVerticalNav">
+                    <li class="nav-item">
+                        <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
+                            <div class="col-auto navbar-vertical-label">LMS</div>
+                            <div class="col ps-0">
+                                <hr class="mb-0 navbar-vertical-divider" />
+                            </div>
+                        </div>
+
+                        <!-- Home -->
+                        <a class="nav-link @((Context.Request.Path == "/") ? "active" : "")" asp-area="" asp-controller="Home" asp-action="Index" role="button">
+                            <div class="d-flex align-items-center">
+                                <span class="nav-link-icon"><span class="fas fa-home"></span></span>
+                                <span class="nav-link-text ps-1">Home</span>
+                            </div>
+                        </a>
+
+                        <!-- Privacy -->
+                        <a class="nav-link @((Context.Request.Path.Value?.ToLower() == "/home/privacy") ? "active" : "")" asp-area="" asp-controller="Home" asp-action="Privacy" role="button">
+                            <div class="d-flex align-items-center">
+                                <span class="nav-link-icon"><span class="fas fa-user-shield"></span></span>
+                                <span class="nav-link-text ps-1">Privacy</span>
+                            </div>
+                        </a>
+
+                        @if (User.IsInRole("Admin"))
+                        {                            
+                            <a class="nav-link @(Context.Request.Path.Value?.ToLower().StartsWith("/teachersmanagement") == true ? "active" : "")" asp-area="" asp-controller="TeachersManagement" asp-action="Index" role="button">
+                                <div class="d-flex align-items-center">
+                                    <span class="nav-link-icon"><span class="fas fa-chalkboard-teacher"></span></span>
+                                    <span class="nav-link-text ps-1">Teacher Management</span>
+                                </div>
+                            </a>
+                        }
+
+                        @if (User.IsInRole("Admin") || User.IsInRole("HeadTeacher"))
+                        {                            
+                            <a class="nav-link @(Context.Request.Path.Value?.ToLower().StartsWith("/sections") == true ? "active" : "")" asp-area="" asp-controller="Sections" asp-action="Index" role="button">
+                                <div class="d-flex align-items-center">
+                                    <span class="nav-link-icon"><span class="fas fa-th-large"></span></span>
+                                    <span class="nav-link-text ps-1">Sections</span>
+                                </div>
+                            </a>
+                        }
+
+                        @if (User.IsInRole("Admin") || User.IsInRole("HeadTeacher"))
+                        {                            
+                            <a class="nav-link @(Context.Request.Path.Value?.ToLower().StartsWith("/students") == true ? "active" : "")" asp-area="" asp-controller="Students" asp-action="Index" role="button">
+                                <div class="d-flex align-items-center">
+                                    <span class="nav-link-icon"><span class="fas fa-user-graduate"></span></span>
+                                    <span class="nav-link-text ps-1">Students</span>
+                                </div>
+                            </a>
+                        }
+
+                        @if (User.IsInRole("Admin") || User.IsInRole("HeadTeacher"))
+                        {                            
+                            <a class="nav-link @(Context.Request.Path.Value?.ToLower().StartsWith("/subjects") == true ? "active" : "")" asp-area="" asp-controller="Subjects" asp-action="Index" role="button">
+                                <div class="d-flex align-items-center">
+                                    <span class="nav-link-icon"><span class="fas fa-book"></span></span>
+                                    <span class="nav-link-text ps-1">Subjects</span>
+                                </div>
+                            </a>
+                        }
+
+                        @if (User.IsInRole("HeadTeacher") || User.IsInRole("Teacher"))
+                        {                            
+                            <a class="nav-link @(Context.Request.Path.Value?.ToLower().StartsWith("/grades") == true ? "active" : "")" asp-area="" asp-controller="Grades" asp-action="Index" role="button">
+                                <div class="d-flex align-items-center">
+                                    <span class="nav-link-icon"><span class="fas fa-clipboard-list"></span></span>
+                                    <span class="nav-link-text ps-1">Grades</span>
+                                </div>
+                            </a>
+                        }
+
+                        @if (User.IsInRole("Teacher"))
+                        {                            
+                            <a class="nav-link @(Context.Request.Path.Value?.ToLower().StartsWith("/advisory") == true ? "active" : "")" asp-area="" asp-controller="Advisory" asp-action="Index" role="button">
+                                <div class="d-flex align-items-center">
+                                    <span class="nav-link-icon"><span class="fas fa-users"></span></span>
+                                    <span class="nav-link-text ps-1">Advisory</span>
+                                </div>
+                            </a>
+                        }
+                    </li>
+
+                </ul>
+            </div>
+          </div>
+        
+        </nav>
+
+        <div class="content">
+            <nav class="navbar navbar-light navbar-glass navbar-top navbar-expand">
+                <button class="btn navbar-toggler-humburger-icon navbar-toggler me-1 me-sm-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarVerticalCollapse" aria-controls="navbarVerticalCollapse" aria-expanded="false" aria-label="Toggle Navigation"><span class="navbar-toggle-icon"><span class="toggle-line"></span></span></button>
+
+                <div class="navbar-brand me-1 me-sm-3">
+                    <span class="font-sans-serif text-primary">@ViewData["Title"]</span>
+                </div>
+
+
+                <ul class="navbar-nav navbar-nav-icons ms-auto flex-row align-items-center">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link pe-0 ps-2 d-flex align-items-center" id="navbarDropdownUser" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <div class="avatar avatar-xl me-1">
+                                <span class="fas fa-user"></span>
+                            </div>
+                            <span class="fw-bold">@User.Identity?.Name</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-caret dropdown-caret dropdown-menu-end py-0" aria-labelledby="navbarDropdownUser">
+                        <div class="bg-white dark__bg-1000 rounded-2 py-2">
+                            @* <a class="dropdown-item fw-bold text-warning" href="#!"><span class="fas fa-crown me-1"></span><span>Go Pro</span></a> *@
+                            @* <div class="dropdown-divider"></div> *@
+                            @* <a class="dropdown-item" href="#!">Set status</a> *@
+                            <a class="dropdown-item" href="pages/user/profile.html">Profile &amp; account</a>
+                            @* <a class="dropdown-item" href="#!">Feedback</a> *@
+                            <div class="dropdown-divider"></div>
+                            @* <a class="dropdown-item" href="pages/user/settings.html">Settings</a> *@
+                            <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                                <button  type="submit" class="dropdown-item">Logout</button>
+                            </form>                            
+                        </div>
+                        </div>
+                    </li>   
+                </ul>
+            </nav>
+        
+            @RenderBody()
+        </div>
+
+      </div>
+    </main>
+    
+    
+    @* <div class="site-wrap">
 
         <nav class="site-nav">            
             <div class="side-nav">
                 <div class="name">
                     @User.Identity?.Name
-                    @* <svg width="24" height="24" viewBox="0 0 24 24">
-                            <path
-                                d="M11.5,22C11.64,22 11.77,22 11.9,21.96C12.55,21.82 13.09,21.38 13.34,20.78C13.44,20.54 13.5,20.27 13.5,20H9.5A2,2 0 0,0 11.5,22M18,10.5C18,7.43 15.86,4.86 13,4.18V3.5A1.5,1.5 0 0,0 11.5,2A1.5,1.5 0 0,0 10,3.5V4.18C7.13,4.86 5,7.43 5,10.5V16L3,18V19H20V18L18,16M19.97,10H21.97C21.82,6.79 20.24,3.97 17.85,2.15L16.42,3.58C18.46,5 19.82,7.35 19.97,10M6.58,3.58L5.15,2.15C2.76,3.97 1.18,6.79 1,10H3C3.18,7.35 4.54,5 6.58,3.58Z">
-                            </path>
-                        </svg> *@
                 </div>
-                @* <div> *@
+                
                     <ul class="nav-links">
                         <li @if(Context.Request.Path == "/") {
                         <text>class="active"</text>
                                                 }
                             >
                             <a asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                            @* <ul>
-                                <li><a href="#0">Create New Deal</a></li>
-                                <li><a href="#0">Modify Deal</a></li>
-                                <li><a href="#0">Pipeline</a></li>
-                            </ul> *@
+                            
+                            
                             <ul>
                                 <li @if(Context.Request.Path.Value?.ToLower() == "/home/privacy") {
                                 <text>
@@ -107,11 +268,7 @@
                             </li>
                         }
                     </ul>
-                    @* <div class="note">
-                        <h3>Your Monthly Report</h3>
-                        <p>Get the info about all your deals, pros, cons. And build your roadmap.</p>
-                    </div>
-                </div> *@
+                    
             </div>
             <ul style="padding: .5rem 0;">
                 <li>
@@ -130,10 +287,22 @@
 
         </main>
 
-    </div>
+    </div> *@
+
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/popper.min.js" asp-append-version="true"></script>
+    <script src="~/js/bootstrap.min.js" asp-append-version="true"></script>
+    <script src="~/js/anchor.min.js" asp-append-version="true"></script>
+    <script src="~/js/is.min.js" asp-append-version="true"></script>
+    <script src="~/js/echarts.min.js" asp-append-version="true"></script>
+    <script src="~/js/all.min.js" asp-append-version="true"></script>
+    <script src="~/js/lodash.min.js" asp-append-version="true"></script>
+    <script src="~/js/list.min.js" asp-append-version="true"></script>
+    <script src="~/js/theme.js" asp-append-version="true"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @* <script src="~/js/site.js" asp-append-version="true"></script> *@
     <script>
         const toggle = document.querySelector('.menu-toggle');
         const navLinks = document.querySelector('.nav-links');
