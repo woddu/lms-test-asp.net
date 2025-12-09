@@ -6,6 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <script type="importmap"></script>
+    <script>
+        // Read stored theme or default to system
+        var theme = localStorage.getItem('theme') || 'auto';
+        var systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? systemTheme : theme);
+    </script>
     <link rel="stylesheet" href="~/css/simplebar.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/theme.min.css" asp-append-version="true" />
     @* <style>
