@@ -2,45 +2,41 @@
 @model LoginModel
 
 @{
-    Layout = "~/Views/Shared/_LoginLayout.cshtml"; // Use your custom layout path
-    ViewData["Title"] = "Log in";
+    Layout = "~/Views/Shared/_LoginLayout.cshtml"; // Use your custom layout path    
 }
 
-<h1>@ViewData["Title"]</h1>
-<hr />
+<form id="account" method="post">
 
-<section>
-    <form id="account" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+    <div class="mb-3">
+        <input asp-for="Input.Email" class="form-control" type="email" autocomplete="username" aria-required="true"
+            placeholder="Email address" />
+        @* <label asp-for="Input.Email" class="form-label">Email</label> *@
+        <span asp-validation-for="Input.Email" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <input asp-for="Input.Password" class="form-control" type="password" autocomplete="current-password" aria-required="true"
+            placeholder="Password" />
+        @* <label asp-for="Input.Password" class="form-label">Password</label> *@
+        <span asp-validation-for="Input.Password" class="text-danger"></span>
+    </div>
 
-        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-        <div class="form-floating mb-3">
-            <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true"
-                placeholder="name@example.com" />
-            <label asp-for="Input.Email" class="form-label">Email</label>
-            <span asp-validation-for="Input.Email" class="text-danger"></span>
-        </div>
-        <div class="form-floating mb-3">
-            <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true"
-                placeholder="password" />
-            <label asp-for="Input.Password" class="form-label">Password</label>
-            <span asp-validation-for="Input.Password" class="text-danger"></span>
-        </div>
-        <div class="checkbox mb-3">
-            <label asp-for="Input.RememberMe" class="form-label">
+    <div class="row flex-between-center">
+        <div class="col-auto">
+            <div class="form-check mb-0">
                 <input class="form-check-input" asp-for="Input.RememberMe" />
-                @Html.DisplayNameFor(m => m.Input.RememberMe)
-            </label>
+                <label class="form-check-label mb-0" for="basic-checkbox">
+                    @Html.DisplayNameFor(m => m.Input.RememberMe)
+                </label>
+            </div>
         </div>
-        <div>
-            <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
-        </div>
-        <div>
-            <p>
-                <a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
-            </p>
-        </div>
-    </form>
-</section>
+
+        <div class="col-auto"><a id="forgot-password" asp-page="./ForgotPassword">Forgot Password?</a></div>
+    </div>
+
+    <div class="mb-3"><button class="btn btn-primary d-block w-100 mt-3" type="submit" id="login-submit" >Log in</button></div>
+
+</form>
 
 
 @section Scripts {
