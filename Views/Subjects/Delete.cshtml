@@ -1,42 +1,47 @@
 @model lms_test1.Models.Subject
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Subjects";
+    ViewData["Header"] = "Delete";
 }
 
-<header>
-    <div class="breadcrumbs">
-        <a asp-area="" asp-controller="Subjects" asp-action="Index">Subject Management</a> > <a
-            href="#0/">@ViewData["Title"]</a>
+<nav class="mb-3" style="--falcon-breadcrumb-divider: '»';" aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a asp-area="" asp-controller="Subjects" asp-action="Index">Subject Management</a>
+    </li>
+    
+    <li class="breadcrumb-item active" aria-current="page">@ViewData["Header"]</li>
+  </ol>
+</nav>
+
+<div class="card mb-3">
+    <div class="card-header">
+        <div class="row flex-between-center">
+            <div class="col-6 col-sm-auto d-flex align-items-center pe-0">
+                <h5>@ViewData["Header"] - @Model.Name</h5>
+            </div>
+            <div class="col-6 col-sm-auto ms-auto text-end ps-0">
+                <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-falcon-default btn-sm" type="button">Edit</a>
+            </div>           
+        </div>
     </div>
-    <h2 class="title">@ViewData["Title"] - @Model.Name</h2>
-</header>
+    <div class="card-body">
+        <div class="row">
+            <dl class="row">
+                <dt class="col-12 col-md-4">@Html.DisplayNameFor(m => m.Name)</dt>
+                <dd class="col-12 col-md-8">@Html.DisplayFor(m => m.Name)</dd>
 
-<style>
-    .prevent-overflow.px-8>*>* {
-        margin-bottom: 1rem;
-    }
+                <dt class="col-12 col-md-4">@Html.DisplayNameFor(m => m.Track)</dt>
+                <dd class="col-12 col-md-8">@Html.DisplayFor(m => m.Track)</dd>
+            </dl>
 
-    .prevent-overflow.px-8>* {
-        margin-bottom: 1rem;
-    }
-
-    .button-error {
-        background: rgb(202, 60, 60);
-        color: white;
-    }
-</style>
-<div class="prevent-overflow px-8">
-    <a asp-action="Index">Back to List</a>
-    <hr />
-    <div class="pure-g">
-        <div class="pure-u-1 pure-u-md-1-3"><strong>@Html.DisplayNameFor(model => model.Name)</strong></div>
-        <div class="pure-u-1 pure-u-md-2-3">@Html.DisplayFor(model => model.Name)</div>
-        <div class="pure-u-1 pure-u-md-1-3"><strong>@Html.DisplayNameFor(model => model.Track)</strong></div>
-        <div class="pure-u-1 pure-u-md-2-3">@Html.DisplayFor(model => model.Track)</div>
+            <div class="col-12">
+                <form asp-action="Delete">
+                    <input type="hidden" asp-for="Id" />
+                    <input type="submit" value="Delete" class="btn btn-danger" />
+                </form>
+            </div>
+        </div>
     </div>
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="pure-button button-error" />
-    </form>
 </div>

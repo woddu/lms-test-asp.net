@@ -1,47 +1,55 @@
 @model lms_test1.Models.Subject
 
 @{
-    ViewData["Title"] = "Edit Subject";
+    ViewData["Title"] = "Subjects";
+    ViewData["Header"] = "Edit";
 }
 
-<header>
-    <div class="breadcrumbs">
-        <a asp-area="" asp-controller="Subjects" asp-action="Index">Subject Management</a> > <a
-            href="#0/">@ViewData["Title"]</a>
-    </div>
-    <h2 class="title">@ViewData["Title"] - @Model.Name</h2>
-</header>
+<nav class="mb-3" style="--falcon-breadcrumb-divider: '»';" aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a asp-area="" asp-controller="Subjects" asp-action="Index">Subject Management</a>
+    </li>
+    
+    <li class="breadcrumb-item active" aria-current="page">@ViewData["Header"]</li>
+  </ol>
+</nav>
 
-<div class="prevent-overflow px-8">
-    <form class="pure-form pure-form-stacked" asp-action="Edit">
-        <fieldset>
-            <legend>
-                <a asp-action="Index">Back to List</a>
-            </legend>
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<div class="card mb-3">
+    <div class="card-header">
+        <div class="col-auto align-self-center">
+            <h5 class="mb-0">
+                @ViewData["Header"] - @Model.Name
+            </h5>
+        </div>        
+    </div>
+    <div class="card-body">
+
+        <form asp-action="Edit" class="row g-3">
+
             <input type="hidden" asp-for="Id" />
-            <div class="pure-g">
-                <div class="pure-u-1 pure-u-md-1-3">
-                    <label asp-for="Name"></label>
-                    <input asp-for="Name" class="pure-u-23-24" required />
-                    <span asp-validation-for="Name" class="text-danger"></span>
-                </div>
-                <div class="pure-u-1 pure-u-md-1-3">
-                    <label asp-for="Track"></label>                    
-                    <select asp-for="Track" class="pure-u-23-24" required>
-                        @foreach (var track in (IEnumerable<string>)ViewData["Tracks"])
-                        {
-                            <option value="@track" selected="@(Model.Track == track ? "selected" : null)">@track</option>
-                        }
-                    </select>
-                    <span asp-validation-for="Track" class="text-danger"></span>
-                </div>
+
+            <div class="col-md-6">
+                <label asp-for="Name"></label>
+                <input asp-for="Name" class="form-control" placeholder="Subject Name"/>
+                <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-            <div style="margin-top: 1rem;">
-                <button type="submit" id="submitBtn" class="pure-button pure-button-primary">Save</button>
+            <div class="col-md-6">
+                <label asp-for="Track"></label>
+                <select asp-for="Track" class="form-control">
+                    <option value="">Select a track</option>
+                    @foreach (var track in (IEnumerable<string>)ViewData["Tracks"])
+                    {
+                        <option value="@track" selected="@(Model.Track == track ? "selected" : null)">@track</option>
+                    }
+                </select>
+                <span asp-validation-for="Track" class="text-danger"></span>
             </div>
-        </fieldset>
-    </form>
+
+            <div class="col-12"><button id="submitBtn" class="btn btn-primary" type="submit">Save</button></div>
+        </form>
+    </div>
 </div>
 
 <script>
