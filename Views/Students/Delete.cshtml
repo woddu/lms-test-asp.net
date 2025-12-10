@@ -1,84 +1,65 @@
 @model lms_test1.Models.Student
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Students";
+    ViewData["Header"] = "Delete";
 }
 
-<header>
-    <div class="breadcrumbs">
-        <a asp-area="" asp-controller="Students" asp-action="Index">Section Management</a> > <a href="#0/">@ViewData["Title"]</a>
-    </div>
-    <h2 class="title">@ViewData["Title"] - @Model.LastName, @Model.FirstName</h2>
-</header>
-
-<style>
-    .prevent-overflow.px-8>*>* {
-        margin-bottom: 1rem;
-    }
-    .prevent-overflow.px-8>* {
-        margin-bottom: 1rem;
-    }
-    .button-error {
-        background: rgb(202, 60, 60);
-        color: white;
-    }
-</style>
-<div class="prevent-overflow px-8">
-    <a asp-action="Index">Back to List</a>
-    <hr />
-    <div class="pure-g">
-        <div class = "pure-u-1 pure-u-md-1-3">
-            <strong>@Html.DisplayNameFor(model => model.LastName)</strong>
-        </div>
-        <div class = "pure-u-1 pure-u-md-2-3">
-            @Html.DisplayFor(model => model.LastName)
-        </div>
-        <div class = "pure-u-1 pure-u-md-1-3">
-            <strong>@Html.DisplayNameFor(model => model.FirstName)</strong>
-        </div>
-        <div class = "pure-u-1 pure-u-md-2-3">
-            @Html.DisplayFor(model => model.FirstName)
-        </div>
-        <div class = "pure-u-1 pure-u-md-1-3">
-            <strong>@Html.DisplayNameFor(model => model.MiddleName)</strong>
-        </div>
-        <div class = "pure-u-1 pure-u-md-2-3">
-            @Html.DisplayFor(model => model.MiddleName)
-        </div>
-        <div class = "pure-u-1 pure-u-md-1-3">
-            <strong>@Html.DisplayNameFor(model => model.Gender)</strong>
-        </div>
-        <div class = "pure-u-1 pure-u-md-2-3">
-            @Html.DisplayFor(model => model.Gender)
-        </div>
-        <div class = "pure-u-1 pure-u-md-1-3">
-            <strong>@Html.DisplayNameFor(model => model.Age)</strong>
-        </div>
-        <div class = "pure-u-1 pure-u-md-2-3">
-            @Html.DisplayFor(model => model.Age)
-        </div>
-        <div class = "pure-u-1 pure-u-md-1-3">
-            <strong>@Html.DisplayNameFor(model => model.BirthDate)</strong>
-        </div>
-        <div class = "pure-u-1 pure-u-md-2-3">
-            @Html.DisplayFor(model => model.BirthDate)
-        </div>
-        <div class = "pure-u-1 pure-u-md-1-3">
-            <strong>@Html.DisplayNameFor(model => model.Address)</strong>
-        </div>
-        <div class = "pure-u-1 pure-u-md-2-3">
-            @Html.DisplayFor(model => model.Address)
-        </div>
-        <div class = "pure-u-1 pure-u-md-1-3">
-            <strong>@Html.DisplayNameFor(model => model.Section)</strong>
-        </div>
-        <div class = "pure-u-1 pure-u-md-2-3">
-            @Html.DisplayFor(model => model.Section.Id)
-        </div>
-    </div>
+<nav class="mb-3" style="--falcon-breadcrumb-divider: '»';" aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a asp-area="" asp-controller="Students" asp-action="Index">Student Management</a>
+    </li>
     
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="pure-button button-error" />
-    </form>
+    <li class="breadcrumb-item active" aria-current="page">@ViewData["Header"]</li>
+  </ol>
+</nav>
+
+<div class="card mb-3">
+    <div class="card-header">
+        <div class="row flex-between-center">
+            <div class="col-6 col-sm-auto d-flex align-items-center pe-0">
+                <h5>@ViewData["Header"] - @Model.LastName, @Model.FirstName</h5>
+            </div>
+            <div class="col-6 col-sm-auto ms-auto text-end ps-0">
+                <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-falcon-default btn-sm" type="button">Edit</a>
+            </div>           
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <dl class="row">
+                <dt class="col-12 col-md-4">@Html.DisplayNameFor(m => m.LastName)</dt>
+                <dd class="col-12 col-md-8">@Html.DisplayFor(m => m.LastName)</dd>
+
+                <dt class="col-12 col-md-4">@Html.DisplayNameFor(m => m.FirstName)</dt>
+                <dd class="col-12 col-md-8">@Html.DisplayFor(m => m.FirstName)</dd>
+
+                <dt class="col-12 col-md-4">@Html.DisplayNameFor(m => m.MiddleName)</dt>
+                <dd class="col-12 col-md-8">@Html.DisplayFor(m => m.MiddleName)</dd>
+
+                <dt class="col-12 col-md-4">@Html.DisplayNameFor(m => m.Gender)</dt>
+                <dd class="col-12 col-md-8">@Html.DisplayFor(m => m.Gender)</dd>
+
+                <dt class="col-12 col-md-4">@Html.DisplayNameFor(m => m.Age)</dt>
+                <dd class="col-12 col-md-8">@Html.DisplayFor(m => m.Age)</dd>
+
+                <dt class="col-12 col-md-4">@Html.DisplayNameFor(m => m.BirthDate)</dt>
+                <dd class="col-12 col-md-8">@Html.DisplayFor(m => m.BirthDate)</dd>
+
+                <dt class="col-12 col-md-4">@Html.DisplayNameFor(m => m.Address)</dt>
+                <dd class="col-12 col-md-8">@Html.DisplayFor(m => m.Address)</dd>
+
+                <dt class="col-12 col-md-4">@Html.DisplayNameFor(m => m.Section)</dt>
+                <dd class="col-12 col-md-8">@Html.DisplayFor(m => m.Section.Name)</dd>
+            </dl>
+
+            <div class="col-12">
+                <form asp-action="Delete">
+                    <input type="hidden" asp-for="Id" />
+                    <input type="submit" value="Delete" class="btn btn-danger" />
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
