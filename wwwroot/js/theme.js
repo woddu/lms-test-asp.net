@@ -4100,6 +4100,10 @@ var listInit = function listInit() {
       });
     }
   }
+
+  document.dispatchEvent(new CustomEvent("listInitialized", {
+    detail: { message: "List is ready" }
+  }));
 };
 var lottieInit = function lottieInit() {
   var lotties = document.querySelectorAll('.lottie');
@@ -4721,6 +4725,7 @@ var swiperInit = function swiperInit() {
 // export default themeControl;
 // eslint-disable-next-line
 
+// eslint-disable-next-line
 /* -------------------------------------------------------------------------- */
 /*                                Theme Control                               */
 /* -------------------------------------------------------------------------- */
@@ -4729,52 +4734,23 @@ var swiperInit = function swiperInit() {
 
 var initialDomSetup = function initialDomSetup(element) {
   if (!element) return;
-  var dataUrlDom = element.querySelector('[data-theme-control = "navbarPosition"]');
-  var hasDataUrl = dataUrlDom ? getData(dataUrlDom, 'page-url') : null;
-  element.querySelectorAll('[data-theme-control]').forEach(function (el) {
-    var inputDataAttributeValue = getData(el, 'theme-control');
-    var localStorageValue = getItemFromStore(inputDataAttributeValue);
-    if (inputDataAttributeValue === 'navbarStyle' && !hasDataUrl && (getItemFromStore('navbarPosition') === 'top' || getItemFromStore('navbarPosition') === 'double-top')) {
-      el.setAttribute('disabled', true);
-    }
-    if (el.type === 'select-one' && inputDataAttributeValue === 'navbarPosition') {
-      el.value = localStorageValue;
-    }
+
+  // Force system theme only
+  setItemToStore('theme', 'auto');
+  document.documentElement.setAttribute('data-bs-theme', getSystemTheme());
+
+  // Disable all theme controls so user cannot override
+  element.querySelectorAll('[data-theme-control="theme"]').forEach(function (el) {
+    el.setAttribute('disabled', true);
+    // Reflect system theme state in UI
     if (el.type === 'checkbox') {
-      if (inputDataAttributeValue === 'theme') {
-        if (localStorageValue === 'auto' ? getSystemTheme() === 'dark' : localStorageValue === 'dark') {
-          el.setAttribute('checked', true);
-        }
-      } else {
-        localStorageValue && el.setAttribute('checked', true);
-      }
+      el.checked = getSystemTheme() === 'dark';
     } else if (el.type === 'radio') {
-      var isChecked = localStorageValue === el.value;
-      isChecked && el.setAttribute('checked', true);
-    } else {
-      var isActive = localStorageValue === el.value;
-      isActive && el.classList.add('active');
+      el.checked = el.value === getSystemTheme();
     }
   });
 };
-var changeTheme = function changeTheme(element) {
-  element.querySelectorAll('[data-theme-control = "theme"]').forEach(function (el) {
-    var inputDataAttributeValue = getData(el, 'theme-control');
-    var localStorageValue = getItemFromStore(inputDataAttributeValue);
-    if (el.type === 'checkbox') {
-      if (localStorageValue === 'auto') {
-        getSystemTheme() === 'dark' ? el.checked = true : el.checked = false;
-      } else {
-        localStorageValue === 'dark' ? el.checked = true : el.checked = false;
-      }
-    } else if (el.type === 'radio') {
-      localStorageValue === el.value ? el.checked = true : el.checked = false;
-    } else {
-      localStorageValue === el.value ? el.classList.add('active') : el.classList.remove('active');
-    }
-  });
-};
-var localStorageValue = getItemFromStore('theme');
+
 var handleThemeDropdownIcon = function handleThemeDropdownIcon(value) {
   document.querySelectorAll('[data-theme-dropdown-toggle-icon]').forEach(function (el) {
     var theme = getData(el, 'theme-dropdown-toggle-icon');
@@ -4785,53 +4761,46 @@ var handleThemeDropdownIcon = function handleThemeDropdownIcon(value) {
     }
   });
 };
-handleThemeDropdownIcon(localStorageValue);
+
+// Always system theme
+handleThemeDropdownIcon('auto');
+
 var themeControl = function themeControl() {
   var themeController = new DomNode(document.body);
   var navbarVertical = document.querySelector('.navbar-vertical');
+
   initialDomSetup(themeController.node);
+
+  // Ignore theme clicks, only allow other controls
   themeController.on('click', function (e) {
     var target = new DomNode(e.target);
     if (target.data('theme-control')) {
       var control = target.data('theme-control');
       var value = e.target[e.target.type === 'checkbox' ? 'checked' : 'value'];
+
       if (control === 'theme') {
-        typeof value === 'boolean' && (value = value ? 'dark' : 'light');
+        // Force system theme
+        setItemToStore('theme', 'auto');
+        document.documentElement.setAttribute('data-bs-theme', getSystemTheme());
+        changeTheme(themeController.node);
+        return;
       }
+
       if (control !== 'navbarPosition') {
         CONFIG.hasOwnProperty(control) && setItemToStore(control, value);
         switch (control) {
-          case 'theme':
-            {
-              document.documentElement.setAttribute('data-bs-theme', value === 'auto' ? getSystemTheme() : value);
-              var clickControl = new CustomEvent('clickControl', {
-                detail: {
-                  control: control,
-                  value: value
-                }
-              });
-              e.currentTarget.dispatchEvent(clickControl);
-              changeTheme(themeController.node);
-              break;
-            }
           case 'navbarStyle':
-            {
-              navbarVertical.classList.remove('navbar-card');
-              navbarVertical.classList.remove('navbar-inverted');
-              navbarVertical.classList.remove('navbar-vibrant');
-              if (value !== 'transparent') {
-                navbarVertical.classList.add("navbar-".concat(value));
-              }
-              break;
+            navbarVertical.classList.remove('navbar-card', 'navbar-inverted', 'navbar-vibrant');
+            if (value !== 'transparent') {
+              navbarVertical.classList.add("navbar-".concat(value));
             }
+            break;
           case 'reset':
-            {
-              Object.keys(CONFIG).forEach(function (key) {
-                localStorage.setItem(key, CONFIG[key]);
-              });
-              window.location.reload();
-              break;
-            }
+            Object.keys(CONFIG).forEach(function (key) {
+              localStorage.setItem(key, CONFIG[key]);
+            });
+            window.location.reload();
+            break;
           default:
             window.location.reload();
         }
@@ -4848,12 +4817,13 @@ var themeControl = function themeControl() {
       !!pageUrl ? window.location.replace(pageUrl) : window.location.replace(window.location.href.split('#')[0]);
     }
   });
+
   themeController.on('clickControl', function (_ref12) {
     var _ref12$detail = _ref12.detail,
       control = _ref12$detail.control,
       value = _ref12$detail.value;
     if (control === 'theme') {
-      handleThemeDropdownIcon(value);
+      handleThemeDropdownIcon('auto');
     }
   });
 };
@@ -14044,6 +14014,7 @@ var weeklySalesInit = function weeklySalesInit() {
 /* -------------------------------------------------------------------------- */
 /*                            Theme Initialization                            */
 /* -------------------------------------------------------------------------- */
+docReady(dataTablesInit);docReady(listInit);
 docReady(detectorInit);
 docReady(handleNavbarVerticalCollapsed);
 docReady(totalOrderInit);
@@ -14145,7 +14116,7 @@ docReady(marketingExpensesInit);
 docReady(chartHalfDoughnutInit);
 docReady(trendingKeywordsInit);
 docReady(D3PackedBubbleInit);
-docReady(dataTablesInit);
+// docReady(dataTablesInit);
 docReady(select2Init);
 docReady(hideOnCollapseInit);
 docReady(unresolvedTicketsTabInit);
@@ -14154,4 +14125,4 @@ docReady(picmoInit);
 docReady(nouisliderInit);
 docReady(bulkSelectInit);
 docReady(advanceAjaxTableInit);
-docReady(listInit);
+// docReady(listInit);
