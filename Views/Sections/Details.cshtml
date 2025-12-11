@@ -1,113 +1,103 @@
 @model lms_test1.Models.ViewModels.Sections.SectionDetails
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Sections";
+    ViewData["Header"] = "Details";
 }
 
-<header>
-    <div class="breadcrumbs">
-        <a asp-area="" asp-controller="Sections" asp-action="Index">Section Management</a> > <a
-            href="#0/">@ViewData["Title"]</a>
+<nav class="mb-3" style="--falcon-breadcrumb-divider: '»';" aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a asp-area="" asp-controller="Sections" asp-action="Index">Section Management</a>
+    </li>
+    
+    <li class="breadcrumb-item active" aria-current="page">@ViewData["Header"]</li>
+  </ol>
+</nav>
+
+<div class="card mb-3">
+    <div class="card-header">
+        <div class="row flex-between-center">
+            <div class="col-6 col-sm-auto d-flex align-items-center pe-0">
+                <h5>@ViewData["Header"] - @Model.Section.Name</h5>
+            </div>
+            <div class="col-6 col-sm-auto ms-auto text-end ps-0">
+                <a asp-action="Edit" asp-route-id="@Model?.Section.Id" class="btn btn-falcon-default btn-sm" type="button">Edit</a>
+            </div>           
+        </div>
     </div>
-    <h2 class="title">@ViewData["Title"] - @Model.Section.Name</h2>
-</header>
+    <div class="card-body">
+        <div class="row">
+            <dl class="row">
+                <dt class="col-12 col-md-4">@Html.DisplayNameFor(m => m.Section.Name)</dt>
+                <dd class="col-12 col-md-8">@Html.DisplayFor(m => m.Section.Name)</dd>
 
-<style>
-    .prevent-overflow.px-8>*>* {
-        margin-bottom: 1rem;
-    }
+                <dt class="col-12 col-md-4">@Html.DisplayNameFor(m => m.Section.Strand)</dt>
+                <dd class="col-12 col-md-8">@Html.DisplayFor(m => m.Section.Strand)</dd>
 
-    .prevent-overflow.px-8>* {
-        margin-bottom: 1rem;
-    }
-</style>
-<div class="prevent-overflow px-8">
-    <div>
-        <a asp-action="Index">Back to List</a> |
-        <a asp-action="Edit" asp-route-id="@Model.Section.Id">Edit</a>
-    </div>
-    <div class="pure-g">
-        <div class="pure-u-1 pure-u-md-1-3">
-            <strong>@Html.DisplayNameFor(model => model.Section.Name)</strong>
-        </div>
-        <div class="pure-u-1 pure-u-md-2-3">
-            @Html.DisplayFor(model => model.Section.Name)
-        </div>
-        <div class="pure-u-1 pure-u-md-1-3">
-            <strong>@Html.DisplayNameFor(model => model.Section.Strand)</strong>
-        </div>
-        <div class="pure-u-1 pure-u-md-2-3">
-            @Html.DisplayFor(model => model.Section.Strand)
-        </div>
+                <dt class="col-12 col-md-4">@Html.DisplayNameFor(m => m.Section.YearLevel)</dt>
+                <dd class="col-12 col-md-8">@Html.DisplayFor(m => m.Section.YearLevel)</dd>
+            </dl>
 
-        <div class="pure-u-1 pure-u-md-1-3">
-            <strong>@Html.DisplayNameFor(model => model.Section.YearLevel)</strong>
-        </div>
-        <div class="pure-u-1 pure-u-md-2-3">
-            @Html.DisplayFor(model => model.Section.YearLevel)
-        </div>
-        <div class="pure-u-1 pure-u-md-12-24">
-            <strong>Students in this Section:</strong>
-            
-            <table style="margin-top: 1rem;" class="pure-table">
-                <thead>
-                    <tr>
-                        <th>Full Name</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Model.Students.Count == 0)
-                    {
-                        <tr><td colspan="2">No students are currently assigned to this section.</td></tr>
-                    }
-                    else
-                    {
-                        @foreach (var student in Model.Students)
-                        {
+            <div class="col-12 col-md-6">
+                <strong>Students in this Section:</strong>
+                @if (Model.Students.Count == 0)
+                {
+                    <em class="d-block mt-3">No students are currently assigned to this section.</em>
+                }
+                else
+                {
+                    <table class="table table-bordered mt-3">
+                        <thead>
                             <tr>
-                                <td>@student.LastName , @student.FirstName @student.MiddleName</td>
-                                <td>
-                                    <a asp-controller="Students" asp-action="Details" asp-route-id="@student.Id">Details</a>
-                                </td>
+                                <th>Full Name</th>
+                                <th></th>
                             </tr>
-                        }
-                    }
-                </tbody>
-            </table>
+                        </thead>
+                        <tbody>
+                            @foreach (var student in Model.Students)
+                            {
+                                <tr>
+                                    <td>@student.LastName , @student.FirstName @student.MiddleName</td>
+                                    <td>
+                                        <a asp-controller="Students" asp-action="Details" asp-route-id="@student.Id">Details</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
 
-        </div>
-
-        <div class="pure-u-1 pure-u-md-12-24">
-            <strong>Subjects in this Section:</strong>
-
-            <table style="margin-top: 1rem;" class="pure-table">
-                <thead>
-                    <tr>
-                        <th>Subject Name</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Model.Subjects.Count == 0)
-                    {
-                        <tr><td colspan="2">No subjects are currently assigned to this section.</td></tr>
-                    }
-                    else
-                    {
-                        @foreach (var subject in Model.Subjects)
-                        {
+            <div class="col-12 col-md-6">
+                <strong>Subjects in this Section:</strong>
+                @if (Model.Subjects.Count == 0)
+                {
+                    <em class="d-block mt-3">No subjects are currently assigned to this section.</em>
+                }
+                else
+                {
+                    <table class="table table-bordered mt-3">
+                        <thead>
                             <tr>
-                                <td>@subject.Name</td>
-                                <td>
-                                    <a asp-controller="Subjects" asp-action="Details" asp-route-id="@subject.Id">Details</a>
-                                </td>
+                                <th>Subject Name</th>
+                                <th></th>
                             </tr>
-                        }
-                    }
-                </tbody>
-            </table>
-
+                        </thead>
+                        <tbody>
+                            @foreach (var subject in Model.Subjects)
+                            {
+                                <tr>
+                                    <td>@subject.Name</td>
+                                    <td>
+                                        <a asp-controller="Subjects" asp-action="Details" asp-route-id="@subject.Id">Details</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
         </div>
     </div>
 </div>
