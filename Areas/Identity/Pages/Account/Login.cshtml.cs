@@ -119,11 +119,22 @@ namespace lms_test1.Areas.Identity.Pages.Account
                     return Page();
                 }
 
+                if (!user.Verified)
+                {
+                    ModelState.AddModelError(string.Empty, "Invalid login attempt: account not verified.");
+                    return Page();
+                }
+
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                 var result = await _signInManager.PasswordSignInAsync(user.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
+                    var roles = await _userManager.GetRolesAsync(user);
+                    if (roles.Contains("Admin"))                    
+                        return RedirectToAction("Index", "TeachersManagement");
+                    else if (roles.Contains("HeadTeacher") || roles.Contains("Teacher"))                    
+                        return RedirectToAction("Index", "Grades");
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
                 }
