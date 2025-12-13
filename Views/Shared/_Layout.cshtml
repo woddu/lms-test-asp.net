@@ -10,23 +10,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - lms_test1</title>
     <script type="importmap"></script>
-    <script>
-        // Read stored theme or default to system
-        var theme = localStorage.getItem('theme') || 'auto';
-        var systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? systemTheme : theme);
-    </script>
-    @* <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" /> *@
-    @* <link rel="stylesheet" href="//cdn.jsdelivr.net/combine/npm/purecss@3.0.0/build/base-min.css,npm/purecss@3.0.0/build/buttons-min.css,npm/purecss@3.0.0/build/forms-min.css,npm/purecss@3.0.0/build/grids-min.css,npm/purecss@3.0.0/build/grids-responsive-min.css,npm/purecss@3.0.0/build/tables-min.css" /> *@
-    @* <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" /> *@
+    <script src="~/js/config.js" asp-append-version="true"></script>
     <link rel="stylesheet" href="~/css/simplebar.min.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/theme.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/htmx_test.styles.css" asp-append-version="true" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-
+    
     @await RenderSectionAsync("Styles", required: false)
+    <link rel="stylesheet" href="~/css/theme.min.css" asp-append-version="true" />
     <style>
         .raleway-font {
             font-family: "Raleway", sans-serif;
@@ -37,10 +29,12 @@
 
         @@media(min-width: 1200px) {
             .navbar-brand.onside {
-            display: none !important;
+                /*display: none !important;*/
+                z-index: -112;
             }
             .navbar-vertical-collapsed .navbar-brand.onside {
-            display: block !important;
+                /*display: block !important;*/
+                z-index: 99999;
             }
         }
         .navbar .avatar {
@@ -64,7 +58,9 @@
             </div> 
 
             <a class="navbar-brand onside">
-              <span class="raleway-font text-primary">@ViewData["Title"]</span>
+                <div class="d-flex align-items-center py-3">
+                    <span class="raleway-font text-primary">@ViewData["Title"]</span>
+                </div>
             </a>
         </div>
 
@@ -79,7 +75,7 @@
                             </div>
                         </div>
 
-                        <!-- Home -->
+                        @* <!-- Home -->
                         <a class="nav-link @((Context.Request.Path == "/") ? "active" : "")" asp-area="" asp-controller="Home" asp-action="Index" role="button">
                             <div class="d-flex align-items-center">
                                 <span class="nav-link-icon"><span class="fas fa-home"></span></span>
@@ -93,7 +89,7 @@
                                 <span class="nav-link-icon"><span class="fas fa-user-shield"></span></span>
                                 <span class="nav-link-text ps-1">Privacy</span>
                             </div>
-                        </a>
+                        </a> *@
 
                         @if (User.IsInRole("Admin"))
                         {                            
@@ -318,11 +314,11 @@
     <script src="~/js/all.min.js" asp-append-version="true"></script>
     <script src="~/js/lodash.min.js" asp-append-version="true"></script>
     <script src="~/js/list.min.js" asp-append-version="true"></script>
+    
+    @await RenderSectionAsync("Scripts", required: false)
+
     <script src="~/js/theme.js" asp-append-version="true"></script>
     
-    @* <script src="~/js/site.js" asp-append-version="true"></script> *@
-
-    @await RenderSectionAsync("Scripts", required: false)
 </body>
 
 </html>
