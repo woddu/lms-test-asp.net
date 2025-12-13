@@ -7,9 +7,9 @@
 
 <form id="account" method="post">
 
-    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+    <div asp-validation-summary="ModelOnly" class="text-danger d-none" role="alert" id="validationSummary"></div>
     <div class="mb-3">
-        <input asp-for="Input.Email" class="form-control" type="email" autocomplete="username" aria-required="true"
+        <input asp-for="Input.Email" class="form-control" type="email" autocomplete="username" aria-required="true" autofocus
             placeholder="Email address" />
         @* <label asp-for="Input.Email" class="form-label">Email</label> *@
         <span asp-validation-for="Input.Email" class="text-danger"></span>
@@ -38,7 +38,43 @@
 
 </form>
 
+@* <div class="toast-container position-fixed top-0 end-0 p-3">
+  <div id="errorToast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body" id="toastBody"></div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+</div> *@
+
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 5">
+  <div class="toast fade" id="errorToast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header bg-danger text-white"><strong class="me-auto">Error</strong>
+      <div data-bs-theme="dark"><button class="btn-close" type="button" data-bs-dismiss="toast" aria-label="Close"></button></div>
+    </div>
+    <div class="toast-body" id="toastBody">Hello, world! This is a toast message.</div>
+  </div>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(function () {
+            var $validationSummary = $("#validationSummary");
+            var $toastBody = $("#toastBody");
+            var $errorToast = $("#errorToast");
+
+            // Check if validation summary has errors
+            if ($validationSummary.text().trim() !== "") {
+                // Copy errors into toast body
+                $toastBody.html($validationSummary.html());
+
+                // Show Bootstrap toast
+                var toast = new bootstrap.Toast($errorToast[0]);
+                toast.show();
+            }
+        });
+    </script>
+
 }
