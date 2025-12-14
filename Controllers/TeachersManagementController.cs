@@ -8,6 +8,7 @@ using lms_test1.Models.ViewModels.TeachersManagement;
 using Microsoft.AspNetCore.Authorization;
 using lms_test1.Models;
 using Microsoft.Data.Sqlite;
+using lms_test1.Models.DTO.Section;
 
 namespace lms_test1.Controllers;
 
@@ -52,8 +53,7 @@ public class TeachersManagementController : Controller
     // GET: Teachers/Details/5
     public async Task<IActionResult> Details(string id)
     {
-        if (id == null) return NotFound();
-        
+        if (id == null) return NotFound();        
 
         var userEntity = await _userManager.Users
             .Include(u => u.AdvisorySections)
@@ -128,89 +128,6 @@ public class TeachersManagementController : Controller
         // return View(user);
     }
 
-    // GET: Teachers/Assign/5
-    public async Task<IActionResult> Assign(string id)
-    {
-        if (string.IsNullOrEmpty(id))
-            return NotFound();
-
-        var user = await _userManager.Users
-            .Include(u => u.AdvisorySections)
-            .Include(u => u.TeacherSubjects)
-                .ThenInclude(ts => ts.Subject)
-            .Include(u => u.TeacherSubjects)
-                .ThenInclude(ts => ts.TeacherSubjectSections)
-                    .ThenInclude(tss => tss.Section)
-            .FirstOrDefaultAsync(u => u.Id == id);
-
-        if (user == null) return NotFound();
-
-        var groupedSubjects = await _context.Subjects
-            .OrderBy(s => s.Track)
-            .ThenBy(s => s.Name)
-            .GroupBy(s => s.Track)
-            .ToListAsync();
-
-        var groupedSections = await _context.Sections
-            .Where(sec => sec.AdviserId == null || sec.AdviserId == user.Id)
-            .OrderBy(sec => sec.YearLevel)
-            .ThenBy(sec => sec.Name)
-            .GroupBy(sec => sec.YearLevel)
-            .ToListAsync();
-
-        var userRoles = await _userManager.GetRolesAsync(user);
-
-        var roles = await _context.Roles.ToListAsync();
-
-        var vm = new AssignTeacherViewModel
-        {
-            Role = userRoles.FirstOrDefault() ?? "",
-            Roles = roles.Select(r => r.Name).ToList(),
-            TeacherId = user.Id,
-            TeacherName = $"{user.LastName}, {user.FirstName} {(string.IsNullOrEmpty(user.MiddleName) ? "" : user.MiddleName[0].ToString())}",
-            AdvisorySectionIds = user.AdvisorySections!.Select(s => s.Id).ToList(),
-            SelectedSubjectIds = user.TeacherSubjects
-                .Where(ts => ts.Subject != null)
-                .Select(ts => ts.Subject!.Id)
-                .ToList(),
-            SubjectSections = user.TeacherSubjects.Select(ts => new SubjectSectionSelection
-            {
-                SubjectId = ts.SubjectId,
-                SectionIds = ts.TeacherSubjectSections.Select(tss => tss.Section.Id).ToList()
-            }).ToList()
-        };
-
-        var subjects = await _context.Subjects.ToListAsync();
-        var sections = await _context.Sections
-            .Include(s => s.TeacherSubjectSections)
-                .ThenInclude(tss => tss.TeacherSubject)
-                    .ThenInclude(ts => ts.Subject)
-            .ToListAsync();
-
-        var subjectSectionOptions = subjects.ToDictionary(
-            subj => subj.Id,
-            subj => sections
-                .Where(sec =>
-                    IsSectionAllowedForSubject(subj, sec) &&
-                    !sec.TeacherSubjectSections.Any(tss =>
-                        tss.TeacherSubject.SubjectId == subj.Id &&
-                        tss.TeacherSubject.TeacherId != user.Id // exclude if another teacher already has it
-                    )
-                )
-                .OrderBy(sec => sec.YearLevel)
-                .ThenBy(sec => sec.Name)
-                .ToList()
-        );
-
-
-        ViewData["AllSections"] = subjectSectionOptions;
-        ViewData["AllSectionsGrouped"] = groupedSections;
-        ViewData["AllSubjectsGrouped"] = groupedSubjects;
-
-        return View(vm);
-
-    }
-
     private bool IsSectionAllowedForSubject(Subject subject, Section section)
     {
         return subject.Track switch
@@ -230,204 +147,251 @@ public class TeachersManagementController : Controller
         };
     }
 
-    // POST: Teachers/Assign/5
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Assign(AssignTeacherViewModel model)
+    public async Task<IActionResult> Assign(string id)
     {
-        if (!ModelState.IsValid)
-        {
-            // Optional: log validation errors for debugging
-            foreach (var entry in ModelState)
-            {
-                foreach (var error in entry.Value.Errors)
-                {
-                    Console.WriteLine($"Property: {entry.Key}, Error: {error.ErrorMessage}");
-                }
-            }
-            return View(model);
-        }
+        if (string.IsNullOrEmpty(id))
+            return NotFound();
 
+        // Load user with related data
         var user = await _userManager.Users
-            .FirstOrDefaultAsync(u => u.Id == model.TeacherId);
+            .Include(u => u.AdvisorySections)
+            .Include(u => u.TeacherSubjects)
+                .ThenInclude(ts => ts.Subject)
+            .Include(u => u.TeacherSubjects)
+                .ThenInclude(ts => ts.TeacherSubjectSections)
+                    .ThenInclude(tss => tss.Section)
+            .FirstOrDefaultAsync(u => u.Id == id);
 
         if (user == null) return NotFound();
 
-        await using var transaction = await _context.Database.BeginTransactionAsync();
+        // Roles
+        var userRoles = await _userManager.GetRolesAsync(user);
+        var roles = await _context.Roles.Select(r => r.Name).ToListAsync();
 
-        // Update role if changed
-        var currentRoles = await _userManager.GetRolesAsync(user);
-        if (model.Role != (currentRoles.FirstOrDefault() ?? ""))
-        {
-            if (currentRoles.Any())
-            {
-                var removeResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
-                if (!removeResult.Succeeded)
-                {
-                    foreach (var error in removeResult.Errors)
-                        ModelState.AddModelError("", error.Description);
-                    Console.WriteLine("Failed to remove existing roles.");
-                    return View(model);
-                }
-            }
-
-            var addResult = await _userManager.AddToRoleAsync(user, model.Role);
-            if (!addResult.Succeeded)
-            {
-                foreach (var error in addResult.Errors)
-                    ModelState.AddModelError("", error.Description);
-                Console.WriteLine("Failed to add new role.");
-                return View(model);
-            }
-        }
-
-        // Update advisory sections
-        user.AdvisorySections = model.AdvisorySectionIds.Any()
-            ? await _context.Sections.Where(s => model.AdvisorySectionIds.Contains(s.Id)).ToListAsync()
-            : null;
-
-        // Get all TeacherSubjects currently in DB for this teacher
-        var existingTeacherSubjects = await _context.TeacherSubjects
-            .Include(ts => ts.TeacherSubjectSections)
-                .ThenInclude(tss => tss.Section)
-            .Where(ts => ts.TeacherId == model.TeacherId)
+        // Subjects (ordered once, reused)
+        var subjects = await _context.Subjects
+            .OrderBy(s => s.Track)
+            .ThenBy(s => s.Name)
             .ToListAsync();
 
-        var selectedSubjectIds = model.SubjectSections.Select(ss => ss.SubjectId).ToHashSet();
+        var groupedSubjects = subjects.GroupBy(s => s.Track).ToList();
 
-        // Remove TeacherSubjects that are no longer selected
-        var toRemove = existingTeacherSubjects
-            .Where(ts => !selectedSubjectIds.Contains(ts.SubjectId))
-            .ToList();
+        // Sections (filtered + eager loaded once, reused)
+        var sections = await _context.Sections
+            .Where(sec => sec.AdviserId == null || sec.AdviserId == user.Id)
+            .OrderBy(sec => sec.YearLevel)
+            .ThenBy(sec => sec.Name)
+            .Include(s => s.TeacherSubjectSections)
+                .ThenInclude(tss => tss.TeacherSubject)
+                    .ThenInclude(ts => ts.Subject)
+            .ToListAsync();
 
-        if (toRemove.Any())
+        var groupedSections = sections.GroupBy(sec => sec.YearLevel).ToList();
+
+        // Build subject-section options dictionary
+        var subjectSectionOptions = subjects.ToDictionary(
+            subj => subj.Id,
+            subj => sections
+                .Where(sec =>
+                    IsSectionAllowedForSubject(subj, sec) &&
+                    !sec.TeacherSubjectSections.Any(tss =>
+                        tss.TeacherSubject.SubjectId == subj.Id &&
+                        tss.TeacherSubject.TeacherId != user.Id
+                    )
+                )
+                .Select(sec => new SectionDTO
+                {
+                    Id = sec.Id,
+                    Name = sec.Name
+                })
+                .ToList()
+        );
+
+        // Construct ViewModel
+        var vm = new AssignTeacherViewModelA
         {
-            _context.TeacherSubjects.RemoveRange(toRemove);
+            TeacherId = user.Id,
+            TeacherName = $"{user.LastName}, {user.FirstName} {(string.IsNullOrEmpty(user.MiddleName) ? "" : user.MiddleName[0].ToString())}",
+            Role = userRoles.FirstOrDefault() ?? "",
+            Roles = roles,
+            AdvisorySections = user.AdvisorySections!.ToList(),
+            SubjectWithSections = user.TeacherSubjects.Select(ts => new SubjectWithSections
+            {
+                Subject = ts.Subject,
+                Sections = ts.TeacherSubjectSections.Select(tss => tss.Section).ToList()
+            }).ToList(),
+            GroupedSections = groupedSections,
+            GroupedSubjects = groupedSubjects,
+            SubjectSectionOptions = subjectSectionOptions
+        };
+
+        return View(vm);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ChangeTeacherRole(string teacherId, string newRole)
+    {
+        var teacher = await _userManager.Users
+            .FirstOrDefaultAsync(u => u.Id == teacherId);
+        if (teacher == null) return NotFound();
+
+        var currentRoles = await _userManager.GetRolesAsync(teacher);
+        if (currentRoles.Any())
+        {
+            var removeResult = await _userManager.RemoveFromRolesAsync(teacher, currentRoles);
+            if (!removeResult.Succeeded)
+            {
+                foreach (var error in removeResult.Errors)
+                    ModelState.AddModelError("", error.Description);
+                return RedirectToAction("Assign", new { id = teacherId });
+            }
         }
 
-        // Add or update TeacherSubjects
-        foreach (var subjectSelection in model.SubjectSections)
+        var addResult = await _userManager.AddToRoleAsync(teacher, newRole);
+        if (!addResult.Succeeded)
         {
-            var existing = existingTeacherSubjects
-                .FirstOrDefault(ts => ts.SubjectId == subjectSelection.SubjectId);
-
-            if (existing != null)
-            {
-                // Compare current vs new section IDs
-                var currentIds = existing.TeacherSubjectSections.Select(s => s.Section.Id).ToHashSet();
-                var newIds = subjectSelection.SectionIds.ToHashSet();
-
-                if (!currentIds.SetEquals(newIds))
-                {
-                    existing.TeacherSubjectSections.Clear();
-
-                    var sections = await _context.Sections
-                        .Where(s => newIds.Contains(s.Id))
-                        .ToListAsync();
-
-                    foreach (var section in sections)
-                    {
-                        existing.TeacherSubjectSections.Add(new TeacherSubjectSection
-                        {
-                            Section = section,
-                            SubjectId = subjectSelection.SubjectId,
-                        });
-                    }
-                }
-            }
-            else
-            {
-                // Create new TeacherSubject
-                var sections = await _context.Sections
-                    .Where(s => subjectSelection.SectionIds.Contains(s.Id))
-                    .ToListAsync();
-
-                var teacherSubject = new TeacherSubject
-                {
-                    TeacherId = model.TeacherId,
-                    SubjectId = subjectSelection.SubjectId,
-                    TeacherSubjectSections = sections.Select(s => new TeacherSubjectSection
-                    {
-                        Section = s,
-                        SubjectId = subjectSelection.SubjectId,
-                    }).ToList()
-                };
-
-                _context.TeacherSubjects.Add(teacherSubject);
-            }
+            foreach (var error in addResult.Errors)
+                ModelState.AddModelError("", error.Description);
+            return RedirectToAction("Assign", new { id = teacherId });
         }
 
+        return RedirectToAction("Assign", new { id = teacherId });
+    }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddAdvisorySection(string teacherId, int sectionId)
+    {        
+        var teacher = await _userManager.Users
+            .FirstOrDefaultAsync(u => u.Id == teacherId);
+        if (teacher == null) return NotFound($"Teacher with ID {teacherId} was not found.");
+
+        
+        var section = await _context.Sections
+            .FirstOrDefaultAsync(s => s.Id == sectionId);
+        if (section == null) return NotFound($"Section with ID {sectionId} was not found.");
+
+        Console.WriteLine($"Assigning advisory section {section.Name} to teacher {teacher.LastName}, {teacher.FirstName}");
+
+        if (section.AdviserId != null && section.AdviserId != teacher.Id)
+        {
+            Console.WriteLine($"Section {section.Name} already has an adviser with ID {section.AdviserId}");
+            ModelState.AddModelError("", "Section already has an adviser.");
+            return RedirectToAction("Assign", new { id = teacherId });
+        }
+        
+        section.AdviserId = teacher.Id;
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction("Assign", new { id = teacherId });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RemoveAdvisorySection(string teacherId, int sectionId)
+    {
+        var teacher = await _userManager.Users
+            .FirstOrDefaultAsync(u => u.Id == teacherId);
+        if (teacher == null) return NotFound($"Teacher with ID {teacherId} was not found.");
+
+        var section = await _context.Sections
+            .FirstOrDefaultAsync(s => s.Id == sectionId);
+        if (section == null) return NotFound($"Section with ID {sectionId} was not found.");
+
+        if (section.AdviserId != teacher.Id)
+        {
+            ModelState.AddModelError("", "Section is not assigned to this teacher.");
+            return RedirectToAction("Assign", new { id = teacherId });
+        }
+
+        section.AdviserId = null;
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction("Assign", new { id = teacherId });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddTeacherSubject(string teacherId, int subjectId)
+    {
+        var teacher = await _userManager.Users
+            .FirstOrDefaultAsync(u => u.Id == teacherId);
+        if (teacher == null) return NotFound($"Teacher with ID {teacherId} was not found.");
+
+        var subject = await _context.Subjects
+            .FirstOrDefaultAsync(s => s.Id == subjectId);
+        if (subject == null) return NotFound($"Subject with ID {subjectId} was not found.");
 
         try
         {
-            await _userManager.UpdateAsync(user);
+            var teacherSubject = new TeacherSubject
+            {
+                TeacherId = teacher.Id,
+                SubjectId = subject.Id
+            };
+            _context.TeacherSubjects.Add(teacherSubject);
             await _context.SaveChangesAsync();
-            await transaction.CommitAsync();
         }
         catch (DbUpdateException ex) when (ex.InnerException is SqliteException sqliteEx &&
                                         sqliteEx.SqliteErrorCode == 19)
         {
             // Handle unique constraint violation
-            
-            await transaction.RollbackAsync();
-
-            var userRoles = await _userManager.GetRolesAsync(user);
-
-            var roles = await _context.Roles.ToListAsync();
-
-            var user1 = await _userManager.Users
-                .Include(u => u.AdvisorySections)
-                .Include(u => u.TeacherSubjects)
-                    .ThenInclude(ts => ts.Subject)
-                .Include(u => u.TeacherSubjects)
-                    .ThenInclude(ts => ts.TeacherSubjectSections)
-                        .ThenInclude(tss => tss.Section)
-                .FirstOrDefaultAsync(u => u.Id == model.TeacherId);
-            var groupedSubjects = await _context.Subjects
-                .OrderBy(s => s.Track)
-                .ThenBy(s => s.Name)
-                .GroupBy(s => s.Track)
-                .ToListAsync();
-
-            var groupedSections = await _context.Sections
-                .Where(sec => sec.AdviserId == null || sec.AdviserId == user1!.Id)
-                .OrderBy(sec => sec.YearLevel)
-                .ThenBy(sec => sec.Name)
-                .GroupBy(sec => sec.YearLevel)
-                .ToListAsync();                            
-
-            var subjects = await _context.Subjects.ToListAsync();
-            var sections = await _context.Sections
-                .ToListAsync();
-
-            var subjectSectionOptions = subjects.ToDictionary(
-                subj => subj.Id,
-                subj => sections
-                    .Where(sec =>
-                        IsSectionAllowedForSubject(subj, sec) &&
-                        !sec.TeacherSubjectSections.Any(tss =>
-                            tss.TeacherSubject.SubjectId == subj.Id &&
-                            tss.TeacherSubject.TeacherId != user.Id // exclude if another teacher already has it
-                        )
-                    )
-                    .OrderBy(sec => sec.YearLevel)
-                    .ThenBy(sec => sec.Name)
-                    .ToList()
-            );
-
-
-            ViewData["AllSections"] = subjectSectionOptions;
-            ViewData["AllSectionsGrouped"] = groupedSections;
-            ViewData["AllSubjectsGrouped"] = groupedSubjects;
-            model.Roles = roles.Select(r => r.Name).ToList();
-            model.Role = userRoles.FirstOrDefault() ?? "";
-
-            ModelState.AddModelError("", $"Section {sections.Where(s => s.Id == model.SubjectSections.FirstOrDefault()?.SectionIds.FirstOrDefault()).Select(s => s.Name).FirstOrDefault()} already has that {subjects.Where(s => s.Id == model.SubjectSections.FirstOrDefault()?.SubjectId).Select(s => s.Name).FirstOrDefault()} assigned.");
-            return View(model);
+            ModelState.AddModelError("", "This subject is already assigned to the teacher.");
+            return RedirectToAction("Assign", new { id = teacherId });
         }
-
-        return RedirectToAction("Index");
+        
+        return RedirectToAction("Assign", new { id = teacherId });
     }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RemoveTeacherSubject(string teacherId, int subjectId)
+    {
+        var teacher = await _userManager.Users
+            .FirstOrDefaultAsync(u => u.Id == teacherId);
+        if (teacher == null) return NotFound($"Teacher with ID {teacherId} was not found.");
+                
+        var subject = await _context.Subjects
+            .FirstOrDefaultAsync(s => s.Id == subjectId);
+        if (subject == null) return NotFound($"Subject with ID {subjectId} was not found.");
+
+        var teacherSubject = await _context.TeacherSubjects
+            .Include(ts => ts.TeacherSubjectSections)
+            .FirstOrDefaultAsync(ts => ts.TeacherId == teacher.Id && ts.SubjectId == subject.Id);
+        if (teacherSubject == null) return NotFound();
+        
+        _context.TeacherSubjects.Remove(teacherSubject);
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction("Assign", new { id = teacherId });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddTeacherSubjectSection(string teacherId, int sectionId, int subjectId)
+    {
+        var teacher = await _userManager.Users
+            .FirstOrDefaultAsync(u => u.Id == teacherId);
+        if (teacher == null) return NotFound($"Teacher with ID {teacherId} was not found.");
+
+        
+        return RedirectToAction("Assign", new { id = teacherId });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RemoveTeacherSubjectSection(string teacherId, int sectionId, int subjectId)
+    {
+        var teacher = await _userManager.Users
+            .FirstOrDefaultAsync(u => u.Id == teacherId);
+        if (teacher == null) return NotFound($"Teacher with ID {teacherId} was not found.");
+
+        
+        return RedirectToAction("Assign", new { id = teacherId });
+    }
+
+
 
     // GET: Teachers/Edit/5
     public async Task<IActionResult> Edit(string id)
