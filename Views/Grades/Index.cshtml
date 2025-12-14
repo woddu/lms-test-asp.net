@@ -1,45 +1,55 @@
 @model IEnumerable<lms_test1.Models.TeacherSubject>
 
 @{
-    ViewData["Title"] = "My Subjects";
+    ViewData["Title"] = "Grades";
+    ViewData["Header"] = "My Subjects";
 }
-<header>
-    <div class="breadcrumbs mx-auto">
-        <span>@ViewData["Title"]</span>
-    </div>
 
-    <h2 class="title">@ViewData["Title"]</h2>
-</header>
+<nav class="mb-3" style="--falcon-breadcrumb-divider: '»';" aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
+  </ol>
+</nav>
 
-<div class="prevent-overflow px-8">
-    <table class="pure-table">
-        <thead>
-            <tr>
-                <th>Subject</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody id="subjectTableBody">
-            @if (!Model.Any())
-            {
-                <tr>
-                    <td colspan="2" style="text-align: center; font-style: italic; color: #888;">
-                        No subjects found.
-                    </td>
-                </tr>
-            }
-            else
-            {
-                @foreach (var teacherSubject in Model)
+<div class="row g-0">
+    <div class="col-xxl-9 col-md-12">
+        <div class="card z-1">
+            <div class="card-header">
+                <div class="col-auto align-self-center">
+                    <h5 class="mb-0">
+                        @ViewData["Header"]
+                    </h5>
+                </div>    
+            </div>
+                
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">                                    
+                @if (!Model.Any())
                 {
-                    <tr>
-                        <td>@teacherSubject.Subject.Name</td>
-                        <td>
-                            <a asp-action="SubjectDetails" asp-route-teacherSubjectId="@teacherSubject.Id">Details</a>
-                        </td>
-                    </tr>
+                    <li class="list-group-item">
+                        No subjects found.
+                    </li>
                 }
-            }
-        </tbody>
-    </table>
+                else
+                {
+                    @foreach (var teacherSubject in Model)
+                    {
+                        <li class="list-group-item">
+                            <a class="btn btn-link" asp-action="SubjectDetails" asp-route-teacherSubjectId="@teacherSubject.Id" type="button">@teacherSubject.Subject.Name</a>                    
+                        </li>
+                        @* <tr>
+                            <td>@teacherSubject.Subject.Name</td>
+                            <td>
+                                <a asp-action="SubjectDetails" asp-route-teacherSubjectId="@teacherSubject.Id">Details</a>
+                            </td>
+                        </tr> *@
+                    }
+                }
+                </ul>
+            </div>
+
+            <div class="card-footer">
+            </div>
+        </div>
+    </div>
 </div>
