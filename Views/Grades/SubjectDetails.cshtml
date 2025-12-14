@@ -1,320 +1,503 @@
 @model lms_test1.Models.TeacherSubject
 
 @{
-    ViewData["Title"] = @Model.Subject.Name + " Details";
+    ViewData["Title"] = "Grades";
+    ViewData["Header"] = "Details";
 }
 
-<header>
-    <div class="breadcrumbs mx-auto">
-        <a asp-controller="Grades" asp-action="Index">My Subjects</a> >
-        <span>@ViewData["Title"]</span>
-    </div>
+<nav class="mb-3" style="--falcon-breadcrumb-divider: '»';" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"> <a asp-controller="Grades" asp-action="Index">My Subjects</a></li>
+        <li class="breadcrumb-item active" aria-current="page">@ViewData["Header"]</li>
+    </ol>
+</nav>
 
-    <h2 class="title">@ViewData["Title"]</h2>
-</header>
+<div class="row row-cols-1 row-cols-md-5 g-3 g-0">
+    <div class="col-xxl-9 col-md-12">
+        <div class="card z-1">
+            <div class="card-header">
+                <div class="col-auto align-self-center">
+                    <h5 class="mb-0">
+                        @Model.Subject.Name @ViewData["Header"]
+                    </h5>
+                </div>
+            </div>
+            <div class="card-body">
+                <h4 class="mb-3">Highest Scores</h4>
+                <form class="mb-4" action="">
+                    <div class="accordion" id="accordionPanelsStayOpenExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#firstQuarter" aria-expanded="true" aria-controls="firstQuarter">
+                                    1st Quarter
+                                </button>
+                            </h2>
+                            <div id="firstQuarter" class="accordion-collapse collapse" style="">
+                                <div class="accordion-body">
+                                    <div class="accordion" id="accordionPanelsStayOpenExample">
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header">
+                                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                                    data-bs-target="#firstQuarterWW" aria-expanded="true" aria-controls="firstQuarterWW">
+                                                    Written Works
+                                                </button>
+                                            </h2>
+                                            <div id="firstQuarterWW" class="accordion-collapse collapse" style="">
+                                                <div class="accordion-body row row-cols-1 row-cols-md-5 g-3">
+                                                    <div class="col d-flex align-items-center">#1:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="WW1_First" /></div>
+                                                    <div class="col d-flex align-items-center">#2:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="WW2_First" /></div>
+                                                    <div class="col d-flex align-items-center">#3:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="WW3_First" /></div>
+                                                    <div class="col d-flex align-items-center">#4:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="WW4_First" /></div>
+                                                    <div class="col d-flex align-items-center">#5:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="WW5_First" /></div>
+                                                    <div class="col d-flex align-items-center">#6:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="WW6_First" /></div>
+                                                    <div class="col d-flex align-items-center">#7:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="WW7_First" /></div>
+                                                    <div class="col d-flex align-items-center">#8:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="WW8_First" /></div>
+                                                    <div class="col d-flex align-items-center">#9:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="WW9_First" /></div>
+                                                    <div class="col d-flex align-items-center">#10:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="WW10_First" /></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header">
+                                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                                    data-bs-target="#firstQuarterPT" aria-expanded="true" aria-controls="firstQuarterPT">
+                                                    Performance Tasks
+                                                </button>
+                                            </h2>
+                                            <div id="firstQuarterPT" class="accordion-collapse collapse" style="">
+                                                <div class="accordion-body row row-cols-1 row-cols-md-5 g-3">
+                                                    <div class="col d-flex align-items-center">#1:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="PT1_First" /></div>
+                                                    <div class="col d-flex align-items-center">#2:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="PT2_First" /></div>
+                                                    <div class="col d-flex align-items-center">#3:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="PT3_First" /></div>
+                                                    <div class="col d-flex align-items-center">#4:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="PT4_First" /></div>
+                                                    <div class="col d-flex align-items-center">#5:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="PT5_First" /></div>
+                                                    <div class="col d-flex align-items-center">#6:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="PT6_First" /></div>
+                                                    <div class="col d-flex align-items-center">#7:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="PT7_First" /></div>
+                                                    <div class="col d-flex align-items-center">#8:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="PT8_First" /></div>
+                                                    <div class="col d-flex align-items-center">#9:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="PT9_First" /></div>
+                                                    <div class="col d-flex align-items-center">#10:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="PT10_First" /></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header">
+                                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                                    data-bs-target="#firstQuarterExam" aria-expanded="true" aria-controls="firstQuarterExam">
+                                                    Exam
+                                                </button>
+                                            </h2>
+                                            <div id="firstQuarterExam" class="accordion-collapse collapse" style="">
+                                                <div class="accordion-body row">                                                    
+                                                    <div class="col d-flex align-items-center"><input class="form-control" type="number" min="0" max="100" asp-for="Exam_First" /></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#secondQuarter" aria-expanded="true"
+                                    aria-controls="secondQuarter">
+                                    2nd Quarter
+                                </button>
+                            </h2>
+                            <div id="secondQuarter" class="accordion-collapse collapse" style="">
+                                <div class="accordion-body">
+                                    <div class="accordion" id="accordionPanelsStayOpenExample">
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header">
+                                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                                    data-bs-target="#secondQuarterWW" aria-expanded="true" aria-controls="secondQuarterWW">
+                                                    Written Works
+                                                </button>
+                                            </h2>
+                                            <div id="secondQuarterWW" class="accordion-collapse collapse" style="">
+                                                <div class="accordion-body row row-cols-1 row-cols-md-5 g-3">
+                                                    <div class="col d-flex align-items-center">#1:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="WW1_Second" /></div>
+                                                    <div class="col d-flex align-items-center">#2:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="WW2_Second" /></div>
+                                                    <div class="col d-flex align-items-center">#3:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="WW3_Second" /></div>
+                                                    <div class="col d-flex align-items-center">#4:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="WW4_Second" /></div>
+                                                    <div class="col d-flex align-items-center">#5:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="WW5_Second" /></div>
+                                                    <div class="col d-flex align-items-center">#6:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="WW6_Second" /></div>
+                                                    <div class="col d-flex align-items-center">#7:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="WW7_Second" /></div>
+                                                    <div class="col d-flex align-items-center">#8:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="WW8_Second" /></div>
+                                                    <div class="col d-flex align-items-center">#9:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="WW9_Second" /></div>
+                                                    <div class="col d-flex align-items-center">#10:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="WW10_Second" /></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header">
+                                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                                    data-bs-target="#secondQuarterPT" aria-expanded="true" aria-controls="secondQuarterPT">
+                                                    Performance Tasks
+                                                </button>
+                                            </h2>
+                                            <div id="secondQuarterPT" class="accordion-collapse collapse" style="">
+                                                <div class="accordion-body row row-cols-1 row-cols-md-5 g-3">
+                                                    <div class="col d-flex align-items-center">#1:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="PT1_Second" /></div>
+                                                    <div class="col d-flex align-items-center">#2:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="PT2_Second" /></div>
+                                                    <div class="col d-flex align-items-center">#3:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="PT3_Second" /></div>
+                                                    <div class="col d-flex align-items-center">#4:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="PT4_Second" /></div>
+                                                    <div class="col d-flex align-items-center">#5:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="PT5_Second" /></div>
+                                                    <div class="col d-flex align-items-center">#6:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="PT6_Second" /></div>
+                                                    <div class="col d-flex align-items-center">#7:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="PT7_Second" /></div>
+                                                    <div class="col d-flex align-items-center">#8:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="PT8_Second" /></div>
+                                                    <div class="col d-flex align-items-center">#9:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="PT9_Second" /></div>
+                                                    <div class="col d-flex align-items-center">#10:<input class="form-control ms-1" type="number" min="0" max="100" asp-for="PT10_Second" /></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header">
+                                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                                    data-bs-target="#secondQuarterExam" aria-expanded="true" aria-controls="secondQuarterExam">
+                                                    Exam
+                                                </button>
+                                            </h2>
+                                            <div id="secondQuarterExam" class="accordion-collapse collapse" style="">
+                                                <div class="accordion-body row">                                                    
+                                                    <div class="col d-flex align-items-center"><input class="form-control" type="number" min="0" max="100" asp-for="Exam_Second" /></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>              
+                </form>
+                <h4 class="mb-1">Sections</h4>
+                <ul class="list-group list-group-flush">                                    
+                    @if (!Model.TeacherSubjectSections.Any())
+                    {
+                        <li class="list-group-item">
+                            No sections found for this subject.
+                        </li>
+                    }
+                    else
+                    {
+                        @foreach (var tss in Model.TeacherSubjectSections)
+                        {
+                            <li class="list-group-item">                            
+                                <a asp-action="SectionStudents" asp-controller="Grades"
+                                    asp-route-teacherSubjectId="@Model.Id" asp-route-sectionId="@tss.Section.Id">
+                                    @tss.Section.Name</a>                            
+                            </li>
+                        }
+                    }
+                </ul>
+            </div>
+            <div class="card-footer"></div>
+        </div>
 
-<div class="prevent-overflow px-8">
-    <h3 style="margin: 1rem 0rem;">Highest Scores</h3>
-    <table class="pure-table">
-        <thead>
-            <tr>
-                <th>Quarter</th>
-                <th>Scores</th>
-                <th>#1</th>
-                <th>#2</th>
-                <th>#3</th>
-                <th>#4</th>
-                <th>#5</th>
-                <th>#6</th>
-                <th>#7</th>
-                <th>#8</th>
-                <th>#9</th>
-                <th>#10</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td rowspan="3">1st</td>
-                <td>Written Works</td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW1_First" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW2_First" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW3_First" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW4_First" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW5_First" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW6_First" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW7_First" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW8_First" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW9_First" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW10_First" />
-                </td>
-            </tr>
-            <tr>
-                <td>Performance Tasks</td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT1_First" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT2_First" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT3_First" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT4_First" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT5_First" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT6_First" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT7_First" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT8_First" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT9_First" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT10_First" />
-                </td>
-            </tr>
-            <tr style="border-bottom: 1px solid #c9c7c7;">
-                <td>Exam</td>
-                <td colspan="10">
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="Exam_First" />
-                </td>
-            </tr>
-            <tr>
-                <td rowspan="3">2nd</td>
-                <td>Written Works</td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW1_Second" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW2_Second" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW3_Second" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW4_Second" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW5_Second" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW6_Second" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW7_Second" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW8_Second" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW9_Second" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW10_Second" />
-                </td>
-            </tr>
-            <tr>
-                <td>Performance Tasks</td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT1_Second" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT2_Second" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT3_Second" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT4_Second" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT5_Second" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT6_Second" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT7_Second" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT8_Second" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT9_Second" />
-                </td>
-                <td>
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT10_Second" />
-                </td>
-            </tr>
-            <tr>
-                <td>Exam</td>
-                <td colspan="10">
-                    <input type="number" min="0" max="100" style="width: 2rem;" asp-for="Exam_Second" />
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <button id="saveBtn" disabled class="pure-button pure-button-primary" asp-controller="Grades"
-        asp-action="SaveSubjectScoresChanges" style="margin-top: 1rem;">Save Changes</button>
-    <form id="scoresForm" style="display: hidden;">
-        @Html.AntiForgeryToken()
-    </form>
-
-    <h3 style="margin: 1rem 0rem;">Sections</h3>
-    <table class="pure-table">
-        <thead>
-            <tr>
-                <th>Section Name</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody id="sectionTableBody">
-            @if (!Model.TeacherSubjectSections.Any())
-            {
-                <tr>
-                    <td colspan="2" style="text-align: center; font-style: italic; color: #888;">
-                        No sections found for this subject.
-                    </td>
-                </tr>
-            }
-            else
-            {
-                @foreach (var tss in Model.TeacherSubjectSections)
-                {
+        <div class="prevent-overflow px-8">
+            <h3 style="margin: 1rem 0rem;">Highest Scores</h3>
+            <table class="pure-table">
+                <thead>
                     <tr>
-                        <td>@tss.Section.Name</td>
+                        <th>Quarter</th>
+                        <th>Scores</th>
+                        <th>#1</th>
+                        <th>#2</th>
+                        <th>#3</th>
+                        <th>#4</th>
+                        <th>#5</th>
+                        <th>#6</th>
+                        <th>#7</th>
+                        <th>#8</th>
+                        <th>#9</th>
+                        <th>#10</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td row row-cols-1 row-cols-md-5 g-3span="3">first</td>
+                        <td>Written Works</td>
                         <td>
-                            <a asp-action="SectionStudents" asp-controller="Grades" asp-route-teacherSubjectId="@Model.Id"
-                                asp-route-sectionId="@tss.Section.Id">View Students</a>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW1_First" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW2_First" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW3_First" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW4_First" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW5_First" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW6_First" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW7_First" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW8_First" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW9_First" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW10_First" />
                         </td>
                     </tr>
-                }
-            }
-        </tbody>
-    </table>
-</div>
+                    <tr>
+                        <td>Performance Tasks</td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT1_First" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT2_First" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT3_First" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT4_First" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT5_First" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT6_First" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT7_First" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT8_First" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT9_First" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT10_First" />
+                        </td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #c9c7c7;">
+                        <td>Exam</td>
+                        <td colspan="10">
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="Exam_First" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td row row-cols-1 row-cols-md-5 g-3span="3">second</td>
+                        <td>Written Works</td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW1_Second" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW2_Second" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW3_Second" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW4_Second" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW5_Second" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW6_Second" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW7_Second" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW8_Second" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW9_Second" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="WW10_Second" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Performance Tasks</td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT1_Second" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT2_Second" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT3_Second" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT4_Second" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT5_Second" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT6_Second" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT7_Second" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT8_Second" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT9_Second" />
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="PT10_Second" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Exam</td>
+                        <td colspan="10">
+                            <input type="number" min="0" max="100" style="width: 2rem;" asp-for="Exam_Second" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <button id="saveBtn" disabled class="pure-button pure-button-primary" asp-controller="Grades"
+                asp-action="SaveSubjectScoresChanges" style="margin-top: 1rem;">Save Changes</button>
+            <form id="scoresForm" style="display: hidden;">
+                @Html.AntiForgeryToken()
+            </form>
+
+            <h3 style="margin: 1rem 0rem;">Sections</h3>
+            <table class="pure-table">
+                <thead>
+                    <tr>
+                        <th>Section Name</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="sectionTableBody">
+                    @if (!Model.TeacherSubjectSections.Any())
+                    {
+                        <tr>
+                            <td colspan="2" style="text-align: center; font-style: italic; color: #888;">
+                                No sections found for this subject.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var tss in Model.TeacherSubjectSections)
+                        {
+                            <tr>
+                                <td>@tss.Section.Name</td>
+                                <td>
+                                    <a asp-action="SectionStudents" asp-controller="Grades"
+                                        asp-route-teacherSubjectId="@Model.Id" asp-route-sectionId="@tss.Section.Id">View
+                                        Students</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
 
 @section Scripts {
-    <script>
-        $(document).on("input", "input[type=number]", function () {
-            var max = parseFloat($(this).attr("max"));
-            var min = parseFloat($(this).attr("min"));
-            var val = parseFloat($(this).val());
+            <script>
+                $(document).on("input", "input[type=number]", function () {
+                    var max = parseFloat($(this).attr("max"));
+                    var min = parseFloat($(this).attr("min"));
+                    var val = parseFloat($(this).val());
 
-            if (!isNaN(max) && val > max) {
-                $(this).val(max); // silently clamp to max
-            }
-            if (!isNaN(min) && val < min) {
-                $(this).val(min); // silently clamp to min
-            }
-        });
-
-        const model = @Html.Raw(Json.Serialize(@Model))
-
-        function hasChanges() {
-            let changed = false;
-            $("input[type='number']").each(function () {
-                const fieldName = this.name; // matches asp-for property
-                const currentValue = this.value;
-                const originalValue = model[fieldName.charAt(0).toLowerCase() + fieldName.slice(1)];
-                    
-                // normalize null/undefined and string vs number
-                if (currentValue !== String(originalValue ?? "")) {
-                    changed = true;
-                    return false; // break loop
-                }
-            });
-            return changed;
-        } 
-
-        // Enable save button only if something changed
-        $("input[type='number']").on("input", function () {
-            if (hasChanges()) {
-                $("#saveBtn").prop("disabled", false);
-            } else {
-                $("#saveBtn").prop("disabled", true);
-            }
-        });
-
-        // Warn before leaving if there are changes
-        $(window).on("beforeunload", function () {
-            if (hasChanges()) {
-                return "You have unsaved changes!";
-            }
-        });
-
-        function getChangedFields() {
-            const changes = {};
-            $("input[type='number']").each(function () {
-                const fieldName = this.name;
-                const currentValue = this.value;
-                const originalValue = model[fieldName.charAt(0).toLowerCase() + fieldName.slice(1)];
-
-                if (currentValue !== String(originalValue ?? "")) {
-                    changes[fieldName.charAt(0).toLowerCase() + fieldName.slice(1)] = currentValue;
-                }
-            });
-            return changes;
-        }
-
-
-        $("#saveBtn").click(function (e) {
-            e.preventDefault();
-
-            const changes = getChangedFields()
-
-            Object.keys(changes).forEach(key => {
-                model[key] = changes[key];
-            });
-
-            var token = $('input[name="__RequestVerificationToken"]').val();
-
-            $.ajax({
-                url: '@Url.Action("SaveSubjectScoresChanges", "Grades")',
-                type: 'POST',
-                contentType: 'application/json',
-                headers: { 'RequestVerificationToken': token },
-                data: JSON.stringify(model),
-                success: function (response) {
-                    
-                    if (response.redirectUrl) {
-                        window.location.href = response.redirectUrl;
+                    if (!isNaN(max) && val > max) {
+                        $(this).val(max); // silently clamp to max
                     }
-                    // reset initial values so button disables again
-                    $("#saveBtn").prop("disabled", true);
-                },
-                error: function (xhr) {
-                    alert("Error saving changes: " + xhr.responseText);
-                }
-            });
-        });
+                    if (!isNaN(min) && val < min) {
+                        $(this).val(min); // silently clamp to min
+                    }
+                });
 
-    </script>
+                const model = @Html.Raw(Json.Serialize(@Model))
+
+                    function hasChanges() {
+                        let changed = false;
+                        $("input[type='number']").each(function () {
+                            const fieldName = this.name; // matches asp-for property
+                            const currentValue = this.value;
+                            const originalValue = model[fieldName.charAt(0).toLowerCase() + fieldName.slice(1)];
+
+                            // normalize null/undefined and string vs number
+                            if (currentValue !== String(originalValue ?? "")) {
+                                changed = true;
+                                return false; // break loop
+                            }
+                        });
+                        return changed;
+                    }
+
+                // Enable save button only if something changed
+                $("input[type='number']").on("input", function () {
+                    if (hasChanges()) {
+                        $("#saveBtn").prop("disabled", false);
+                    } else {
+                        $("#saveBtn").prop("disabled", true);
+                    }
+                });
+
+                // Warn before leaving if there are changes
+                $(window).on("beforeunload", function () {
+                    if (hasChanges()) {
+                        return "You have unsaved changes!";
+                    }
+                });
+
+                function getChangedFields() {
+                    const changes = {};
+                    $("input[type='number']").each(function () {
+                        const fieldName = this.name;
+                        const currentValue = this.value;
+                        const originalValue = model[fieldName.charAt(0).toLowerCase() + fieldName.slice(1)];
+
+                        if (currentValue !== String(originalValue ?? "")) {
+                            changes[fieldName.charAt(0).toLowerCase() + fieldName.slice(1)] = currentValue;
+                        }
+                    });
+                    return changes;
+                }
+
+
+                $("#saveBtn").click(function (e) {
+                    e.preventDefault();
+
+                    const changes = getChangedFields()
+
+                    Object.keys(changes).forEach(key => {
+                        model[key] = changes[key];
+                    });
+
+                    var token = $('input[name="__RequestVerificationToken"]').val();
+
+                    $.ajax({
+                        url: '@Url.Action("SaveSubjectScoresChanges", "Grades")',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        headers: { 'RequestVerificationToken': token },
+                        data: JSON.stringify(model),
+                        success: function (response) {
+
+                            if (response.redirectUrl) {
+                                window.location.href = response.redirectUrl;
+                            }
+                            // reset initial values so button disables again
+                            $("#saveBtn").prop("disabled", true);
+                        },
+                        error: function (xhr) {
+                            alert("Error saving changes: " + xhr.responseText);
+                        }
+                    });
+                });
+
+            </script>
 }
