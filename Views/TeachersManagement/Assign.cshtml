@@ -1,98 +1,331 @@
-@model lms_test1.Models.ViewModels.TeachersManagement.AssignTeacherViewModel
+@model lms_test1.Models.ViewModels.TeachersManagement.AssignTeacherViewModelA
 
 @{
-    ViewData["Title"] = "Assign Subjects and Section to Teacher";
+    ViewData["Title"] = "Teachers";
+    ViewData["Header"] = "Assign";
 }
 
-@section Styles {
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+@section Styles {    
+    <link rel="stylesheet" href="~/css/choices.min.css" asp-append-version="true" />
 }
 
-<header>
-    <div class="breadcrumbs">
-        <a asp-area="" asp-controller="TeachersManagement" asp-action="Index">Teacher Management</a> > <a
-            href="#0/">@ViewData["Title"]</a>
-    </div>
+<style>
+    .dropdown-toggle::after,
+    .dropdown-toggle::before {
+        display: none !important;
+        content: none !important;
+    }
 
-    <h2 class="title font-bold text-2xl">Assign Subjects and Section to @Model.TeacherName</h2>
-</header>
-<div class="prevent-overflow px-8">
-    <form class="pure-form pure-form-stacked" asp-action="Assign" method="post">
-        <fieldset>
-            <legend>
-                <a asp-action="Index">Back to List</a>
-            </legend>
-            <input type="hidden" asp-for="TeacherId" />
-            <div class="pure-g">
-                <div class="pure-u-1 pure-u-md-1-2">
-                    <label asp-for="Role">Role</label>
-                    <select asp-for="Role" class="pure-u-23-24">
-                        @foreach (var role in Model.Roles)
-                        {
-                            <option value="@role"
-                                selected="@(Model.Role == role ? "selected" : null)">
-                                @role
-                            </option>
-                        }
-                    </select>
-                    <span asp-validation-for="Role" class="text-danger"></span>
-                </div>  
+    .choices__list.choices__list--dropdown.is-active,
+    .choices__list[aria-expanded="true"] {
+        max-height: 200px !important; /* 5 options * 40px each */        
+    }
+</style>
 
-                <div class="pure-u-1 pure-u-md-1-2">
-                    <label asp-for="AdvisorySectionIds">Advisory Section</label>
-                    <select id="sectionsSelect" asp-for="AdvisorySectionIds" multiple="multiple" class="pure-u-23-24">
-                        <option value="">None</option>
-                        @foreach (var group in (IEnumerable<IGrouping<int, Section>>)ViewData["AllSectionsGrouped"]!)
-                        {
-                            <optgroup label="Grade @group.Key">
-                                @foreach (var advisorySection in group)
-                                {
-                                    <option value="@advisorySection.Id"
-                                        selected="@(Model.AdvisorySectionIds.Contains(advisorySection.Id) ? "selected" : null)">
-                                        @advisorySection.Name
-                                    </option>
-                                }
-                            </optgroup>
-                        }
-                    </select>
-                    <span asp-validation-for="AdvisorySectionIds" class="text-danger"></span>
-                </div>
-
-                <div class="pure-u-1 pure-u-md-1-2">
-                    <label>Subjects</label>
-                    <select id="subjectsSelect" asp-for="SelectedSubjectIds" multiple="multiple" class="pure-u-23-24">
-                        @foreach (var group in (IEnumerable<IGrouping<string, Subject>>)ViewData["AllSubjectsGrouped"]!)
-                        {
-                            <optgroup label="@group.Key">
-                                @foreach (var subject in group)
-                                {
-                                    <option value="@subject.Id"
-                                        selected="@(Model.SelectedSubjectIds.Contains(subject.Id) ? "selected" : null)">
-                                        @subject.Name
-                                    </option>
-                                }
-                            </optgroup>
-                        }
-                    </select>
-                    <span asp-validation-for="SelectedSubjectIds" class="text-danger"></span>
-                </div>
-
-                <div class="pure-u-1 pure-u-md-1-2">
-                    <div id="sectionsContainer">
-
-                    </div>
-                    <span asp-validation-for="SubjectSections" class="text-danger"></span>
-                </div>
+<nav class="mb-3" style="--falcon-breadcrumb-divider: '»';" aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a asp-area="" asp-controller="TeachersManagement" asp-action="Index">Teacher Management</a>
+    </li>
+    
+    <li class="breadcrumb-item active" aria-current="page">@ViewData["Header"] </li>
+  </ol>
+</nav>
 
 
+<div class="row g-3 mb-3">
+    <h2>@Model.TeacherName</h2>
+</div>
 
-                <div class="pure-u-1" style="margin-top: 1rem;">
-                    <div asp-validation-summary="All" class="text-danger"></div>
-                    <input type="submit" value="Save" class="pure-button pure-button-primary" />
+
+<div class="row g-3 mb-3">
+    <div class="col-xxl-9 col-xl-3 col-md-5">
+        <div class="card h-100 z-1"> 
+            <div class="card-header">
+                <div class="row flex-between-center">
+                    <div class="col-6 col-sm-auto d-flex align-items-center pe-0">
+                        <h5 class="mb-0">Role</h5>
+                    </div>                    
                 </div>
             </div>
-        </fieldset>
-    </form>
+
+            <div class="card-body px-4 py-3">
+                <form asp-action="ChangeTeacherRole" method="post">
+                    <input type="hidden" name="teacherId" value="@Model.TeacherId" />
+                    <div class="mb-3">
+                        <label for="newRole" class="form-label">Select Role</label>
+                        <select class="form-select" name="newRole">
+                            @foreach (var role in Model.Roles)
+                            {
+                                <option value="@role" selected="@(role == Model.Role ? "selected" : null)">@role</option>
+                            }
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Change Role</button>
+                </form>
+            </div>                    
+
+            <div class="card-footer"></div>                    
+        </div>                    
+    </div>
+
+    <div class="col-xxl-9 col-xl-9 col-md-7">
+        <div class="card h-100 z-1"> 
+            <div class="card-header">
+                <div class="row flex-between-center">
+                    <div class="col-6 col-sm-auto d-flex align-items-center pe-0">
+                        <h5 class="mb-0">Advisory Sections</h5>
+                    </div>                    
+                </div>
+            </div>
+
+            <div class="card-body row px-4 py-3">
+                <div class="col-12 col-md-6">
+                    <ul class="list-group list-group-flush">
+                        @if (!Model.AdvisorySections.Any())
+                        {
+                            <li class="list-group-item">
+                                No advisory sections assigned.  
+                            </li>
+                        }
+                        else
+                        {
+                            @foreach (var advisorySection in Model.AdvisorySections)
+                            {
+                                <li class="list-group-item">
+                                    @advisorySection.Name
+                                    <form asp-action="RemoveAdvisorySection" method="post" class="d-inline float-end">
+                                        <input type="hidden" name="teacherId" value="@Model.TeacherId" />
+                                        <input type="hidden" name="sectionId" value="@advisorySection.Id" />
+                                        <button type="submit" class="btn btn-sm btn-danger btn-icon-only" title="Remove Advisory Section">
+                                            <span class="fas fa-trash" aria-hidden="true"></span>
+                                        </button>
+                                    </form>
+                                </li>
+                            }
+                        }
+                    </ul>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <form asp-action="AddAdvisorySection" method="post">
+                        <input type="hidden" name="teacherId" value="@Model.TeacherId" />
+                        <div class="mb-3">
+                            <label for="sectionId" class="form-label">Select Advisory Section</label>
+                            <select class="form-select" name="sectionId">
+                                <option value="" disabled selected>Select a section</option>
+                                @foreach (var sectionGroup in Model.GroupedSections ?? [])
+                                {
+                                    <optgroup label="Grade @sectionGroup.Key">
+                                        @foreach (var section_ in sectionGroup)
+                                        {
+                                            @if(Model.AdvisorySections.Any(s => s.Id == section_.Id)) {continue;}
+                                            <option value="@section_.Id">@section_.Name</option>
+                                        }
+                                    </optgroup>
+                                }
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Assign Advisory Section</button>
+                    </form>
+                </div>
+            </div>                    
+
+            <div class="card-footer"></div>                    
+        </div>                    
+    </div>
+</div>
+
+<div class="row g-0">
+    <div class="col-xxl-9 col-md-12">
+        <div class="card z-1"> 
+            <div class="card-header">
+                <div class="row flex-between-center">
+                    <div class="col-6 col-sm-auto d-flex align-items-center pe-0">
+                        <h5 class="mb-0">Assigned Subjects and Sections</h5>
+                    </div>                    
+                    <div class="col-6 col-sm-auto ms-auto text-end ps-0">                    
+                        <div id="table-purchases-replace-element">
+                            <button class="btn btn-falcon-success btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#add-subject-modal">
+                                @* <svg class="svg-inline--fa fa-plus fa-w-14" data-fa-transform="shrink-3 down-2" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="plus" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg="" style="transform-origin: 0.4375em 0.625em;"><g transform="translate(224 256)"><g transform="translate(0, 64)  scale(0.8125, 0.8125)  rotate(0 0 0)"><path fill="currentColor" d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z" transform="translate(-224 -256)"></path></g></g></svg> *@
+                                <span class="ms-1 fas fa-plus" data-fa-transform="shrink-2"></span>
+                                <span class="d-none d-sm-inline-block ms-1">Assign Subject</span>
+                            </button>                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="table-responsive scrollbar">
+                <table class="table table-sm fs-10 mb-0 overflow-hidden">
+                    <thead class="bg-200">
+                        <tr>
+                            <th class="text-900 no-sort pe-1 align-middle white-space-nowrap">
+                                Subject
+                            </th>
+                            <th class="text-900 no-sort pe-1 align-middle white-space-nowrap">
+                                Sections
+                            </th>
+                            <th class="no-sort pe-1 align-middle data-table-row-action"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.SubjectWithSections)
+                        {
+                            <tr>
+                                <td class="align-middle white-space-nowrap">
+                                    @item.Subject.Name
+                                </td>
+                                <td class="align-middle white-space-nowrap">
+                                    @foreach (var section_ in item.Sections)
+                                    {
+                                        <span class="badge bg-info text-dark me-1 mb-1">@section_.Name</span>
+                                    }
+                                </td>
+
+
+
+                                <td class="align-middle white-space-nowrap text-end">                              
+                                    <div class="dropstart font-sans-serif position-static d-inline-block">
+                                    <button class="btn btn-link text-600 btn-sm dropdown-toggle btn-reveal float-end" type="button" id="dropdown-recent-purchase-table-0" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent">
+                                        <svg class="svg-inline--fa fa-ellipsis-h fa-w-16 fs-10" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="ellipsis-h" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg=""><path fill="currentColor" d="M328 256c0 39.8-32.2 72-72 72s-72-32.2-72-72 32.2-72 72-72 72 32.2 72 72zm104-72c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72zm-352 0c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72z"></path></svg>
+                                    </button>
+                                        <div class="dropdown-menu dropdown-menu-end border py-2" aria-labelledby="dropdown-recent-purchase-table-0">
+                                            <button
+                                              class="addSectionBtn dropdown-item"
+                                              data-id="@item.Subject.Id"
+                                              data-sectionIds="@string.Join(",", item.Sections.Select(s => s.Id))"
+                                              data-bs-toggle="modal"
+                                              data-bs-target="#add-section-modal">Assign a Section</button>
+                                            <div class="dropdown-divider"></div>
+                                            <button
+                                              class="removeSectionBtn dropdown-item text-danger"
+                                              data-id="@item.Subject.Id"
+                                              data-sectionIds="@string.Join(",", item.Sections.Select(s => s.Id))"
+                                              data-bs-toggle="modal"
+                                              data-bs-target="#remove-section-modal">Remove a Section</button>
+                                            @* <a class="dropdown-item" asp-action="Assign" asp-route-id="@item.Id">Assign</a> *@
+                                            @* <a class="dropdown-item text-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>                                 *@
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="card-footer"></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="add-subject-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 500px">
+    <div class="modal-content position-relative">
+      <div class="position-absolute top-0 end-0 mt-2 me-2 z-1">
+        <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-0">
+        <div class="rounded-top-3 py-3 ps-4 pe-6 bg-body-tertiary">
+          <h4 class="mb-1" id="modalExampleDemoLabel">Assign a Subject </h4>
+        </div>
+        <div class="p-4 pb-0">
+          <form id="add-subject-form" asp-action="AddTeacherSubject" method="post">
+            <input type="hidden" name="teacherId" value="@Model.TeacherId" />
+            <div class="mb-3">
+              <label class="col-form-label" for="selected-subject">Select A Subject</label>
+              <select class="form-select" id="selected-subject" size="1" required="required" name="selected-subject">
+              @* <select class="form-select" id="selected-subject" name="subjectId" required="required"> *@
+                <option value="" disabled selected>Select a subject</option>
+                @foreach (var subjectGroup in Model.GroupedSubjects ?? [])
+                {
+                    <optgroup label="@subjectGroup.Key">
+                        @foreach (var subject_ in subjectGroup)
+                        {
+                            @if(Model.SubjectWithSections.Any(s => s.Subject.Id == subject_.Id)) {continue;}
+                            <option value="@subject_.Id">@subject_.Name</option>
+                        }
+                    </optgroup>
+                }
+              </select>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Close</button>
+        <button class="btn btn-primary" type="submit" form="add-subject-form">Assign </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="add-section-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 500px">
+    <div class="modal-content position-relative">
+      <div class="position-absolute top-0 end-0 mt-2 me-2 z-1">
+        <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-0">
+        <div class="rounded-top-3 py-3 ps-4 pe-6 bg-body-tertiary">
+          <h4 class="mb-1" id="modalExampleDemoLabel">Assign a Section</h4>
+        </div>
+        <div class="p-4 pb-0">
+          <form id="add-section-form" asp-action="AddTeacherSubjectSection" method="post">
+            <input type="hidden" name="teacherId" value="@Model.TeacherId" />
+            <input id="section-add-subject-id" type="hidden" name="subjectId" />
+            <div class="mb-3">
+              <label class="col-form-label" for="selected-section">Select A Subject</label>
+              @* <select class="form-select" id="selected-section" name="sectionIds" size="7" required="required"> *@
+              <select class="form-select" id="selected-section" size="1" required="required" name="selected-section">
+                <option value="" disabled selected>Select a section</option>
+                
+              </select>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Close</button>
+        <button class="btn btn-primary" type="submit" form="add-section-form">Assign </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="remove-section-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 500px">
+    <div class="modal-content position-relative">
+      <div class="position-absolute top-0 end-0 mt-2 me-2 z-1">
+        <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-0">
+        <div class="rounded-top-3 py-3 ps-4 pe-6 bg-body-tertiary">
+          <h4 class="mb-1" id="modalExampleDemoLabel">Remove a Section</h4>
+        </div>
+        <div class="p-4 pb-0">
+          <form id="remove-section-form" asp-action="RemoveTeacherSubjectSection" method="post">
+            <input type="hidden" name="teacherId" value="@Model.TeacherId" />
+            <input id="section-remove-subject-id" type="hidden" name="subjectId" />
+            <div class="mb-3">
+              <label class="col-form-label" for="selected-remove-section">Select A Subject</label>
+              @* <select class="form-select" id="selected-remove-section" name="sectionIds" size="7" required="required" multiple> *@
+              <select class="form-select" id="selected-remove-section" size="1" required="required" name="selected-remove-section">
+                <option value="" disabled selected>Select a section</option>
+                
+              </select>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Close</button>
+        <button class="btn btn-danger" type="submit" form="remove-section-form">Remove </button>
+      </div>
+    </div>
+  </div>
 </div>
 
 @section Scripts {
@@ -100,79 +333,89 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="~/js/choices.min.js" asp-append-version="true"></script>
     <script>
         $(function () {
-            $('#subjectsSelect').select2({
-                placeholder: "Search and select Subjects",
-                allowClear: true,
-                width: '95%'
+
+            let subjectSectionOptions = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.SubjectSectionOptions));
+           
+            const addSubjectChoices = new Choices('#selected-subject', {
+                removeItemButton: true,
+                placeholder: true,
+                renderChoiceLimit: 3
             });
 
-            $('#sectionsSelect').select2({
-                placeholder: "Search and select Sections",
-                allowClear: true,
-                width: '95%'
+            const addSectionChoices = new Choices('#selected-section', {
+                removeItemButton: true,
+                placeholder: true
             });
 
-            var allSections = @Html.Raw(Json.Serialize(ViewData["AllSections"]));
-            var subjectSections = @Html.Raw(Json.Serialize(@Model.SubjectSections));
-
-            var renderedSubjects = new Map(); // subjectId → index
-
-            // Initial render from model
-            subjectSections.forEach(function (subject, index) {
-                renderedSubjects.set(subject.subjectId.toString(), index);
-                renderSectionSelect(subject.subjectId, subject.sectionIds, index);
+            const removeSectionChoices = new Choices('#selected-remove-section', {
+                removeItemButton: true,
+                placeholder: true
             });
 
-            function renderSectionSelect(subjectId, selectedSectionIds = [], index) {
-                var subjectName = $('#subjectsSelect option[value="' + subjectId + '"]').text();
-                var allowedSections = allSections[subjectId] || [];
+            $('.addSectionBtn').on('click', function() {
+                let selectedSubjectId = $(this).data('id');
+                //console.log('Subject Id:', selectedSubjectId);
+//
+                //let val = $(this).data("sectionids");
+                //console.log("Raw value:", val);
+                //console.log("typeof:", typeof val);
 
-                var optionsHtml = allowedSections.map(function (s) {
-                    var selected = selectedSectionIds.includes(s.id) ? 'selected' : '';
-                    return `<option ${selected} value="${s.id}">${s.name}</option>`;
-                }).join('');
+                let raw = $(this).attr('data-sectionids');
+                let sectionArray = raw ? raw.split(',') : [];
+                let sections = subjectSectionOptions[selectedSubjectId] || [];
 
-                var html = `
-                    <div class="subject-section-block" data-subject-id="${subjectId}">
-                        <label>Sections for ${subjectName}</label>
-                        <select name="SubjectSections[${index}].SectionIds" multiple class="section-select" required>
-                            ${optionsHtml}
-                        </select>
-                        <input type="hidden" name="SubjectSections[${index}].SubjectId" value="${subjectId}" />
-                    </div>
-                `;
-                $('#sectionsContainer').append(html);
-                $('#sectionsContainer').find('.section-select').last().select2({ width: '95%' });
-            }
+                let $addSubjectIdInput = $('#section-add-subject-id');
+                $addSubjectIdInput.val(selectedSubjectId);
 
-            $('#subjectsSelect').on('change', function () {
-                var selectedSubjects = $(this).val() || [];
-                var container = $('#sectionsContainer');
+                addSectionChoices.clearStore();
+                addSectionChoices.clearChoices();
 
-                // Remove selects for subjects that were deselected
-                container.find('.subject-section-block').each(function () {
-                    var subjectId = $(this).data('subject-id').toString();
-                    if (!selectedSubjects.includes(subjectId)) {
-                        $(this).remove();
-                        renderedSubjects.delete(subjectId);
+                sections.forEach(function(section) {
+                    if (!sectionArray.includes(section.Id.toString())) {                            
+                        addSectionChoices.setChoices([{
+                            value: section.Id,
+                            label: section.Name,
+                            selected: false,
+                            disabled: false
+                        }], 'value', 'label', false);
                     }
                 });
+            });
+            
+            $('.removeSectionBtn').on('click', function() {
+                let selectedSubjectId = $(this).data('id');
+                //console.log('Subject Id:', selectedSubjectId);
+//
+                //let val = $(this).data("sectionids");
+                //console.log("Raw value:", val);
+                //console.log("typeof:", typeof val);
 
-                // Add selects for newly selected subjects
-                selectedSubjects.forEach(function (subjectId) {
-                    subjectId = subjectId.toString();
-                    if (!renderedSubjects.has(subjectId)) {
-                        var newIndex = renderedSubjects.size;
-                        renderedSubjects.set(subjectId, newIndex);
-                        renderSectionSelect(subjectId, [], newIndex);
+                let raw = $(this).attr('data-sectionids');
+                let sectionArray = raw ? raw.split(',') : [];
+                let sections = subjectSectionOptions[selectedSubjectId] || [];
+
+                console.log('Sections for subject:', sections);
+
+                removeSectionChoices.clearStore();
+                removeSectionChoices.clearChoices();
+
+                let $removeSubjectIdInput = $('#section-remove-subject-id');
+                $removeSubjectIdInput.val(selectedSubjectId);
+
+                sections.forEach(function(section) {
+                    if (sectionArray.includes(section.Id.toString())) {                        
+                        removeSectionChoices.setChoices([{
+                            value: section.Id,
+                            label: section.Name,
+                            selected: false,
+                            disabled: false
+                        }], 'value', 'label', false);
                     }
                 });
             });
         });
-
     </script>
 }
