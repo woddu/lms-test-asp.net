@@ -15,7 +15,8 @@ public class ApplicationDbContext : IdentityDbContext<LMSUser>
     public DbSet<TeacherSubjectSection> TeacherSubjectSections { get; set; }
     public DbSet<StudentExtraFieldDefinition> StudentsExtraFieldDefinitions { get; set; }
     public DbSet<StudentExtraField> StudentsExtraFields { get; set; }
-
+    public DbSet<Announcement> Announcements { get; set; }
+    
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
